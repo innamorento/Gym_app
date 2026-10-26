@@ -37,10 +37,12 @@
 | [`.agents/skills/gym-architecture-and-standards/SKILL.md`](./.agents/skills/gym-architecture-and-standards/SKILL.md) | Навык и стандарты разработки фичей, MVI и Room |
 | [`.agents/mcp/gym_sqlite_mcp.py`](./.agents/mcp/gym_sqlite_mcp.py) | Локальный MCP-сервер для Room/SQLite инспекции и 1RM расчетов |
 | [`docs/analysis/PRD.md`](./docs/analysis/PRD.md) | Продуктовые требования, User Stories, анализ предметной области |
+| [`docs/analysis/COMPETITOR_ANALYSIS.md`](./docs/analysis/COMPETITOR_ANALYSIS.md) | Бенчмарк конкурентов: Strong, Hevy, FitNotes, Everfit, JEFIT |
 | [`docs/decisions/`](./docs/decisions/) | Architecture Decision Records (ADR) — логика и обоснование каждого решения |
 | [`docs/decisions/ADR-001-tech-stack-and-architecture.md`](./docs/decisions/ADR-001-tech-stack-and-architecture.md) | Выбор Kotlin, Jetpack Compose, Room, Clean Architecture + MVI |
 | [`docs/decisions/ADR-002-modular-architecture-and-mvp-scope.md`](./docs/decisions/ADR-002-modular-architecture-and-mvp-scope.md) | Модульная архитектура Gradle, скоуп MVP и конструктор суперсетов |
 | [`docs/decisions/ADR-003-coach-platform-video-and-smart-progression.md`](./docs/decisions/ADR-003-coach-platform-video-and-smart-progression.md) | Платформа Тренер-Клиент, видеоотчеты, автопрогрессия и дискретность снарядов |
+| [`docs/decisions/ADR-004-smart-progression-rpe-and-exercise-clustering.md`](./docs/decisions/ADR-004-smart-progression-rpe-and-exercise-clustering.md) | Субъективная шкала RPE/RIR, 2-уровневый каталог мышц и Smart Swap |
 | [`docs/architecture/domain-model.md`](./docs/architecture/domain-model.md) | Доменная модель сущностей (Workout, Exercise, Set, Template) |
 | [`docs/notes/DEV_LOG.md`](./docs/notes/DEV_LOG.md) | Инженерный журнал, рассуждения, открытые вопросы и TODO |
 
