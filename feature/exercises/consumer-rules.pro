@@ -1,0 +1,1 @@
+# Feature exercises consumer rules

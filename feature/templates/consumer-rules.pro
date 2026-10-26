@@ -1,0 +1,1 @@
+# Feature templates consumer rules
