@@ -21,6 +21,12 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises WHERE id = :id")
     suspend fun getExerciseById(id: Long): ExerciseEntity?
 
+    @Query("SELECT * FROM exercises WHERE isExcluded = 0 ORDER BY name ASC")
+    fun getActiveExercises(): Flow<List<ExerciseEntity>>
+
+    @Query("UPDATE exercises SET isExcluded = :isExcluded, exclusionReason = :reason WHERE id = :id")
+    suspend fun updateExclusionStatus(id: Long, isExcluded: Boolean, reason: String?)
+
     @Query("SELECT * FROM exercises WHERE name LIKE '%' || :query || '%' ORDER BY name ASC")
     fun searchExercises(query: String): Flow<List<ExerciseEntity>>
 

@@ -9,6 +9,7 @@ data class WorkoutSet(
     val weight: Double,
     val reps: Int,
     val rpe: Float? = null,
+    val effort: PerceivedEffort? = null,
     val isCompleted: Boolean = false,
     val completedAt: Long? = null,
     val restTimeSeconds: Int? = null

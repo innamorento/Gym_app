@@ -12,6 +12,7 @@ import com.gym.core.database.entity.ExerciseEntity
 import com.gym.core.database.entity.WorkoutEntity
 import com.gym.core.database.entity.WorkoutExerciseEntity
 import com.gym.core.database.entity.WorkoutSetEntity
+import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.WorkoutStatus
 import kotlinx.coroutines.flow.Flow
 
@@ -73,6 +74,12 @@ interface WorkoutDao {
 
     @Update
     suspend fun updateWorkoutSet(set: WorkoutSetEntity)
+
+    @Query("UPDATE workout_sets SET effort = :effort WHERE id = :setId")
+    suspend fun updateSetEffort(setId: Long, effort: PerceivedEffort)
+
+    @Query("UPDATE workout_sets SET isCompleted = :isCompleted, completedAt = :completedAt WHERE id = :setId")
+    suspend fun updateSetCompletion(setId: Long, isCompleted: Boolean, completedAt: Long?)
 
     @Query("DELETE FROM workout_sets WHERE id = :setId")
     suspend fun deleteWorkoutSet(setId: Long)

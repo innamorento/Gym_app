@@ -38,7 +38,9 @@ fun ExerciseEntity.toDomain(): Exercise {
         equipment = equipment,
         isCustom = isCustom,
         defaultRestSeconds = defaultRestSeconds,
-        instructions = instructions
+        instructions = instructions,
+        isExcluded = isExcluded,
+        exclusionReason = exclusionReason
     )
 }
 
@@ -51,7 +53,9 @@ fun Exercise.toEntity(): ExerciseEntity {
         equipment = equipment,
         isCustom = isCustom,
         defaultRestSeconds = defaultRestSeconds,
-        instructions = instructions
+        instructions = instructions,
+        isExcluded = isExcluded,
+        exclusionReason = exclusionReason
     )
 }
 
@@ -85,6 +89,7 @@ fun WorkoutSetEntity.toDomain(): WorkoutSet {
         weight = weight,
         reps = reps,
         rpe = rpe,
+        effort = effort,
         isCompleted = isCompleted,
         completedAt = completedAt,
         restTimeSeconds = restTimeSeconds
@@ -100,6 +105,7 @@ fun WorkoutSet.toEntity(workoutExerciseId: Long): WorkoutSetEntity {
         weight = weight,
         reps = reps,
         rpe = rpe,
+        effort = effort,
         isCompleted = isCompleted,
         completedAt = completedAt,
         restTimeSeconds = restTimeSeconds

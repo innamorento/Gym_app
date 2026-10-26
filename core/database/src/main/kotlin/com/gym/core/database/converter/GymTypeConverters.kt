@@ -3,6 +3,7 @@ package com.gym.core.database.converter
 import androidx.room.TypeConverter
 import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
+import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.WorkoutStatus
 
@@ -31,4 +32,12 @@ class GymTypeConverters {
 
     @TypeConverter
     fun toWorkoutStatus(value: String): WorkoutStatus = WorkoutStatus.valueOf(value)
+
+    @TypeConverter
+    fun fromPerceivedEffort(value: PerceivedEffort?): String? = value?.name
+
+    @TypeConverter
+    fun toPerceivedEffort(value: String?): PerceivedEffort? = value?.let {
+        try { PerceivedEffort.valueOf(it) } catch (e: Exception) { null }
+    }
 }

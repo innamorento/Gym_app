@@ -68,4 +68,27 @@ class SmartProgressionEngineTest {
         assertEquals(ProgressionDecision.INCREASE_WEIGHT, result.decision)
         assertEquals(12.0, result.suggestedWeight, 0.01)
     }
+
+    @Test
+    fun testHitMaxRepsWithFailureEffortMaintainsWeightForSafety() {
+        val dumbbellProfile = EquipmentWeightProfile.defaultFor(Equipment.DUMBBELL)
+
+        // Атлет закрыл 10 из 10, но последний сет был в жесткий отказ
+        val sets = listOf(
+            WorkoutSet(setNumber = 1, weight = 10.0, reps = 10, effort = PerceivedEffort.OPTIMAL, isCompleted = true),
+            WorkoutSet(setNumber = 2, weight = 10.0, reps = 10, effort = PerceivedEffort.HARD, isCompleted = true),
+            WorkoutSet(setNumber = 3, weight = 10.0, reps = 10, effort = PerceivedEffort.FAILURE, isCompleted = true)
+        )
+
+        val result = SmartProgressionEngine.calculateNextLoad(
+            previousSets = sets,
+            targetMinReps = 8,
+            targetMaxReps = 10,
+            equipmentProfile = dumbbellProfile
+        )
+
+        // Безопасность: не повышать вес, пока отказ не уйдет
+        assertEquals(ProgressionDecision.MAINTAIN_WEIGHT, result.decision)
+        assertEquals(10.0, result.suggestedWeight, 0.01)
+    }
 }

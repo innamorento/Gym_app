@@ -49,9 +49,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.Workout
 import com.gym.core.model.WorkoutExercise
 import com.gym.core.model.WorkoutSet
+import com.gym.core.ui.component.PerceivedEffortSelector
 import com.gym.core.ui.component.SetTypeBadge
 import com.gym.core.ui.component.SupersetBadge
 import com.gym.core.ui.theme.GymAccentBlue
@@ -97,6 +99,12 @@ fun LiveWorkoutScreen(
                 },
                 onAttachVideo = { setId, uri ->
                     viewModel.attachVideoToSet(setId, uri)
+                },
+                onToggleSet = { setId, isCompleted ->
+                    viewModel.toggleSetCompletion(setId, isCompleted)
+                },
+                onSelectEffort = { setId, effort ->
+                    viewModel.updateSetEffort(setId, effort)
                 }
             )
         }
@@ -109,7 +117,9 @@ fun ActiveWorkoutContent(
     workout: Workout,
     onFinishClick: () -> Unit,
     onAddSet: (Long, Int) -> Unit,
-    onAttachVideo: (Long, String) -> Unit = { _, _ -> }
+    onAttachVideo: (Long, String) -> Unit = { _, _ -> },
+    onToggleSet: (Long, Boolean) -> Unit = { _, _ -> },
+    onSelectEffort: (Long, PerceivedEffort) -> Unit = { _, _ -> }
 ) {
     Scaffold(
         topBar = {
@@ -153,7 +163,9 @@ fun ActiveWorkoutContent(
                 WorkoutExerciseCard(
                     exercise = exercise,
                     onAddSetClick = { onAddSet(exercise.id, exercise.sets.size) },
-                    onAttachVideo = onAttachVideo
+                    onAttachVideo = onAttachVideo,
+                    onToggleSet = onToggleSet,
+                    onSelectEffort = onSelectEffort
                 )
             }
         }
@@ -164,7 +176,9 @@ fun ActiveWorkoutContent(
 fun WorkoutExerciseCard(
     exercise: WorkoutExercise,
     onAddSetClick: () -> Unit,
-    onAttachVideo: (Long, String) -> Unit
+    onAttachVideo: (Long, String) -> Unit,
+    onToggleSet: (Long, Boolean) -> Unit,
+    onSelectEffort: (Long, PerceivedEffort) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -221,9 +235,11 @@ fun WorkoutExerciseCard(
             exercise.sets.forEach { set ->
                 WorkoutSetRow(
                     set = set,
-                    onAttachVideo = { uri -> onAttachVideo(set.id, uri) }
+                    onAttachVideo = { uri -> onAttachVideo(set.id, uri) },
+                    onToggleCompleted = { onToggleSet(set.id, set.isCompleted) },
+                    onSelectEffort = { effort -> onSelectEffort(set.id, effort) }
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -244,13 +260,14 @@ fun WorkoutExerciseCard(
 @Composable
 fun WorkoutSetRow(
     set: WorkoutSet,
-    onAttachVideo: (String) -> Unit = {}
+    onAttachVideo: (String) -> Unit = {},
+    onToggleCompleted: () -> Unit = {},
+    onSelectEffort: (PerceivedEffort) -> Unit = {}
 ) {
     val context = LocalContext.current
     var currentVideoUri by remember { mutableStateOf<String?>(null) }
     var tempCaptureUri by remember { mutableStateOf<android.net.Uri?>(null) }
 
-    // Лаунчер системной видеокамеры с лимитом 60 секунд
     val videoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CaptureVideo()
     ) { success ->
@@ -261,63 +278,74 @@ fun WorkoutSetRow(
         }
     }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(if (set.isCompleted) GymAccentGreen.copy(alpha = 0.1f) else Color.Transparent)
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        SetTypeBadge(setNumber = set.setNumber, setType = set.setType)
-
-        Text(
-            text = "${set.weight} кг",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = GymTextPrimary,
-            modifier = Modifier.weight(1f).padding(start = 12.dp)
-        )
-
-        Text(
-            text = "${set.reps}",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = GymTextPrimary,
-            modifier = Modifier.weight(1f)
-        )
-
-        // Кнопка записи видео для тренера (системная камера с лимитом 60с)
-        IconButton(
-            onClick = {
-                val (_, uri) = VideoRecordingHelper.createVideoFileUri(context, set.id)
-                tempCaptureUri = uri
-                videoLauncher.launch(uri)
-            },
-            modifier = Modifier.size(36.dp)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(if (set.isCompleted) GymAccentGreen.copy(alpha = 0.1f) else Color.Transparent)
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                imageVector = Icons.Default.Videocam,
-                contentDescription = "Записать видео подхода для тренера (до 60 сек)",
-                tint = if (currentVideoUri != null) GymAccentGreen else GymTextSecondary
+            SetTypeBadge(setNumber = set.setNumber, setType = set.setType)
+
+            Text(
+                text = "${set.weight} кг",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = GymTextPrimary,
+                modifier = Modifier.weight(1f).padding(start = 12.dp)
             )
+
+            Text(
+                text = "${set.reps}",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = GymTextPrimary,
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(
+                onClick = {
+                    val (_, uri) = VideoRecordingHelper.createVideoFileUri(context, set.id)
+                    tempCaptureUri = uri
+                    videoLauncher.launch(uri)
+                },
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Videocam,
+                    contentDescription = "Записать видео подхода для тренера (до 60 сек)",
+                    tint = if (currentVideoUri != null) GymAccentGreen else GymTextSecondary
+                )
+            }
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            // Крупная кнопка завершения сета (Ergonomics First)
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(if (set.isCompleted) GymAccentGreen else GymDarkSurfaceVariant)
+                    .clickable { onToggleCompleted() },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Завершить подход",
+                    tint = if (set.isCompleted) GymDarkBackground else GymTextSecondary
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.width(4.dp))
-
-        // Крупная кнопка завершения сета (Ergonomics First)
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (set.isCompleted) GymAccentGreen else GymDarkSurfaceVariant),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Завершить подход",
-                tint = if (set.isCompleted) GymDarkBackground else GymTextSecondary
+        // Шкала усилия (RPE / RIR) появляется сразу после завершения сета
+        if (set.isCompleted) {
+            Spacer(modifier = Modifier.height(4.dp))
+            PerceivedEffortSelector(
+                selectedEffort = set.effort,
+                onEffortSelect = onSelectEffort
             )
         }
     }

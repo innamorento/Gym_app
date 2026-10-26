@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
+import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.WorkoutStatus
 
@@ -19,7 +20,9 @@ data class ExerciseEntity(
     val equipment: Equipment,
     val isCustom: Boolean = false,
     val defaultRestSeconds: Int = 90,
-    val instructions: String? = null
+    val instructions: String? = null,
+    val isExcluded: Boolean = false,
+    val exclusionReason: String? = null
 )
 
 @Entity(tableName = "workout_templates")
@@ -131,6 +134,7 @@ data class WorkoutSetEntity(
     val weight: Double,
     val reps: Int,
     val rpe: Float? = null,
+    val effort: PerceivedEffort? = null,
     val isCompleted: Boolean = false,
     val completedAt: Long? = null,
     val restTimeSeconds: Int? = null

@@ -11,6 +11,7 @@ import com.gym.core.database.entity.WorkoutExerciseEntity
 import com.gym.core.database.entity.WorkoutSetEntity
 import com.gym.core.database.mapper.toDomain
 import com.gym.core.database.mapper.toEntity
+import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.Workout
 import com.gym.core.model.WorkoutStatus
@@ -117,11 +118,15 @@ class WorkoutViewModel(
 
     fun toggleSetCompletion(setId: Long, currentIsCompleted: Boolean) {
         viewModelScope.launch {
-            // Быстрое обновление статуса сета в БД
             val newCompleted = !currentIsCompleted
             val completedTime = if (newCompleted) System.currentTimeMillis() else null
-            // Обновляем сущность
-            // В реальной сессии: читаем текущий сет и инвертируем
+            workoutDao.updateSetCompletion(setId, newCompleted, completedTime)
+        }
+    }
+
+    fun updateSetEffort(setId: Long, effort: PerceivedEffort) {
+        viewModelScope.launch {
+            workoutDao.updateSetEffort(setId, effort)
         }
     }
 

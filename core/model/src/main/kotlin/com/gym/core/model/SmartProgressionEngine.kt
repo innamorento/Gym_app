@@ -43,11 +43,22 @@ object SmartProgressionEngine {
         val lastWeight = workingSets.first().weight
         val allHitMaxReps = workingSets.all { it.reps >= targetMaxReps }
         val anyFailedMinReps = workingSets.any { it.reps < targetMinReps }
+        val reachedFailure = workingSets.any { it.effort == PerceivedEffort.FAILURE }
+        val predominantlyHard = workingSets.count { it.effort == PerceivedEffort.HARD || it.effort == PerceivedEffort.FAILURE } >= 2
 
         return when {
-            // Успех: все сеты закрыты на максимум повторов -> повышаем вес
+            // Успех по повторам, НО подход был на пределе/в отказ -> вес фиксируем для закрепления
+            allHitMaxReps && (reachedFailure || predominantlyHard) -> {
+                ProgressionRecommendation(
+                    suggestedWeight = lastWeight,
+                    suggestedReps = "$targetMaxReps",
+                    decision = ProgressionDecision.MAINTAIN_WEIGHT,
+                    rationaleRu = "Вы закрыли все $targetMaxReps повторений, но с предельным усилием (Отказ / Тяжело). Повышать вес рано: закрепите этот вес еще на 1 тренировку для безопасной адаптации связок."
+                )
+            }
+
+            // Успех по повторам и комфортное усилие (Легко / В цель) -> уверенно повышаем вес
             allHitMaxReps -> {
-                // Инкремент веса: пробуем прибавить сырой шаг и округлить до физического шага снаряда
                 val step = when (equipmentProfile.equipment) {
                     Equipment.DUMBBELL -> if (lastWeight < equipmentProfile.smallWeightThreshold) equipmentProfile.smallWeightStep else equipmentProfile.defaultStep
                     Equipment.BARBELL -> equipmentProfile.minPlatesPairWeight
@@ -63,7 +74,7 @@ object SmartProgressionEngine {
                     suggestedWeight = finalWeight,
                     suggestedReps = "$targetMinReps",
                     decision = ProgressionDecision.INCREASE_WEIGHT,
-                    rationaleRu = "Отличная работа! Вы закрыли все $targetMaxReps повторений в каждом подходе. Время повысить вес до $finalWeight кг (шаг снаряда)."
+                    rationaleRu = "Отличная работа! Подходы выполнены уверенно (усилие в цель). Время повысить вес до $finalWeight кг (шаг снаряда)."
                 )
             }
 
