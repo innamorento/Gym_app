@@ -1,9 +1,11 @@
 # Gym Workout Tracker — Project Index & AI Context
 
-> **Version:** 0.1.0  
+> **Version:** 0.2.0  
 > **Role:** Fullstack Android Developer & Systems/Product Analyst  
-> **Status:** Discovery & Architecture Phase  
+> **Status:** MVP Feature Implementation & Polishing Phase  
 > **Target Platform:** Android (Offline-First Mobile App) + Sync/Backend Service  
+> **Current Workspace:** `C:\Dev\Gym`  
+> **Remote Repository:** `https://github.com/innamorento/Gym_app` (branch `main`)
 
 ---
 
@@ -16,6 +18,7 @@
 - Гибкий конструктор тренировок, шаблонов, упражнений и суперсетов.
 - Встроенный таймер отдыха с гибкими уведомлениями.
 - Наглядная аналитика прогресса: рабочий объём (Volume), расчетный 1RM (одноповторный максимум), частота, графики.
+- Платформа «Тренер-Клиент» с видеорецензиями подходов (до 60 секунд) и умной автопрогрессией с дискретностью снарядов зала.
 
 ---
 
@@ -24,6 +27,7 @@
 1. **Clarify Before Build:** Если требование, сценарий или техническое решение неоднозначно или не хватает вводных данных — **всегда задавать уточняющие вопросы пользователю**, не делая слепых предположений.
 2. **Document Decisions & Logic:** Любое архитектурное решение, изменение схемы данных или смена приоритетов фиксируется в `docs/decisions/` и `docs/notes/DEV_LOG.md`.
 3. **Ergonomics First:** Любой UI/UX сценарий оценивается с позиции атлета в зале (усталость, 1 рука, пот/магнезия, плохой свет, отсутствие сети).
+4. **Adaptive Scaling (FlowRow):** Все фильтры и чипы обязаны поддерживать нестандартный масштаб шрифтов и экранов с автоматическим переносом на новую строку.
 
 ---
 
@@ -44,29 +48,33 @@
 | [`docs/decisions/ADR-003-coach-platform-video-and-smart-progression.md`](./docs/decisions/ADR-003-coach-platform-video-and-smart-progression.md) | Платформа Тренер-Клиент, видеоотчеты, автопрогрессия и дискретность снарядов |
 | [`docs/decisions/ADR-004-smart-progression-rpe-and-exercise-clustering.md`](./docs/decisions/ADR-004-smart-progression-rpe-and-exercise-clustering.md) | Субъективная шкала RPE/RIR, 2-уровневый каталог мышц и Smart Swap |
 | [`docs/architecture/domain-model.md`](./docs/architecture/domain-model.md) | Доменная модель сущностей (Workout, Exercise, Set, Template) |
-| [`docs/notes/DEV_LOG.md`](./docs/notes/DEV_LOG.md) | Инженерный журнал, рассуждения, открытые вопросы и TODO |
+| [`docs/notes/DEV_LOG.md`](./docs/notes/DEV_LOG.md) | Инженерный журнал, рассуждения, багфиксы, открытые вопросы и Roadmap |
 
 ---
 
 ## 4. Core Tech Stack (Approved Baseline)
 - **Client (Android):**
-  - Language: Kotlin 2.x
+  - Language: Kotlin 2.0.x (JVM target 17)
   - UI: Jetpack Compose + Material 3 (Dark theme optimized for gym lighting & battery)
-  - Architecture: Clean Architecture + MVI (Model-View-Intent) / UDF (Unidirectional Data Flow)
-  - Local Storage (Offline-First): Room DB (SQLite) + Jetpack DataStore (Preferences)
-  - DI: Koin or Hilt (Koin для лёгкости и скорости сборки, либо Hilt)
-  - Async/Concurrency: Kotlin Coroutines & Flow
-  - Notifications / Background Work: Android Foreground Services + WorkManager (для таймеров отдыха и синхронизации)
-- **Backend / Sync Layer (Phase 2):**
-  - Architecture: Offline-first with eventual consistency sync
-  - Tech Options: Ktor / Supabase (PostgreSQL + Row-Level Security + Auth)
+  - Architecture: Multi-Module Clean Architecture + MVI (Model-View-Intent) / UDF
+  - Modules: `:core:model`, `:core:database`, `:core:ui`, `:feature:templates`, `:feature:exercises`, `:feature:workout`, `:app`
+  - Local Storage (Offline-First): Room DB (SQLite) + Flow Coroutines
+  - DI: Koin 4.x (`koin-androidx-compose`)
+  - Video & Media: Android Intent Video Recording (лимит 60с) + FileProvider
+- **Web Simulator & Preview:**
+  - `preview/index.html` — интерактивный симулятор функционала и верстки
 
 ---
 
 ## 5. Current Phase & Next Actions
 - [x] Инициализация структуры документации и AI-индекса.
-- [x] Подготовка Product Requirements Document (PRD) с анализом функционала.
-- [x] Формирование ADR-001 (обоснование стека и архитектуры).
-- [x] Доменное моделирование сущностей (Упражнение, Подход, Тренировка, Шаблон).
-- [ ] Согласование с пользователем приоритетов MVP и фичей первой версии.
-- [ ] Инициализация структуры Android-проекта (Gradle, модули).
+- [x] Подготовка PRD и ADR (ADR-001 ... ADR-004).
+- [x] Развертывание модульного Android-проекта (`:core:model`, `:core:database`, `:core:ui`, `:feature:templates`, `:feature:exercises`, `:feature:workout`, `:app`).
+- [x] Реализация конструктора шаблонов и группировки в суперсеты.
+- [x] Реализация экрана живой тренировки `LiveWorkoutScreen` с фиксацией подходов и оценкой RPE.
+- [x] Видеофиксация техники атлета (Intent видеокамеры, 60 секунд) и кабинет тренера `CoachReviewScreen`.
+- [x] Адаптивная верстка FlowRow для любых масштабов экрана.
+- [x] Изоляция сессий редактора шаблонов и добавление упражнений в живую тренировку.
+- [x] Каталог упражнений с иллюстрированными бейджами снарядов и подробным `ExerciseDetailSheet` (3D заготовка).
+- [ ] Доработка таймера отдыха с Android Foreground Service и виброоткликом.
+- [ ] Добавление аналитики (расчет прогресса 1RM, графики объема).
