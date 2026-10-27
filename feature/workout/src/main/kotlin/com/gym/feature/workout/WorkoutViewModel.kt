@@ -10,19 +10,29 @@ import com.gym.core.database.entity.WorkoutEntity
 import com.gym.core.database.entity.WorkoutExerciseEntity
 import com.gym.core.database.entity.WorkoutSetEntity
 import com.gym.core.database.mapper.toDomain
-import com.gym.core.database.mapper.toEntity
 import com.gym.core.model.Exercise
 import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.Workout
 import com.gym.core.model.WorkoutStatus
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+
+data class RestTimerState(
+    val isRunning: Boolean = false,
+    val totalSeconds: Int = 90,
+    val remainingSeconds: Int = 90
+)
 
 sealed interface WorkoutUiState {
     object Idle : WorkoutUiState
@@ -34,6 +44,87 @@ class WorkoutViewModel(
     private val templateDao: TemplateDao,
     private val coachAndReviewDao: CoachAndReviewDao
 ) : ViewModel() {
+
+    private val _workoutDurationSeconds = MutableStateFlow(0L)
+    val workoutDurationSeconds: StateFlow<Long> = _workoutDurationSeconds.asStateFlow()
+
+    private val _restTimerState = MutableStateFlow(RestTimerState())
+    val restTimerState: StateFlow<RestTimerState> = _restTimerState.asStateFlow()
+
+    private var durationTimerJob: Job? = null
+    private var restTimerJob: Job? = null
+
+    init {
+        // Запуск и синхронизация секундомера тренировки при наличии активной тренировки
+        viewModelScope.launch {
+            uiState.collectLatest { state ->
+                when (state) {
+                    is WorkoutUiState.Active -> {
+                        startDurationTicker(state.workout.startTime)
+                    }
+                    is WorkoutUiState.Idle -> {
+                        durationTimerJob?.cancel()
+                        _workoutDurationSeconds.value = 0L
+                        stopRestTimer()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun startDurationTicker(startTime: Long) {
+        durationTimerJob?.cancel()
+        durationTimerJob = viewModelScope.launch {
+            while (isActive) {
+                val elapsed = (System.currentTimeMillis() - startTime) / 1000
+                _workoutDurationSeconds.value = elapsed.coerceAtLeast(0)
+                delay(1000)
+            }
+        }
+    }
+
+    fun startRestTimer(seconds: Int = 90) {
+        restTimerJob?.cancel()
+        val safeSeconds = seconds.coerceAtLeast(1)
+        _restTimerState.value = RestTimerState(isRunning = true, totalSeconds = safeSeconds, remainingSeconds = safeSeconds)
+        restTimerJob = viewModelScope.launch {
+            while (isActive && _restTimerState.value.remainingSeconds > 0) {
+                delay(1000)
+                _restTimerState.update { current ->
+                    if (current.remainingSeconds > 1) {
+                        current.copy(remainingSeconds = current.remainingSeconds - 1)
+                    } else {
+                        current.copy(isRunning = false, remainingSeconds = 0)
+                    }
+                }
+            }
+        }
+    }
+
+    fun adjustRestTimer(deltaSeconds: Int) {
+        _restTimerState.update { current ->
+            val newRemaining = (current.remainingSeconds + deltaSeconds).coerceAtLeast(0)
+            val newTotal = (current.totalSeconds + deltaSeconds).coerceAtLeast(newRemaining)
+            current.copy(
+                totalSeconds = newTotal,
+                remainingSeconds = newRemaining,
+                isRunning = newRemaining > 0
+            )
+        }
+        if (_restTimerState.value.isRunning && restTimerJob?.isActive != true) {
+            // Перезапуск корутины если оставалось 0
+            startRestTimer(_restTimerState.value.remainingSeconds)
+        }
+    }
+
+    fun setRestTimer(seconds: Int) {
+        startRestTimer(seconds)
+    }
+
+    fun stopRestTimer() {
+        restTimerJob?.cancel()
+        _restTimerState.value = RestTimerState(isRunning = false, remainingSeconds = 0)
+    }
 
     fun attachVideoToSet(setId: Long, uriString: String) {
         viewModelScope.launch {
@@ -117,11 +208,24 @@ class WorkoutViewModel(
         }
     }
 
-    fun toggleSetCompletion(setId: Long, currentIsCompleted: Boolean) {
+    fun toggleSetCompletion(setId: Long, currentIsCompleted: Boolean, defaultRestSeconds: Int = 90) {
         viewModelScope.launch {
             val newCompleted = !currentIsCompleted
             val completedTime = if (newCompleted) System.currentTimeMillis() else null
             workoutDao.updateSetCompletion(setId, newCompleted, completedTime)
+            if (newCompleted) {
+                startRestTimer(defaultRestSeconds)
+            }
+        }
+    }
+
+    fun updateSetWeightAndReps(setId: Long, weight: Double, reps: Int) {
+        viewModelScope.launch {
+            workoutDao.updateSetWeightAndReps(
+                setId = setId,
+                weight = weight.coerceAtLeast(0.0),
+                reps = reps.coerceAtLeast(0)
+            )
         }
     }
 
@@ -143,6 +247,12 @@ class WorkoutViewModel(
                     isCompleted = false
                 )
             )
+        }
+    }
+
+    fun removeSet(setId: Long) {
+        viewModelScope.launch {
+            workoutDao.deleteWorkoutSet(setId)
         }
     }
 
@@ -186,6 +296,7 @@ class WorkoutViewModel(
                     status = WorkoutStatus.COMPLETED
                 )
             )
+            stopRestTimer()
         }
     }
 }

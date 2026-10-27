@@ -148,7 +148,7 @@ class TemplatesViewModel(
         }
     }
 
-    private fun saveTemplate() {
+    fun saveTemplate(onSaved: ((Long) -> Unit)? = null) {
         val state = _editorUiState.value
         if (state.title.isBlank() || state.exercises.isEmpty()) return
 
@@ -172,9 +172,10 @@ class TemplatesViewModel(
                 )
             }
 
-            templateDao.saveTemplateWithExercises(templateEntity, exerciseEntities)
+            val savedId = templateDao.saveTemplateWithExercises(templateEntity, exerciseEntities)
             clearEditorSession()
             _editorUiState.update { it.copy(isSaving = false, isSaved = true) }
+            onSaved?.invoke(savedId)
         }
     }
 

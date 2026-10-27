@@ -94,7 +94,13 @@ fun GymNavHost(
                 templateId = templateId,
                 viewModel = templatesViewModel,
                 onBackClick = { navController.popBackStack() },
-                onAddExerciseClick = { navController.navigate(Destinations.exercisePickerRoute("template")) }
+                onAddExerciseClick = { navController.navigate(Destinations.exercisePickerRoute("template")) },
+                onStartWorkout = { savedTemplateId ->
+                    workoutViewModel.startWorkoutFromTemplate(savedTemplateId)
+                    navController.navigate(Destinations.LIVE_WORKOUT) {
+                        popUpTo(Destinations.TEMPLATES_LIST) { inclusive = false }
+                    }
+                }
             )
         }
 

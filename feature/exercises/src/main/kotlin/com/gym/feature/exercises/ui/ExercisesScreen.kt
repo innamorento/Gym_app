@@ -61,8 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gym.core.model.Equipment
 import com.gym.core.model.Exercise
-import com.gym.core.model.MuscleGroup
-import com.gym.core.model.MuscleRegion
+import com.gym.core.model.MuscleCategory
 import com.gym.core.ui.component.ExerciseDetailSheet
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
@@ -151,10 +150,11 @@ fun ExercisesScreen(
                 singleLine = true
             )
 
-            // 1-й Уровень: 4 макро-хаба (адаптивная сетка FlowRow, перенос на новую строку при любом масштабе)
+            // Понятные анатомические категории мышц с FlowRow автопереносом
             Text(
-                text = "Категории мышц (выберите категорию):",
+                text = "Группы мышц:",
                 fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
                 color = GymTextSecondary,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
@@ -163,37 +163,33 @@ fun ExercisesScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                maxItemsInEachRow = 2
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                MuscleRegion.values().forEach { region ->
-                    MuscleRegionCard(
-                        region = region,
-                        count = state.regionCounts[region] ?: 0,
-                        isSelected = state.selectedRegion == region,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            viewModel.onRegionSelected(if (state.selectedRegion == region) null else region)
-                        }
+                // Все упражнения
+                FilterChip(
+                    selected = state.selectedRegion == null,
+                    onClick = { viewModel.onRegionSelected(null) },
+                    label = { Text("Все (${state.exercises.size})", fontSize = 12.sp) },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = GymAccentGreen,
+                        selectedLabelColor = GymDarkBackground,
+                        containerColor = GymDarkSurface,
+                        labelColor = GymTextSecondary
                     )
-                }
-            }
+                )
 
-            // 2-й Уровень: Компактные подгруппы с адаптивным автопереносом FlowRow
-            if (state.selectedRegion != null) {
-                Spacer(modifier = Modifier.height(8.dp))
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
+                // Понятные привычные категории
+                MuscleCategory.values().forEach { category ->
+                    val count = state.regionCounts[category] ?: 0
                     FilterChip(
-                        selected = state.selectedMuscleGroup == null,
-                        onClick = { viewModel.onMuscleGroupSelected(null) },
-                        label = { Text("Все в хабе", fontSize = 12.sp) },
+                        selected = state.selectedRegion == category,
+                        onClick = {
+                            viewModel.onRegionSelected(if (state.selectedRegion == category) null else category)
+                        },
+                        label = {
+                            Text("${category.emoji} ${category.displayNameRu} ($count)", fontSize = 12.sp)
+                        },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = GymAccentGreen,
                             selectedLabelColor = GymDarkBackground,
@@ -201,26 +197,12 @@ fun ExercisesScreen(
                             labelColor = GymTextSecondary
                         )
                     )
-
-                    state.selectedRegion!!.muscleGroups.forEach { group ->
-                        FilterChip(
-                            selected = state.selectedMuscleGroup == group,
-                            onClick = { viewModel.onMuscleGroupSelected(group) },
-                            label = { Text(group.displayNameRu, fontSize = 12.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = GymAccentGreen,
-                                selectedLabelColor = GymDarkBackground,
-                                containerColor = GymDarkSurface,
-                                labelColor = GymTextSecondary
-                            )
-                        )
-                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            // Список упражнений с иллюстрированными карточками
+            // Список упражнений
             if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = GymAccentGreen)
@@ -228,14 +210,13 @@ fun ExercisesScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(state.exercises, key = { it.id }) { exercise ->
                         ExerciseListItem(
                             exercise = exercise,
                             onClick = {
-                                // Нажатие открывает подробную карточку с описанием и анимацией/иллюстрацией
                                 selectedExerciseForDetail = exercise
                             },
                             onQuickAdd = {
@@ -264,53 +245,6 @@ fun ExercisesScreen(
 }
 
 @Composable
-fun MuscleRegionCard(
-    region: MuscleRegion,
-    count: Int,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { onClick() }
-            .then(
-                if (isSelected) Modifier.border(2.dp, GymAccentGreen, RoundedCornerShape(12.dp)) else Modifier
-            ),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) GymDarkSurfaceVariant else GymDarkSurface
-        ),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = region.emoji, fontSize = 18.sp)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = region.displayNameRu.substringBefore(" ("),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (isSelected) GymAccentGreen else GymTextPrimary
-                )
-            }
-            Text(
-                text = "$count",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = GymTextSecondary
-            )
-        }
-    }
-}
-
-@Composable
 fun ExerciseListItem(
     exercise: Exercise,
     onClick: () -> Unit,
@@ -318,13 +252,13 @@ fun ExerciseListItem(
     onExclude: () -> Unit,
     onRestore: () -> Unit
 ) {
-    // Стильная цветовая палитра иконки в зависимости от типа снаряда
     val iconBgGradient = when (exercise.equipment) {
         Equipment.BARBELL -> Brush.linearGradient(listOf(GymAccentGreen.copy(alpha = 0.25f), GymAccentBlue.copy(alpha = 0.15f)))
         Equipment.DUMBBELL -> Brush.linearGradient(listOf(GymAccentBlue.copy(alpha = 0.25f), GymAccentPurple.copy(alpha = 0.15f)))
         Equipment.CABLE -> Brush.linearGradient(listOf(GymAccentPurple.copy(alpha = 0.25f), GymDarkSurfaceVariant))
         Equipment.MACHINE -> Brush.linearGradient(listOf(Color(0xFFEAB308).copy(alpha = 0.25f), GymDarkSurfaceVariant))
         Equipment.BODYWEIGHT -> Brush.linearGradient(listOf(Color(0xFF06B6D4).copy(alpha = 0.25f), GymDarkSurfaceVariant))
+        else -> Brush.linearGradient(listOf(GymDarkSurfaceVariant, GymDarkBackground))
     }
 
     val equipmentBadgeEmoji = when (exercise.equipment) {
@@ -333,6 +267,7 @@ fun ExerciseListItem(
         Equipment.CABLE -> "⚙️"
         Equipment.MACHINE -> "🏗️"
         Equipment.BODYWEIGHT -> "🤸"
+        else -> "🎯"
     }
 
     Card(
@@ -351,10 +286,9 @@ fun ExerciseListItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Иллюстрированная миниатюра упражнения
             Box(
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(48.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(iconBgGradient)
                     .border(1.dp, GymDarkSurfaceVariant, RoundedCornerShape(12.dp)),
@@ -365,7 +299,6 @@ fun ExerciseListItem(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Текстовая информация
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = exercise.name,
@@ -398,7 +331,6 @@ fun ExerciseListItem(
                 }
             }
 
-            // Кнопки действий
             if (exercise.isExcluded) {
                 IconButton(onClick = onRestore) {
                     Icon(
@@ -409,7 +341,6 @@ fun ExerciseListItem(
                 }
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Кнопка быстрой информации/деталей
                     IconButton(onClick = onClick) {
                         Icon(
                             imageVector = Icons.Default.Info,
@@ -419,7 +350,6 @@ fun ExerciseListItem(
                         )
                     }
 
-                    // Кнопка быстрого добавления в тренировку/шаблон
                     IconButton(
                         onClick = onQuickAdd,
                         modifier = Modifier
@@ -428,7 +358,7 @@ fun ExerciseListItem(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Добавить",
+                            contentDescription = "Добавить в тренировку",
                             tint = GymAccentGreen,
                             modifier = Modifier.size(20.dp)
                         )
@@ -437,8 +367,8 @@ fun ExerciseListItem(
                     IconButton(onClick = onExclude) {
                         Icon(
                             imageVector = Icons.Default.Block,
-                            contentDescription = "Скрыть / Исключить",
-                            tint = GymTextSecondary.copy(alpha = 0.5f),
+                            contentDescription = "Скрыть",
+                            tint = GymTextSecondary.copy(alpha = 0.4f),
                             modifier = Modifier.size(18.dp)
                         )
                     }

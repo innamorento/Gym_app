@@ -75,6 +75,9 @@ interface WorkoutDao {
     @Update
     suspend fun updateWorkoutSet(set: WorkoutSetEntity)
 
+    @Query("UPDATE workout_sets SET weight = :weight, reps = :reps WHERE id = :setId")
+    suspend fun updateSetWeightAndReps(setId: Long, weight: Double, reps: Int)
+
     @Query("UPDATE workout_sets SET effort = :effort WHERE id = :setId")
     suspend fun updateSetEffort(setId: Long, effort: PerceivedEffort)
 

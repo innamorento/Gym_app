@@ -59,37 +59,41 @@ enum class PerceivedEffort(
 }
 
 /**
- * 4 макро-хаба анатомических групп мышц для ликвидации бесконечного скролла.
+ * Понятные анатомические категории мышц (взамен абстрактных Push/Pull):
+ * Грудь, Спина, Ноги, Плечи, Бицепс, Трицепс, Руки, Пресс, Прочее.
  */
-enum class MuscleRegion(
+enum class MuscleCategory(
     val displayNameRu: String,
     val emoji: String,
     val muscleGroups: List<MuscleGroup>
 ) {
-    PUSH(
-        displayNameRu = "Жимовые (Push)",
-        emoji = "🏋️‍♂️",
-        muscleGroups = listOf(MuscleGroup.CHEST, MuscleGroup.SHOULDERS, MuscleGroup.TRICEPS)
-    ),
-    PULL(
-        displayNameRu = "Тяговые (Pull)",
-        emoji = "🦾",
-        muscleGroups = listOf(MuscleGroup.BACK, MuscleGroup.BICEPS)
-    ),
-    LEGS(
-        displayNameRu = "Низ тела (Legs)",
-        emoji = "🦵",
-        muscleGroups = listOf(MuscleGroup.LEGS_QUADS, MuscleGroup.LEGS_HAMSTRINGS, MuscleGroup.CALVES)
-    ),
-    CORE(
-        displayNameRu = "Кор и стабилизаторы (Core)",
-        emoji = "🛡️",
-        muscleGroups = listOf(MuscleGroup.CORE, MuscleGroup.FULL_BODY)
-    );
+    CHEST("Грудь", "🥋", listOf(MuscleGroup.CHEST)),
+    BACK("Спина", "🦅", listOf(MuscleGroup.BACK)),
+    LEGS("Ноги", "🦵", listOf(MuscleGroup.LEGS_QUADS, MuscleGroup.LEGS_HAMSTRINGS, MuscleGroup.CALVES)),
+    SHOULDERS("Плечи", "🎯", listOf(MuscleGroup.SHOULDERS)),
+    BICEPS("Бицепс", "💪", listOf(MuscleGroup.BICEPS)),
+    TRICEPS("Трицепс", "⚡", listOf(MuscleGroup.TRICEPS)),
+    ARMS("Руки", "🦾", listOf(MuscleGroup.BICEPS, MuscleGroup.TRICEPS)),
+    CORE("Пресс / Кор", "🛡️", listOf(MuscleGroup.CORE)),
+    OTHER("Прочее", "🌐", listOf(MuscleGroup.FULL_BODY));
 
     companion object {
-        fun regionFor(group: MuscleGroup): MuscleRegion {
-            return values().firstOrNull { it.muscleGroups.contains(group) } ?: PUSH
+        fun categoryFor(group: MuscleGroup): MuscleCategory {
+            return when (group) {
+                MuscleGroup.CHEST -> CHEST
+                MuscleGroup.BACK -> BACK
+                MuscleGroup.LEGS_QUADS, MuscleGroup.LEGS_HAMSTRINGS, MuscleGroup.CALVES -> LEGS
+                MuscleGroup.SHOULDERS -> SHOULDERS
+                MuscleGroup.BICEPS -> BICEPS
+                MuscleGroup.TRICEPS -> TRICEPS
+                MuscleGroup.CORE -> CORE
+                MuscleGroup.FULL_BODY -> OTHER
+            }
         }
     }
 }
+
+/**
+ * Обратная совместимость для MuscleRegion
+ */
+typealias MuscleRegion = MuscleCategory

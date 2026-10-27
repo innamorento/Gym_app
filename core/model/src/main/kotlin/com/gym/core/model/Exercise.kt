@@ -12,6 +12,8 @@ data class Exercise(
     val isExcluded: Boolean = false,
     val exclusionReason: String? = null
 ) {
-    val region: MuscleRegion
-        get() = MuscleRegion.regionFor(primaryMuscleGroup)
+    val category: MuscleCategory
+        get() = MuscleCategory.categoryFor(primaryMuscleGroup)
+    val region: MuscleCategory
+        get() = category
 }
