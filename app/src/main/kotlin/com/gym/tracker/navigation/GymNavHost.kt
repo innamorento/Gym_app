@@ -22,12 +22,13 @@ import org.koin.androidx.compose.koinViewModel
 object Destinations {
     const val TEMPLATES_LIST = "templates_list"
     const val TEMPLATE_EDITOR = "template_editor/{templateId}"
-    const val EXERCISE_PICKER = "exercise_picker"
+    const val EXERCISE_PICKER = "exercise_picker?target={target}"
     const val LIVE_WORKOUT = "live_workout"
     const val EQUIPMENT_SETTINGS = "equipment_settings"
     const val COACH_REVIEWS = "coach_reviews"
 
     fun templateEditorRoute(templateId: Long) = "template_editor/$templateId"
+    fun exercisePickerRoute(target: String = "template") = "exercise_picker?target=$target"
 }
 
 @Composable
@@ -48,9 +49,11 @@ fun GymNavHost(
             TemplatesListScreen(
                 viewModel = templatesViewModel,
                 onCreateTemplateClick = {
+                    templatesViewModel.clearEditorSession()
                     navController.navigate(Destinations.templateEditorRoute(0L))
                 },
                 onTemplateClick = { templateId ->
+                    templatesViewModel.clearEditorSession()
                     navController.navigate(Destinations.templateEditorRoute(templateId))
                 },
                 onStartWorkoutClick = { templateId ->
@@ -91,16 +94,29 @@ fun GymNavHost(
                 templateId = templateId,
                 viewModel = templatesViewModel,
                 onBackClick = { navController.popBackStack() },
-                onAddExerciseClick = { navController.navigate(Destinations.EXERCISE_PICKER) }
+                onAddExerciseClick = { navController.navigate(Destinations.exercisePickerRoute("template")) }
             )
         }
 
-        composable(Destinations.EXERCISE_PICKER) {
+        composable(
+            route = Destinations.EXERCISE_PICKER,
+            arguments = listOf(
+                navArgument("target") {
+                    type = NavType.StringType
+                    defaultValue = "template"
+                }
+            )
+        ) { backStackEntry ->
+            val target = backStackEntry.arguments?.getString("target") ?: "template"
             ExercisesScreen(
                 viewModel = exercisesViewModel,
                 onBackClick = { navController.popBackStack() },
                 onExerciseSelect = { exercise ->
-                    templatesViewModel.handleIntent(TemplateEditorIntent.AddExercise(exercise))
+                    if (target == "workout") {
+                        workoutViewModel.addExerciseToActiveWorkout(exercise)
+                    } else {
+                        templatesViewModel.handleIntent(TemplateEditorIntent.AddExercise(exercise))
+                    }
                     navController.popBackStack()
                 }
             )
@@ -111,6 +127,9 @@ fun GymNavHost(
                 viewModel = workoutViewModel,
                 onFinishClick = {
                     navController.popBackStack(Destinations.TEMPLATES_LIST, inclusive = false)
+                },
+                onAddExerciseClick = {
+                    navController.navigate(Destinations.exercisePickerRoute("workout"))
                 }
             )
         }

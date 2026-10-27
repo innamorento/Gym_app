@@ -72,7 +72,8 @@ import com.gym.feature.workout.video.VideoRecordingHelper
 @Composable
 fun LiveWorkoutScreen(
     viewModel: WorkoutViewModel,
-    onFinishClick: () -> Unit
+    onFinishClick: () -> Unit,
+    onAddExerciseClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -97,6 +98,7 @@ fun LiveWorkoutScreen(
                 onAddSet = { exerciseId, count ->
                     viewModel.addSetToExercise(exerciseId, count)
                 },
+                onAddExerciseClick = onAddExerciseClick,
                 onAttachVideo = { setId, uri ->
                     viewModel.attachVideoToSet(setId, uri)
                 },
@@ -117,6 +119,7 @@ fun ActiveWorkoutContent(
     workout: Workout,
     onFinishClick: () -> Unit,
     onAddSet: (Long, Int) -> Unit,
+    onAddExerciseClick: () -> Unit = {},
     onAttachVideo: (Long, String) -> Unit = { _, _ -> },
     onToggleSet: (Long, Boolean) -> Unit = { _, _ -> },
     onSelectEffort: (Long, PerceivedEffort) -> Unit = { _, _ -> }
@@ -167,6 +170,25 @@ fun ActiveWorkoutContent(
                     onToggleSet = onToggleSet,
                     onSelectEffort = onSelectEffort
                 )
+            }
+
+            item {
+                Button(
+                    onClick = onAddExerciseClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = GymDarkSurfaceVariant),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, tint = GymAccentGreen)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Добавить упражнение в тренировку",
+                        color = GymTextPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

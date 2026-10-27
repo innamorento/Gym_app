@@ -11,6 +11,7 @@ import com.gym.core.database.entity.WorkoutExerciseEntity
 import com.gym.core.database.entity.WorkoutSetEntity
 import com.gym.core.database.mapper.toDomain
 import com.gym.core.database.mapper.toEntity
+import com.gym.core.model.Exercise
 import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.Workout
@@ -142,6 +143,33 @@ class WorkoutViewModel(
                     isCompleted = false
                 )
             )
+        }
+    }
+
+    fun addExerciseToActiveWorkout(exercise: Exercise) {
+        viewModelScope.launch {
+            val current = (uiState.value as? WorkoutUiState.Active)?.workout ?: return@launch
+            val nextOrder = current.exercises.size
+            val workoutExerciseId = workoutDao.insertWorkoutExercise(
+                WorkoutExerciseEntity(
+                    workoutId = current.id,
+                    exerciseId = exercise.id,
+                    orderIndex = nextOrder,
+                    supersetId = null
+                )
+            )
+
+            val initialSets = (1..3).map { setNumber ->
+                WorkoutSetEntity(
+                    workoutExerciseId = workoutExerciseId,
+                    setNumber = setNumber,
+                    setType = SetType.NORMAL,
+                    weight = 0.0,
+                    reps = 0,
+                    isCompleted = false
+                )
+            }
+            workoutDao.insertWorkoutSets(initialSets)
         }
     }
 

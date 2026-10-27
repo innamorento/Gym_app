@@ -6,6 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,13 +18,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
@@ -44,18 +48,25 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.model.Equipment
 import com.gym.core.model.Exercise
 import com.gym.core.model.MuscleGroup
 import com.gym.core.model.MuscleRegion
+import com.gym.core.ui.component.ExerciseDetailSheet
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
+import com.gym.core.ui.theme.GymAccentPurple
 import com.gym.core.ui.theme.GymAccentRed
 import com.gym.core.ui.theme.GymDarkBackground
 import com.gym.core.ui.theme.GymDarkSurface
@@ -64,7 +75,7 @@ import com.gym.core.ui.theme.GymTextPrimary
 import com.gym.core.ui.theme.GymTextSecondary
 import com.gym.feature.exercises.ExercisesViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ExercisesScreen(
     viewModel: ExercisesViewModel,
@@ -72,6 +83,7 @@ fun ExercisesScreen(
     onExerciseSelect: (Exercise) -> Unit
 ) {
     val state by viewModel.uiState.collectAsState()
+    var selectedExerciseForDetail by remember { mutableStateOf<Exercise?>(null) }
 
     Scaffold(
         topBar = {
@@ -139,95 +151,62 @@ fun ExercisesScreen(
                 singleLine = true
             )
 
-            // 1-й Уровень: 4 макро-хаба (сетка 2x2 без бесконечного скролла)
+            // 1-й Уровень: 4 макро-хаба (адаптивная сетка FlowRow, перенос на новую строку при любом масштабе)
             Text(
-                text = "Группы мышц (выберите категорию):",
+                text = "Категории мышц (выберите категорию):",
                 fontSize = 12.sp,
                 color = GymTextSecondary,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
-            Column(
+            FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                maxItemsInEachRow = 2
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                MuscleRegion.values().forEach { region ->
                     MuscleRegionCard(
-                        region = MuscleRegion.PUSH,
-                        count = state.regionCounts[MuscleRegion.PUSH] ?: 0,
-                        isSelected = state.selectedRegion == MuscleRegion.PUSH,
+                        region = region,
+                        count = state.regionCounts[region] ?: 0,
+                        isSelected = state.selectedRegion == region,
                         modifier = Modifier.weight(1f),
                         onClick = {
-                            viewModel.onRegionSelected(if (state.selectedRegion == MuscleRegion.PUSH) null else MuscleRegion.PUSH)
-                        }
-                    )
-                    MuscleRegionCard(
-                        region = MuscleRegion.PULL,
-                        count = state.regionCounts[MuscleRegion.PULL] ?: 0,
-                        isSelected = state.selectedRegion == MuscleRegion.PULL,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            viewModel.onRegionSelected(if (state.selectedRegion == MuscleRegion.PULL) null else MuscleRegion.PULL)
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    MuscleRegionCard(
-                        region = MuscleRegion.LEGS,
-                        count = state.regionCounts[MuscleRegion.LEGS] ?: 0,
-                        isSelected = state.selectedRegion == MuscleRegion.LEGS,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            viewModel.onRegionSelected(if (state.selectedRegion == MuscleRegion.LEGS) null else MuscleRegion.LEGS)
-                        }
-                    )
-                    MuscleRegionCard(
-                        region = MuscleRegion.CORE,
-                        count = state.regionCounts[MuscleRegion.CORE] ?: 0,
-                        isSelected = state.selectedRegion == MuscleRegion.CORE,
-                        modifier = Modifier.weight(1f),
-                        onClick = {
-                            viewModel.onRegionSelected(if (state.selectedRegion == MuscleRegion.CORE) null else MuscleRegion.CORE)
+                            viewModel.onRegionSelected(if (state.selectedRegion == region) null else region)
                         }
                     )
                 }
             }
 
-            // 2-й Уровень: Компактные подгруппы выбранного хаба
+            // 2-й Уровень: Компактные подгруппы с адаптивным автопереносом FlowRow
             if (state.selectedRegion != null) {
-                Spacer(modifier = Modifier.height(10.dp))
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                Spacer(modifier = Modifier.height(8.dp))
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    item {
-                        FilterChip(
-                            selected = state.selectedMuscleGroup == null,
-                            onClick = { viewModel.onMuscleGroupSelected(null) },
-                            label = { Text("Все в хабе") },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = GymAccentGreen,
-                                selectedLabelColor = GymDarkBackground,
-                                containerColor = GymDarkSurface,
-                                labelColor = GymTextSecondary
-                            )
+                    FilterChip(
+                        selected = state.selectedMuscleGroup == null,
+                        onClick = { viewModel.onMuscleGroupSelected(null) },
+                        label = { Text("Все в хабе", fontSize = 12.sp) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = GymAccentGreen,
+                            selectedLabelColor = GymDarkBackground,
+                            containerColor = GymDarkSurface,
+                            labelColor = GymTextSecondary
                         )
-                    }
+                    )
 
-                    items(state.selectedRegion!!.muscleGroups) { group ->
+                    state.selectedRegion!!.muscleGroups.forEach { group ->
                         FilterChip(
                             selected = state.selectedMuscleGroup == group,
                             onClick = { viewModel.onMuscleGroupSelected(group) },
-                            label = { Text(group.displayNameRu) },
+                            label = { Text(group.displayNameRu, fontSize = 12.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = GymAccentGreen,
                                 selectedLabelColor = GymDarkBackground,
@@ -241,7 +220,7 @@ fun ExercisesScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Список упражнений
+            // Список упражнений с иллюстрированными карточками
             if (state.isLoading) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = GymAccentGreen)
@@ -255,7 +234,13 @@ fun ExercisesScreen(
                     items(state.exercises, key = { it.id }) { exercise ->
                         ExerciseListItem(
                             exercise = exercise,
-                            onClick = { onExerciseSelect(exercise) },
+                            onClick = {
+                                // Нажатие открывает подробную карточку с описанием и анимацией/иллюстрацией
+                                selectedExerciseForDetail = exercise
+                            },
+                            onQuickAdd = {
+                                onExerciseSelect(exercise)
+                            },
                             onExclude = { viewModel.excludeExercise(exercise.id) },
                             onRestore = { viewModel.restoreExercise(exercise.id) }
                         )
@@ -263,6 +248,18 @@ fun ExercisesScreen(
                 }
             }
         }
+    }
+
+    // Модальная карточка упражнения с описанием, иллюстрацией техники и заготовкой под 3D анимацию
+    if (selectedExerciseForDetail != null) {
+        ExerciseDetailSheet(
+            exercise = selectedExerciseForDetail,
+            onDismiss = { selectedExerciseForDetail = null },
+            onSelectExercise = { exercise ->
+                onExerciseSelect(exercise)
+                selectedExerciseForDetail = null
+            }
+        )
     }
 }
 
@@ -317,26 +314,58 @@ fun MuscleRegionCard(
 fun ExerciseListItem(
     exercise: Exercise,
     onClick: () -> Unit,
+    onQuickAdd: () -> Unit,
     onExclude: () -> Unit,
     onRestore: () -> Unit
 ) {
+    // Стильная цветовая палитра иконки в зависимости от типа снаряда
+    val iconBgGradient = when (exercise.equipment) {
+        Equipment.BARBELL -> Brush.linearGradient(listOf(GymAccentGreen.copy(alpha = 0.25f), GymAccentBlue.copy(alpha = 0.15f)))
+        Equipment.DUMBBELL -> Brush.linearGradient(listOf(GymAccentBlue.copy(alpha = 0.25f), GymAccentPurple.copy(alpha = 0.15f)))
+        Equipment.CABLE -> Brush.linearGradient(listOf(GymAccentPurple.copy(alpha = 0.25f), GymDarkSurfaceVariant))
+        Equipment.MACHINE -> Brush.linearGradient(listOf(Color(0xFFEAB308).copy(alpha = 0.25f), GymDarkSurfaceVariant))
+        Equipment.BODYWEIGHT -> Brush.linearGradient(listOf(Color(0xFF06B6D4).copy(alpha = 0.25f), GymDarkSurfaceVariant))
+    }
+
+    val equipmentBadgeEmoji = when (exercise.equipment) {
+        Equipment.BARBELL -> "🏋️"
+        Equipment.DUMBBELL -> "💪"
+        Equipment.CABLE -> "⚙️"
+        Equipment.MACHINE -> "🏗️"
+        Equipment.BODYWEIGHT -> "🤸"
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(14.dp))
             .clickable { if (!exercise.isExcluded) onClick() },
         colors = CardDefaults.cardColors(
             containerColor = if (exercise.isExcluded) GymDarkSurface.copy(alpha = 0.5f) else GymDarkSurface
         ),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(14.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            // Иллюстрированная миниатюра упражнения
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(iconBgGradient)
+                    .border(1.dp, GymDarkSurfaceVariant, RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = equipmentBadgeEmoji, fontSize = 22.sp)
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Текстовая информация
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = exercise.name,
@@ -344,22 +373,23 @@ fun ExerciseListItem(
                     fontWeight = FontWeight.Bold,
                     color = if (exercise.isExcluded) GymTextSecondary else GymTextPrimary
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row {
+                Spacer(modifier = Modifier.height(3.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = exercise.primaryMuscleGroup.displayNameRu,
                         fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
                         color = if (exercise.isExcluded) GymTextSecondary else GymAccentGreen
                     )
                     Text(
                         text = " • ${exercise.equipment.displayNameRu}",
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = GymTextSecondary
                     )
                 }
 
                 if (exercise.isExcluded) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = "Исключено (${exercise.exclusionReason ?: "Не используется"})",
                         fontSize = 11.sp,
@@ -368,6 +398,7 @@ fun ExerciseListItem(
                 }
             }
 
+            // Кнопки действий
             if (exercise.isExcluded) {
                 IconButton(onClick = onRestore) {
                     Icon(
@@ -377,12 +408,40 @@ fun ExerciseListItem(
                     )
                 }
             } else {
-                IconButton(onClick = onExclude) {
-                    Icon(
-                        imageVector = Icons.Default.Block,
-                        contentDescription = "Скрыть / Исключить (нет в зале)",
-                        tint = GymTextSecondary
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Кнопка быстрой информации/деталей
+                    IconButton(onClick = onClick) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Подробнее об упражнении",
+                            tint = GymTextSecondary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    // Кнопка быстрого добавления в тренировку/шаблон
+                    IconButton(
+                        onClick = onQuickAdd,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .background(GymAccentGreen.copy(alpha = 0.15f), CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Добавить",
+                            tint = GymAccentGreen,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+
+                    IconButton(onClick = onExclude) {
+                        Icon(
+                            imageVector = Icons.Default.Block,
+                            contentDescription = "Скрыть / Исключить",
+                            tint = GymTextSecondary.copy(alpha = 0.5f),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
         }

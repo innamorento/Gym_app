@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Workout Tracker — Интерактивный эмулятор</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #0a0a0c; color: #f3f4f6; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        
+        .controls-bar {
+            display: flex; gap: 12px; margin-bottom: 14px; align-items: center;
+        }
+        .scale-btn {
+            background: #1e1e24; border: 1px solid #3f3f46; color: #f3f4f6; padding: 6px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s;
+        }
+        .scale-btn.active {
+            background: #22c55e; color: #121214; font-weight: 700; border-color: #22c55e;
+        }
+
+        /* Стилизация смартфона Pixel */
+        .phone-frame {
+            width: 390px; height: 820px; background: #121214; border-radius: 46px; border: 10px solid #27272a;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 25px rgba(34, 197, 94, 0.2);
+            display: flex; flex-direction: column; overflow: hidden; position: relative; transition: width 0.3s;
+        }
+        .phone-frame.scaled-scale {
+            width: 350px; /* Симуляция узкого экрана или крупного масштаба шрифта */
+        }
+        .notch {
+            position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+            width: 90px; height: 22px; background: #000; border-radius: 20px; z-index: 100;
+        }
+        .status-bar {
+            height: 44px; display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 24px 0 24px; font-size: 13px; font-weight: 600; color: #9ca3af;
+        }
+        .app-content { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+        .app-content::-webkit-scrollbar { width: 0; }
+
+        /* Верхняя панель */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .header h1 { font-size: 19px; font-weight: 700; color: #f3f4f6; }
+        .finish-btn { background: #22c55e; color: #121214; font-weight: 700; font-size: 13px; padding: 6px 14px; border-radius: 10px; border: none; cursor: pointer; }
+        
+        /* Карточка упражнения */
+        .card { background: #1e1e24; border-radius: 16px; padding: 14px; border: 1px solid #2a2a32; }
+        .card.superset { border-color: rgba(168, 85, 247, 0.6); box-shadow: 0 0 15px rgba(168, 85, 247, 0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .exercise-title { font-size: 16px; font-weight: 700; color: #f3f4f6; }
+        .exercise-sub { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+        .badge-superset { background: rgba(168, 85, 247, 0.2); color: #c084fc; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px; }
+
+        /* FlowRow перенос групп мышц */
+        .flow-row {
+            display: flex; flex-wrap: wrap; gap: 6px;
+        }
+        .chip {
+            background: #27272a; color: #9ca3af; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; border: 1px solid #3f3f46; cursor: pointer; transition: 0.2s;
+        }
+        .chip.active {
+            background: #22c55e; color: #121214; border-color: #22c55e; font-weight: 700;
+        }
+
+        /* Таблица подходов */
+        .set-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-radius: 8px; margin-bottom: 4px; }
+        .set-row.completed { background: rgba(34, 197, 94, 0.1); padding: 6px 8px; }
+        .set-badge { width: 32px; height: 32px; background: #2a2a32; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #f3f4f6; }
+        .set-val { font-size: 15px; font-weight: 600; color: #f3f4f6; }
+        .cam-btn { background: transparent; border: none; font-size: 18px; cursor: pointer; opacity: 0.6; transition: 0.2s; }
+        .cam-btn.active { opacity: 1; filter: drop-shadow(0 0 5px #22c55e); }
+        .check-btn { width: 36px; height: 36px; border-radius: 8px; background: #2a2a32; border: none; color: #9ca3af; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .check-btn.checked { background: #22c55e; color: #121214; }
+
+        /* RPE Селектор */
+        .rpe-panel { background: rgba(42, 42, 50, 0.7); border-radius: 10px; padding: 8px; margin-top: 6px; display: none; }
+        .rpe-panel.visible { display: block; animation: fadeIn 0.3s ease; }
+        .rpe-title { font-size: 11px; color: #9ca3af; margin-bottom: 6px; }
+        .rpe-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .rpe-btn { background: #1e1e24; border: 1px solid #2a2a32; border-radius: 8px; padding: 6px 2px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .rpe-btn.easy { color: #22c55e; }
+        .rpe-btn.optimal { color: #eab308; }
+        .rpe-btn.hard { color: #f97316; }
+        .rpe-btn.fail { color: #ef4444; }
+        .rpe-btn.selected { background: rgba(255,255,255,0.1); border-color: currentColor; }
+        .rpe-btn span { display: block; font-size: 11px; font-weight: 700; }
+        .rpe-btn small { font-size: 9px; opacity: 0.8; }
+
+        /* Кнопка добавления упражнения */
+        .add-exercise-btn {
+            background: #27272a; border: 1px dashed #3f3f46; color: #22c55e; font-weight: 700; font-size: 14px;
+            padding: 12px; border-radius: 14px; cursor: pointer; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+        }
+        .add-exercise-btn:hover { background: #323238; border-color: #22c55e; }
+
+        /* Каталог упражнений (Модальный экран) */
+        .catalog-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121214; z-index: 200;
+            display: none; flex-direction: column; padding: 50px 16px 16px 16px;
+        }
+        .catalog-screen.visible { display: flex; animation: slideUp 0.25s ease; }
+        .catalog-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .catalog-header h2 { font-size: 18px; font-weight: 700; }
+        .close-catalog { background: transparent; border: none; font-size: 20px; color: #9ca3af; cursor: pointer; }
+        .catalog-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+
+        .cat-item {
+            background: #1e1e24; border: 1px solid #2a2a32; border-radius: 12px; padding: 10px; display: flex;
+            align-items: center; gap: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .cat-item:hover { border-color: #22c55e; background: #26262e; }
+        .cat-thumb {
+            width: 48px; height: 48px; border-radius: 10px; background: rgba(34, 197, 94, 0.15); display: flex; align-items: center; justify-content: center; font-size: 22px;
+        }
+        .cat-info { flex: 1; }
+        .cat-name { font-size: 14px; font-weight: 700; color: #f3f4f6; }
+        .cat-meta { font-size: 12px; color: #22c55e; margin-top: 2px; }
+        .cat-add-btn { background: rgba(34, 197, 94, 0.2); border: none; color: #22c55e; width: 34px; height: 34px; border-radius: 8px; font-weight: 700; font-size: 18px; cursor: pointer; }
+
+        /* BottomSheet подробностей упражнения (Иллюстрация + Биомеханика + 3D контейнер) */
+        .bottom-sheet-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 300; display: none; align-items: flex-end;
+        }
+        .bottom-sheet-overlay.visible { display: flex; animation: fadeIn 0.2s ease; }
+        .bottom-sheet {
+            width: 100%; max-height: 85%; background: #1e1e24; border-top-left-radius: 24px; border-top-right-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+        }
+        .sheet-media-box {
+            width: 100%; height: 160px; background: linear-gradient(180deg, #27272a, #121214); border-radius: 16px; border: 1px solid #3f3f46; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden;
+        }
+        .anim-tag {
+            background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; margin-top: 6px; display: flex; align-items: center; gap: 4px;
+        }
+        .anim-pulsar { width: 8px; height: 8px; background: #60a5fa; border-radius: 50%; animation: pulse 1.5s infinite; }
+
+        /* Навигация внизу */
+        .bottom-nav { height: 60px; background: #18181b; border-top: 1px solid #27272a; display: flex; justify-content: space-around; align-items: center; }
+        .nav-item { color: #9ca3af; font-size: 11px; text-align: center; cursor: pointer; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+        .nav-item.active { color: #22c55e; font-weight: 700; }
+        .nav-item span { font-size: 18px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+    </style>
+</head>
+<body>
+
+<div class="controls-bar">
+    <span style="font-size: 13px; color: #9ca3af;">Масштаб экрана / FlowRow тест:</span>
+    <button class="scale-btn active" id="btn-scale-normal" onclick="setScale(false)">Стандарт (100%)</button>
+    <button class="scale-btn" id="btn-scale-large" onclick="setScale(true)">Крупный масштаб (FlowRow перенос)</button>
+</div>
+
+<div class="phone-frame" id="phone">
+    <div class="notch"></div>
+    <div class="status-bar">
+        <span>17:45</span>
+        <span>5G • 88%</span>
+    </div>
+
+    <div class="app-content" id="content">
+        <!-- Шапка -->
+        <div class="header">
+            <div>
+                <h1 id="workout-title">День груди и трицепса</h1>
+                <div style="font-size: 12px; color: #22c55e; margin-top: 2px;" id="header-stats">Объем: 1 480 кг • Сеты: 4</div>
+            </div>
+            <button class="finish-btn" onclick="alert('Тренировка сохранена в Room SQLite!')">Завершить</button>
+        </div>
+
+        <div id="exercises-container" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Упражнение 1 -->
+            <div class="card superset">
+                <div class="card-header">
+                    <div>
+                        <div class="exercise-title" onclick="openExerciseDetail('Жим штанги лежа', 'Грудь', 'Штанга', 'BARBELL', '120 сек')" style="cursor: pointer; text-decoration: underline dotted;">Жим штанги лежа ℹ️</div>
+                        <div class="exercise-sub">Грудь • Штанга (гриф 20кг)</div>
+                    </div>
+                    <div class="badge-superset">СУПЕРСЕТ #1</div>
+                </div>
+
+                <div>
+                    <div class="set-row" id="row-1">
+                        <div class="set-badge">1</div>
+                        <div class="set-val">60.0 кг</div>
+                        <div class="set-val">10 повт.</div>
+                        <button class="cam-btn" id="cam-1" onclick="recordVideo(1)" title="Видеоотчет до 60с">📹</button>
+                        <button class="check-btn" id="chk-1" onclick="toggleSet(1)">✔</button>
+                    </div>
+                    <div class="rpe-panel" id="rpe-1">
+                        <div class="rpe-title">Оценка усилия подхода (для автоподбора веса):</div>
+                        <div class="rpe-grid">
+                            <div class="rpe-btn easy" onclick="selectRpe(1, 'easy')"><span>Легко</span><small>3+ зап.</small></div>
+                            <div class="rpe-btn optimal" onclick="selectRpe(1, 'optimal')"><span>В цель</span><small>2 зап.</small></div>
+                            <div class="rpe-btn hard" onclick="selectRpe(1, 'hard')"><span>Тяжело</span><small>1 зап.</small></div>
+                            <div class="rpe-btn fail" onclick="selectRpe(1, 'fail')"><span>Отказ</span><small>0 зап.</small></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 6px;">
+                    <div class="set-row" id="row-2">
+                        <div class="set-badge">2</div>
+                        <div class="set-val">60.0 кг</div>
+                        <div class="set-val">10 повт.</div>
+                        <button class="cam-btn" id="cam-2" onclick="recordVideo(2)">📹</button>
+                        <button class="check-btn" id="chk-2" onclick="toggleSet(2)">✔</button>
+                    </div>
+                    <div class="rpe-panel" id="rpe-2">
+                        <div class="rpe-title">Оценка усилия подхода (для автоподбора веса):</div>
+                        <div class="rpe-grid">
+                            <div class="rpe-btn easy" onclick="selectRpe(2, 'easy')"><span>Легко</span><small>3+ зап.</small></div>
+                            <div class="rpe-btn optimal" onclick="selectRpe(2, 'optimal')"><span>В цель</span><small>2 зап.</small></div>
+                            <div class="rpe-btn hard" onclick="selectRpe(2, 'hard')"><span>Тяжело</span><small>1 зап.</small></div>
+                            <div class="rpe-btn fail" onclick="selectRpe(2, 'fail')"><span>Отказ</span><small>0 зап.</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Упражнение 2 (Суперсет) -->
+            <div class="card superset">
+                <div class="card-header">
+                    <div>
+                        <div class="exercise-title" onclick="openExerciseDetail('Французский жим лежа', 'Трицепс', 'EZ-штанга', 'BARBELL', '90 сек')" style="cursor: pointer; text-decoration: underline dotted;">Французский жим лежа ℹ️</div>
+                        <div class="exercise-sub">Трицепс • EZ-штанга (шаг 2.5кг)</div>
+                    </div>
+                    <div class="badge-superset">СУПЕРСЕТ #1</div>
+                </div>
+                <div class="set-row">
+                    <div class="set-badge">1</div>
+                    <div class="set-val">25.0 кг</div>
+                    <div class="set-val">12 повт.</div>
+                    <button class="cam-btn" onclick="alert('Камера: запись до 60 сек для тренера')">📹</button>
+                    <button class="check-btn" onclick="alert('Отмечено! Отдых 90 сек')">✔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка: + Добавить упражнение в тренировку -->
+        <div class="add-exercise-btn" onclick="openCatalog()">
+            <span>➕</span> Добавить упражнение в тренировку
+        </div>
+
+        <!-- Подсказка автопрогрессии -->
+        <div class="card" style="background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.3);">
+            <div style="font-size: 13px; font-weight: 700; color: #22c55e;">💡 Умная автопрогрессия веса</div>
+            <div style="font-size: 12px; color: #d1d5db; margin-top: 4px;" id="progression-hint">
+                Выполните подходы и выберите усилие. Если выберите «В цель» — система предложит следующий шаг снаряда 62.5 кг (+2.5кг блины). Если «Отказ» — зафиксирует вес.
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальный экран каталога упражнений -->
+    <div class="catalog-screen" id="catalog-screen">
+        <div class="catalog-header">
+            <h2>Каталог упражнений</h2>
+            <button class="close-catalog" onclick="closeCatalog()">✕</button>
+        </div>
+
+        <div style="font-size: 12px; color: #9ca3af; margin-bottom: 6px;">Категории мышц (FlowRow с автопереносом):</div>
+        <div class="flow-row" id="hub-chips">
+            <div class="chip active" onclick="filterCatalog('ALL', this)">Все категории</div>
+            <div class="chip" onclick="filterCatalog('PUSH', this)">🔴 Жимовые (Push)</div>
+            <div class="chip" onclick="filterCatalog('PULL', this)">🔵 Тяговые (Pull)</div>
+            <div class="chip" onclick="filterCatalog('LEGS', this)">🟢 Ноги (Legs)</div>
+            <div class="chip" onclick="filterCatalog('CORE', this)">🟡 Кор и Пресс (Core)</div>
+        </div>
+
+        <div class="catalog-list" id="catalog-list">
+            <!-- Элементы генерируются динамически -->
+        </div>
+    </div>
+
+    <!-- Модальный BottomSheet: Детали упражнения, техника, иллюстрация и анимация -->
+    <div class="bottom-sheet-overlay" id="detail-sheet">
+        <div class="bottom-sheet">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="sheet-title" style="font-size: 18px; font-weight: 700;">Жим штанги лежа</h2>
+                <button onclick="closeExerciseDetail()" style="background: none; border: none; font-size: 22px; color: #9ca3af; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- Иллюстрация и заготовка под 3D-анимацию -->
+            <div class="sheet-media-box">
+                <span id="sheet-emoji" style="font-size: 52px;">🏋️</span>
+                <div class="anim-tag">
+                    <div class="anim-pulsar"></div>
+                    <span>3D Анимация и биомеханика движения</span>
+                </div>
+                <div style="font-size: 11px; color: #9ca3af; margin-top: 4px;" id="sheet-equipment">Снаряд: Штанга (гриф 20кг)</div>
+            </div>
+
+            <div style="font-size: 12px; font-weight: 700; color: #f3f4f6;">Задействованные мышцы:</div>
+            <div class="flow-row" id="sheet-muscles">
+                <span class="chip active" style="font-size: 11px;" id="sheet-primary-muscle">Основная: Грудь</span>
+                <span class="chip" style="font-size: 11px;">Трицепс</span>
+                <span class="chip" style="font-size: 11px;">Передняя дельта</span>
+            </div>
+
+            <div style="background: #121214; border-radius: 12px; padding: 12px; border: 1px solid #27272a;">
+                <div style="font-size: 13px; font-weight: 700; color: #22c55e; margin-bottom: 4px;">Пошаговая техника:</div>
+                <div style="font-size: 12px; color: #d1d5db; line-height: 1.5;" id="sheet-instructions">
+                    1. Лягте на скамью, сведите лопатки, стопы плотно уприте в пол.<br>
+                    2. Снимите штангу и плавно опустите к середине груди на вдохе (темп 2-0-1).<br>
+                    3. На выдохе мощно выжмите вес вверх, не отрывая таз и сохраняя естественный прогиб.
+                </div>
+            </div>
+
+            <button class="finish-btn" id="sheet-add-btn" style="width: 100%; padding: 12px; font-size: 14px;" onclick="addCurrentSheetExercise()">
+                ➕ Добавить в тренировку
+            </button>
+        </div>
+    </div>
+
+    <!-- Нижняя панель навигации -->
+    <div class="bottom-nav">
+        <div class="nav-item active"><span>🏋️‍♂️</span>Тренировка</div>
+        <div class="nav-item" onclick="openCatalog()"><span>📖</span>Каталог</div>
+        <div class="nav-item" onclick="alert('Кабинет тренера: видеоотчеты подопечных и оценки 1-5 звезд')"><span>🎓</span>Тренер</div>
+        <div class="nav-item" onclick="alert('Настройки шага весов: гантели (шаг 1кг/2кг), блоки 2.5кг, штанги')"><span>⚙️</span>Тренажеры</div>
+    </div>
+</div>
+
+<script>
+    const catalogExercises = [
+        { id: 1, name: "Жим гантелей наклонный", hub: "PUSH", muscle: "Верх груди", equip: "Гантели", emoji: "💪", rest: "90 сек" },
+        { id: 2, name: "Сведение рук в кроссовере", hub: "PUSH", muscle: "Грудь", equip: "Тросовый блочный тренажер", emoji: "⚙️", rest: "60 сек" },
+        { id: 3, name: "Подтягивания широким хватом", hub: "PULL", muscle: "Широчайшие мышцы спины", equip: "Собственный вес", emoji: "🤸", rest: "120 сек" },
+        { id: 4, name: "Тяга штанги в наклоне", hub: "PULL", muscle: "Спина и бицепс", equip: "Штанга", emoji: "🏋️", rest: "120 сек" },
+        { id: 5, name: "Приседания со штангой", hub: "LEGS", muscle: "Квадрицепс и ягодицы", equip: "Штанга", emoji: "🏋️", rest: "180 сек" },
+        { id: 6, name: "Румынская тяга с гантелями", hub: "LEGS", muscle: "Бицепс бедра", equip: "Гантели", emoji: "💪", rest: "90 сек" },
+        { id: 7, name: "Скручивания на наклонной скамье", hub: "CORE", muscle: "Пресс (прямая мышца)", equip: "Собственный вес", emoji: "🤸", rest: "45 сек" },
+        { id: 8, name: "Жим ногами в тренажере", hub: "LEGS", muscle: "Квадрицепс", equip: "Тренажер", emoji: "🏗️", rest: "120 сек" }
+    ];
+
+    let currentSelectedForSheet = null;
+
+    function renderCatalog(filter = 'ALL') {
+        const list = document.getElementById('catalog-list');
+        list.innerHTML = '';
+        const items = filter === 'ALL' ? catalogExercises : catalogExercises.filter(e => e.hub === filter);
+
+        items.forEach(ex => {
+            const el = document.createElement('div');
+            el.className = 'cat-item';
+            el.innerHTML = `
+                <div class="cat-thumb">${ex.emoji}</div>
+                <div class="cat-info" onclick="openExerciseDetail('${ex.name}', '${ex.muscle}', '${ex.equip}', '${ex.emoji}', '${ex.rest}')">
+                    <div class="cat-name">${ex.name}</div>
+                    <div class="cat-meta">${ex.muscle} • ${ex.equip}</div>
+                </div>
+                <button class="cat-add-btn" onclick="addExerciseToWorkout('${ex.name}', '${ex.muscle}', '${ex.equip}', '${ex.rest}')" title="Добавить в тренировку">＋</button>
+            `;
+            list.appendChild(el);
+        });
+    }
+
+    function filterCatalog(hub, chipEl) {
+        document.querySelectorAll('#hub-chips .chip').forEach(c => c.classList.remove('active'));
+        chipEl.classList.add('active');
+        renderCatalog(hub);
+    }
+
+    function openCatalog() {
+        renderCatalog('ALL');
+        document.getElementById('catalog-screen').classList.add('visible');
+    }
+
+    function closeCatalog() {
+        document.getElementById('catalog-screen').classList.remove('visible');
+    }
+
+    function openExerciseDetail(name, muscle, equip, emoji, rest) {
+        currentSelectedForSheet = { name, muscle, equip, emoji, rest };
+        document.getElementById('sheet-title').innerText = name;
+        document.getElementById('sheet-emoji').innerText = emoji.length > 2 ? '🏋️' : emoji;
+        document.getElementById('sheet-equipment').innerText = 'Снаряд: ' + equip + ' • Отдых: ' + rest;
+        document.getElementById('sheet-primary-muscle').innerText = 'Основная: ' + muscle;
+        document.getElementById('detail-sheet').classList.add('visible');
+    }
+
+    function closeExerciseDetail() {
+        document.getElementById('detail-sheet').classList.remove('visible');
+    }
+
+    function addCurrentSheetExercise() {
+        if (!currentSelectedForSheet) return;
+        addExerciseToWorkout(currentSelectedForSheet.name, currentSelectedForSheet.muscle, currentSelectedForSheet.equip, currentSelectedForSheet.rest);
+        closeExerciseDetail();
+        closeCatalog();
+    }
+
+    function addExerciseToWorkout(name, muscle, equip, rest) {
+        const container = document.getElementById('exercises-container');
+        const count = container.children.length + 1;
+        const newCard = document.createElement('div');
+        newCard.className = 'card';
+        newCard.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="exercise-title" onclick="openExerciseDetail('${name}', '${muscle}', '${equip}', '💪', '${rest}')" style="cursor: pointer; text-decoration: underline dotted;">${name} ℹ️</div>
+                    <div class="exercise-sub">${muscle} • ${equip} (отдых ${rest})</div>
+                </div>
+            </div>
+            <div class="set-row">
+                <div class="set-badge">1</div>
+                <div class="set-val">0.0 кг</div>
+                <div class="set-val">0 повт.</div>
+                <button class="cam-btn" onclick="alert('Камера Android готова к записи')">📹</button>
+                <button class="check-btn" onclick="this.classList.toggle('checked')">✔</button>
+            </div>
+        `;
+        container.appendChild(newCard);
+        
+        // Обновляем счетчик шапки
+        document.getElementById('header-stats').innerText = `Объем: 1 480 кг • Упражнений: ${count}`;
+        closeCatalog();
+        alert(`✅ Упражнение «${name}» успешно добавлено в активную тренировку!`);
+    }
+
+    function setScale(isLarge) {
+        const phone = document.getElementById('phone');
+        const btnNormal = document.getElementById('btn-scale-normal');
+        const btnLarge = document.getElementById('btn-scale-large');
+
+        if (isLarge) {
+            phone.classList.add('scaled-scale');
+            btnLarge.classList.add('active');
+            btnNormal.classList.remove('active');
+        } else {
+            phone.classList.remove('scaled-scale');
+            btnNormal.classList.add('active');
+            btnLarge.classList.remove('active');
+        }
+    }
+
+    function toggleSet(num) {
+        const row = document.getElementById('row-' + num);
+        const chk = document.getElementById('chk-' + num);
+        const rpe = document.getElementById('rpe-' + num);
+
+        if (chk.classList.contains('checked')) {
+            chk.classList.remove('checked');
+            row.classList.remove('completed');
+            rpe.classList.remove('visible');
+        } else {
+            chk.classList.add('checked');
+            row.classList.add('completed');
+            rpe.classList.add('visible');
+        }
+    }
+
+    function selectRpe(num, type) {
+        const rpePanel = document.getElementById('rpe-' + num);
+        const btns = rpePanel.querySelectorAll('.rpe-btn');
+        btns.forEach(b => b.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+
+        const hint = document.getElementById('progression-hint');
+        if (type === 'fail' || type === 'hard') {
+            hint.innerHTML = '🛑 <b>Вес зафиксирован (60.0 кг)!</b> Вы указали «Отказ / Тяжело». Связки и ЦНС адаптируются на текущем весе.';
+            hint.style.color = '#f97316';
+        } else {
+            hint.innerHTML = '🚀 <b>Рекомендация на следующую тренировку: 62.5 кг!</b> Усилие рабочее (запас 2+). С учетом пары минимальных дисков 2x1.25 кг вес увеличен на 1 шаг.';
+            hint.style.color = '#22c55e';
+        }
+    }
+
+    function recordVideo(num) {
+        const cam = document.getElementById('cam-' + num);
+        cam.classList.toggle('active');
+        alert('📹 Запущена системная камера Android: видеоотчет техники для наставника (лимит 60 секунд). Видео сохранено в Movies/!');
+    }
+</script>
+</body>
+</html>

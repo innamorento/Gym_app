@@ -36,9 +36,20 @@ class TemplatesViewModel(
     private val _editorUiState = MutableStateFlow(TemplateEditorUiState())
     val editorUiState: StateFlow<TemplateEditorUiState> = _editorUiState.asStateFlow()
 
-    fun initEditor(templateId: Long = 0) {
+    private var activeEditorSessionId: String? = null
+    private var currentEditingTemplateId: Long? = null
+
+    fun initEditor(templateId: Long = 0, forceReset: Boolean = false) {
+        // Если уже инициализирован редактор для этого templateId в рамках текущей сессии,
+        // сохраняем все добавленные упражнения и черновики (не сбрасываем!)
+        if (!forceReset && currentEditingTemplateId == templateId && activeEditorSessionId != null) {
+            return
+        }
+        currentEditingTemplateId = templateId
+        activeEditorSessionId = UUID.randomUUID().toString()
+
         if (templateId == 0L) {
-            _editorUiState.value = TemplateEditorUiState()
+            _editorUiState.value = TemplateEditorUiState(templateId = 0L)
         } else {
             viewModelScope.launch {
                 val existing = templateDao.getTemplateWithExercises(templateId)?.toDomain()
@@ -59,6 +70,12 @@ class TemplatesViewModel(
                 }
             }
         }
+    }
+
+    fun clearEditorSession() {
+        activeEditorSessionId = null
+        currentEditingTemplateId = null
+        _editorUiState.value = TemplateEditorUiState()
     }
 
     fun handleIntent(intent: TemplateEditorIntent) {
@@ -156,6 +173,7 @@ class TemplatesViewModel(
             }
 
             templateDao.saveTemplateWithExercises(templateEntity, exerciseEntities)
+            clearEditorSession()
             _editorUiState.update { it.copy(isSaving = false, isSaved = true) }
         }
     }
