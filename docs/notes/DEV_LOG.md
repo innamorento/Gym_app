@@ -4,6 +4,32 @@
 
 ---
 
+## [2026-10-27 (Sprint 3)] — Восстановление стабильности Gradle-сборки и запуск в Android Studio
+
+### 1. Диагностика и первопричины сбоя (Root Cause Analysis)
+- **Симптом:** При открытии и сборке в Android Studio проект не синхронизировался и не собирался. В консоли Gradle возникали ошибки отсутствия `GradleWrapperMain` и неразрешимых плагинов.
+- **Первопричины:**
+  1. **Фантомные/несуществующие версии:** В `libs.versions.toml` и `gradle-wrapper.properties` ошибочно попали несуществующие версии (AGP 9.4.1, Kotlin 2.2.10, Gradle 9.6.0, Room 2.8.5). Gradle и AGP версий 9.x ещё не существуют в релизе и не поддерживаются Android Studio.
+  2. **Отсутствие бинарника `gradle-wrapper.jar`:** В директории `gradle/wrapper/` отсутствовал `gradle-wrapper.jar`, что вызывало `ClassNotFoundException: org.gradle.wrapper.GradleWrapperMain`.
+  3. **Конфликтующие флаги в `gradle.properties`:** Наличие экспериментальных флагов (`org.gradle.tooling.parallel=true`, `android.builtInKotlin=false`), ломавших конфигурационный кэш.
+
+### 2. Примененные исправления (Fixes & Verification)
+1. **Синхронизация Version Catalog (`libs.versions.toml`):**
+   - AGP зафиксирован на стабильном `8.6.1`;
+   - Kotlin — на `2.0.21` (с официальным Compose Compiler плагином);
+   - KSP — на `2.0.21-1.0.27`;
+   - Room — на `2.6.1`.
+2. **Восстановление Gradle Wrapper:**
+   - Сгенерирован полноценный `gradle-wrapper.jar` (43.5 КБ) под официальный Gradle `8.9`;
+   - Добавлены скрипты `gradlew` и `gradlew.bat`.
+3. **Очистка конфигурации:**
+   - В `gradle.properties` и `settings.gradle.kts` возвращена чистая стабильная конфигурация без лишних плагинов.
+4. **Верификация сборки:**
+   - Выполнена полная компиляция всех 7 модулей: `:core:model`, `:core:database`, `:core:ui`, `:feature:templates`, `:feature:exercises`, `:feature:workout`, `:app` — **0 ошибок** (`BUILD SUCCESSFUL in 1m`).
+   - Собран полный Debug APK: `app/build/outputs/apk/debug/app-debug.apk` (18.5 МБ). Приложение готово к запуску в Android Studio и на любом эмуляторе/устройстве.
+
+---
+
 ## [2026-10-27 (Sprint 2)] — Анатомические группы мышц, интерактивный ввод веса/повторов, секундомер и гибкий таймер отдыха
 
 ### 1. Ход рассуждений и изменения архитектуры (Reasoning & Decisions)
