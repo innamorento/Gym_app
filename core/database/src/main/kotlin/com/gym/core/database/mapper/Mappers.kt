@@ -137,3 +137,36 @@ fun WorkoutWithDetails.toDomain(): Workout {
         notes = workout.notes
     )
 }
+
+
+fun com.gym.core.database.entity.UserProfileEntity.toDomain(): com.gym.core.model.UserProfile {
+    return com.gym.core.model.UserProfile(
+        id = id,
+        name = name,
+        gender = gender,
+        age = age,
+        heightCm = heightCm,
+        weightKg = weightKg,
+        experience = experience,
+        primaryGoal = primaryGoal,
+        workoutsPerWeek = workoutsPerWeek,
+        isCompleted = isCompleted,
+        createdAt = createdAt
+    )
+}
+
+fun com.gym.core.model.UserProfile.toEntity(): com.gym.core.database.entity.UserProfileEntity {
+    return com.gym.core.database.entity.UserProfileEntity(
+        id = id,
+        name = name,
+        gender = gender,
+        age = age,
+        heightCm = heightCm,
+        weightKg = weightKg,
+        experience = experience,
+        primaryGoal = primaryGoal,
+        workoutsPerWeek = workoutsPerWeek,
+        isCompleted = isCompleted,
+        createdAt = createdAt
+    )
+}

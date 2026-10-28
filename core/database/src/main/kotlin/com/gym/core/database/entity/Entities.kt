@@ -202,3 +202,19 @@ data class CoachAssignmentEntity(
     val assignedDate: Long = System.currentTimeMillis(),
     val isCompleted: Boolean = false
 )
+
+@Entity(tableName = "user_profiles")
+data class UserProfileEntity(
+    @PrimaryKey
+    val id: String = "default_user",
+    val name: String = "",
+    val gender: com.gym.core.model.Gender = com.gym.core.model.Gender.MALE,
+    val age: Int = 25,
+    val heightCm: Float = 175f,
+    val weightKg: Float = 75f,
+    val experience: com.gym.core.model.TrainingExperience = com.gym.core.model.TrainingExperience.BEGINNER,
+    val primaryGoal: com.gym.core.model.FitnessGoal = com.gym.core.model.FitnessGoal.HYPERTROPHY,
+    val workoutsPerWeek: Int = 3,
+    val isCompleted: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
+)

@@ -1,10 +1,10 @@
 # Gym Workout Tracker — Project Index & AI Context
 
-> **Version:** 0.2.0  
+> **Version:** 0.3.0  
 > **Role:** Fullstack Android Developer & Systems/Product Analyst  
-> **Status:** MVP Feature Implementation & Polishing Phase  
+> **Status:** Phase 0 (Onboarding & Profile) & Phase 1 (Foreground Timer) Active  
 > **Target Platform:** Android (Offline-First Mobile App) + Sync/Backend Service  
-> **Current Workspace:** `C:\Dev\Gym`  
+> **Current Workspace:** `C:\Users\Thinkpad X1\Downloads\Gym` (synced with `C:\Dev\Gym`)  
 > **Remote Repository:** `https://github.com/innamorento/Gym_app` (branch `main`)
 
 ---
@@ -13,12 +13,12 @@
 Разрабатываемый продукт — современное, быстрое и надежное приложение для планирования, создания и отслеживания силовых тренировок в тренажёрном зале (Gym Workout Tracker / Logger).
 
 **Ключевая ценность для пользователя:**
-- Минимальное трение во время тренировки (quick logging: 1-2 клика на запись подхода).
-- Полноценная работа офлайн прямо в зале (подвальные залы без связи).
-- Гибкий конструктор тренировок, шаблонов, упражнений и суперсетов.
-- Встроенный таймер отдыха с гибкими уведомлениями.
-- Наглядная аналитика прогресса: рабочий объём (Volume), расчетный 1RM (одноповторный максимум), частота, графики.
-- Платформа «Тренер-Клиент» с видеорецензиями подходов (до 60 секунд) и умной автопрогрессией с дискретностью снарядов зала.
+- **Умный онбординг атлета (Phase 0):** сбор антропометрии (рост, вес, пол, возраст), расчет ИМТ, фиксация целей и стажа с автоматической рекомендацией оптимального сплита.
+- **Минимальное трение во время тренировки:** quick logging ровно в 1 тап, умное каскадирование веса на последующие подходы.
+- **Полноценная работа офлайн прямо в зале:** 100% Offline-First на Room SQLite.
+- **Фоновый таймер отдыха с виброоткликом (Phase 1):** Android Foreground Service с Ongoing Notification в шторке, кнопками `+30с` и `Пропустить`, тройной вибросигнал в кармане.
+- **Наглядная аналитика прогресса:** суммарный тоннаж, расчетный 1RM по формуле Эпли, динамика личных рекордов (PR), распределение объема по мышцам.
+- **Платформа «Тренер-Клиент»:** видеорецензии подходов (до 60 секунд), оценка 1–5 звезд и умная автопрогрессия с дискретностью снарядов зала.
 
 ---
 
@@ -47,7 +47,7 @@
 | [`docs/decisions/ADR-002-modular-architecture-and-mvp-scope.md`](./docs/decisions/ADR-002-modular-architecture-and-mvp-scope.md) | Модульная архитектура Gradle, скоуп MVP и конструктор суперсетов |
 | [`docs/decisions/ADR-003-coach-platform-video-and-smart-progression.md`](./docs/decisions/ADR-003-coach-platform-video-and-smart-progression.md) | Платформа Тренер-Клиент, видеоотчеты, автопрогрессия и дискретность снарядов |
 | [`docs/decisions/ADR-004-smart-progression-rpe-and-exercise-clustering.md`](./docs/decisions/ADR-004-smart-progression-rpe-and-exercise-clustering.md) | Субъективная шкала RPE/RIR, 2-уровневый каталог мышц и Smart Swap |
-| [`docs/architecture/domain-model.md`](./docs/architecture/domain-model.md) | Доменная модель сущностей (Workout, Exercise, Set, Template) |
+| [`docs/architecture/domain-model.md`](./docs/architecture/domain-model.md) | Доменная модель сущностей (UserProfile, Workout, Exercise, Set, Template) |
 | [`docs/notes/DEV_LOG.md`](./docs/notes/DEV_LOG.md) | Инженерный журнал, рассуждения, багфиксы, открытые вопросы и Roadmap |
 
 ---
@@ -60,6 +60,7 @@
   - Modules: `:core:model`, `:core:database`, `:core:ui`, `:feature:templates`, `:feature:exercises`, `:feature:workout`, `:app`
   - Local Storage (Offline-First): Room DB (SQLite) + Flow Coroutines
   - DI: Koin 4.x (`koin-androidx-compose`)
+  - Background Service: Android Foreground Service (`RestTimerService`) с типом `specialUse` + Ongoing Notification + Vibration
   - Video & Media: Android Intent Video Recording (лимит 60с) + FileProvider
 - **Web Simulator & Preview:**
   - `preview/index.html` — интерактивный симулятор функционала и верстки
@@ -88,5 +89,10 @@
   - Графики/история динамики силового рекорда (PR);
   - Диаграмма распределения тоннажа и рабочих сетов по анатомическим группам мышц;
   - Фильтры по периодам (7 дней, 30 дней, Всё время) и суммарный тоннаж.
+- [x] Автопосев базы данных (`DefaultTemplates.kt`): 4 стартовые программы и 28+ упражнений с защитой от сброса при миграции Room.
+- [x] Быстрые пресеты названий шаблонов и софтверная клавиатура.
+- [x] Фоновый сервис таймера отдыха (`RestTimerService`): Android Foreground Service с Ongoing Notification, кнопками `+30с` / `Пропустить` и виброоткликом.
+- [x] Доменная модель и база данных профиля атлета (Фаза 0): `UserProfile`, `UserProfileEntity`, `UserProfileDao`, TypeConverters, мапперы, расчет ИМТ и автоподбор программ.
+- [x] Обновлен Генеральный стратегический мастер-план `gym_tracker_master_plan.md` до версии 1.1.0 с Фазой 0 и графиком спринтов.
+- [ ] UI интерактивного онбординга атлета (`OnboardingScreen` / `OnboardingViewModel`) и роутинг в `GymNavHost`.
 - [ ] Алгоритм динамического изменения и подбора весов на следующих тренировках (Double Progression / RPE).
-- [ ] Доработка таймера отдыха с Android Foreground Service для фоновых уведомлений при заблокированном экране.

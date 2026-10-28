@@ -42,7 +42,8 @@ sealed interface WorkoutUiState {
 class WorkoutViewModel(
     private val workoutDao: WorkoutDao,
     private val templateDao: TemplateDao,
-    private val coachAndReviewDao: CoachAndReviewDao
+    private val coachAndReviewDao: CoachAndReviewDao,
+    private val context: android.content.Context? = null
 ) : ViewModel() {
 
     val uiState: StateFlow<WorkoutUiState> = workoutDao.getActiveWorkout()
@@ -69,6 +70,13 @@ class WorkoutViewModel(
     private var restTimerJob: Job? = null
 
     init {
+        if (context != null) {
+            viewModelScope.launch {
+                com.gym.feature.workout.service.RestTimerService.serviceTimerState.collect { state ->
+                    _restTimerState.value = state
+                }
+            }
+        }
         // Запуск и синхронизация секундомера тренировки при наличии активной тренировки
         viewModelScope.launch {
             uiState.collectLatest { state ->
@@ -98,8 +106,11 @@ class WorkoutViewModel(
     }
 
     fun startRestTimer(seconds: Int = 90) {
-        restTimerJob?.cancel()
         val safeSeconds = seconds.coerceAtLeast(1)
+        if (context != null) {
+            com.gym.feature.workout.service.RestTimerService.start(context, safeSeconds)
+        }
+        restTimerJob?.cancel()
         _restTimerState.value = RestTimerState(isRunning = true, totalSeconds = safeSeconds, remainingSeconds = safeSeconds)
         restTimerJob = viewModelScope.launch {
             while (isActive && _restTimerState.value.remainingSeconds > 0) {
@@ -116,6 +127,9 @@ class WorkoutViewModel(
     }
 
     fun adjustRestTimer(deltaSeconds: Int) {
+        if (context != null) {
+            com.gym.feature.workout.service.RestTimerService.adjust(context, deltaSeconds)
+        }
         _restTimerState.update { current ->
             val newRemaining = (current.remainingSeconds + deltaSeconds).coerceAtLeast(0)
             val newTotal = (current.totalSeconds + deltaSeconds).coerceAtLeast(newRemaining)
@@ -136,6 +150,9 @@ class WorkoutViewModel(
     }
 
     fun stopRestTimer() {
+        if (context != null) {
+            com.gym.feature.workout.service.RestTimerService.stop(context)
+        }
         restTimerJob?.cancel()
         _restTimerState.value = RestTimerState(isRunning = false, remainingSeconds = 0)
     }
