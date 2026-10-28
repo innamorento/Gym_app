@@ -13,7 +13,6 @@ import com.gym.core.database.entity.WorkoutEntity
 import com.gym.core.database.entity.WorkoutExerciseEntity
 import com.gym.core.database.entity.WorkoutSetEntity
 import com.gym.core.model.PerceivedEffort
-import com.gym.core.model.WorkoutStatus
 import kotlinx.coroutines.flow.Flow
 
 data class WorkoutExerciseWithSets(
@@ -102,17 +101,17 @@ interface WorkoutDao {
     suspend fun updateWorkoutSet(set: WorkoutSetEntity)
 
     @Query("UPDATE workout_sets SET weight = :weight, reps = :reps WHERE id = :setId")
-    suspend fun updateSetWeightAndReps(setId: Long, weight: Double, reps: Int)
+    suspend fun updateSetWeightAndReps(setId: Long, weight: Double, reps: Int): Int
 
     @Query("UPDATE workout_sets SET effort = :effort WHERE id = :setId")
-    suspend fun updateSetEffort(setId: Long, effort: PerceivedEffort)
+    suspend fun updateSetEffort(setId: Long, effort: PerceivedEffort): Int
 
     @Query("UPDATE workout_sets SET isCompleted = :isCompleted, completedAt = :completedAt WHERE id = :setId")
-    suspend fun updateSetCompletion(setId: Long, isCompleted: Boolean, completedAt: Long?)
+    suspend fun updateSetCompletion(setId: Long, isCompleted: Boolean, completedAt: Long?): Int
 
     @Query("DELETE FROM workout_sets WHERE id = :setId")
-    suspend fun deleteWorkoutSet(setId: Long)
+    suspend fun deleteWorkoutSet(setId: Long): Int
 
     @Query("DELETE FROM workouts WHERE id = :workoutId")
-    suspend fun deleteWorkout(workoutId: Long)
+    suspend fun deleteWorkout(workoutId: Long): Int
 }

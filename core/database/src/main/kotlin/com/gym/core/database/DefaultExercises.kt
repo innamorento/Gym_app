@@ -132,6 +132,13 @@ object DefaultExercises {
             equipment = Equipment.DUMBBELL,
             defaultRestSeconds = 60
         ),
+        ExerciseEntity(
+            name = "Махи гантелями в наклоне (задняя дельта)",
+            primaryMuscleGroup = MuscleGroup.SHOULDERS,
+            secondaryMuscleGroups = "BACK",
+            equipment = Equipment.DUMBBELL,
+            defaultRestSeconds = 60
+        ),
 
         // Руки
         ExerciseEntity(
@@ -149,6 +156,13 @@ object DefaultExercises {
             defaultRestSeconds = 60
         ),
         ExerciseEntity(
+            name = "Сгибания на скамье Скотта",
+            primaryMuscleGroup = MuscleGroup.BICEPS,
+            secondaryMuscleGroups = "",
+            equipment = Equipment.BARBELL,
+            defaultRestSeconds = 60
+        ),
+        ExerciseEntity(
             name = "Французский жим лежа",
             primaryMuscleGroup = MuscleGroup.TRICEPS,
             secondaryMuscleGroups = "",
@@ -160,6 +174,13 @@ object DefaultExercises {
             primaryMuscleGroup = MuscleGroup.TRICEPS,
             secondaryMuscleGroups = "",
             equipment = Equipment.CABLE,
+            defaultRestSeconds = 60
+        ),
+        ExerciseEntity(
+            name = "Отжимания от скамьи на трицепс",
+            primaryMuscleGroup = MuscleGroup.TRICEPS,
+            secondaryMuscleGroups = "CHEST",
+            equipment = Equipment.BODYWEIGHT,
             defaultRestSeconds = 60
         ),
 
@@ -176,6 +197,36 @@ object DefaultExercises {
             primaryMuscleGroup = MuscleGroup.CORE,
             secondaryMuscleGroups = "FULL_BODY",
             equipment = Equipment.BODYWEIGHT,
+            defaultRestSeconds = 60
+        ),
+        ExerciseEntity(
+            name = "Подъем ног в висе на турнике",
+            primaryMuscleGroup = MuscleGroup.CORE,
+            secondaryMuscleGroups = "",
+            equipment = Equipment.BODYWEIGHT,
+            defaultRestSeconds = 60
+        ),
+
+        // Прочее / Все тело
+        ExerciseEntity(
+            name = "Гиперэкстензия",
+            primaryMuscleGroup = MuscleGroup.FULL_BODY,
+            secondaryMuscleGroups = "BACK,LEGS_HAMSTRINGS",
+            equipment = Equipment.BODYWEIGHT,
+            defaultRestSeconds = 60
+        ),
+        ExerciseEntity(
+            name = "Бёрпи / Разминка",
+            primaryMuscleGroup = MuscleGroup.FULL_BODY,
+            secondaryMuscleGroups = "CORE,LEGS_QUADS",
+            equipment = Equipment.BODYWEIGHT,
+            defaultRestSeconds = 60
+        ),
+        ExerciseEntity(
+            name = "Махи гирей (Kettlebell Swing)",
+            primaryMuscleGroup = MuscleGroup.FULL_BODY,
+            secondaryMuscleGroups = "LEGS_HAMSTRINGS,CORE,SHOULDERS",
+            equipment = Equipment.KETTLEBELL,
             defaultRestSeconds = 60
         )
     )

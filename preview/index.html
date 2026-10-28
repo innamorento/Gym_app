@@ -550,18 +550,53 @@
 </div>
 
 <script>
-    // База упражнений с привычными категориями
+    // База упражнений с привычными категориями (по 3-5 в каждом разделе)
     const catalogExercises = [
-        { id: 1, name: "Жим гантелей наклонный", cat: "CHEST", muscle: "Грудь", equip: "Гантели", emoji: "💪", rest: 90 },
-        { id: 2, name: "Сведение рук в кроссовере", cat: "CHEST", muscle: "Грудь", equip: "Блочный тренажер", emoji: "⚙️", rest: 60 },
-        { id: 3, name: "Подтягивания широким хватом", cat: "BACK", muscle: "Спина", equip: "Собственный вес", emoji: "🤸", rest: 120 },
-        { id: 4, name: "Тяга штанги в наклоне", cat: "BACK", muscle: "Спина", equip: "Штанга", emoji: "🏋️", rest: 120 },
-        { id: 5, name: "Приседания со штангой", cat: "LEGS", muscle: "Ноги", equip: "Штанга", emoji: "🏋️", rest: 180 },
-        { id: 6, name: "Махи гантелями в стороны", cat: "SHOULDERS", muscle: "Плечи", equip: "Гантели", emoji: "💪", rest: 60 },
-        { id: 7, name: "Подъем штанги на бицепс", cat: "BICEPS", muscle: "Бицепс", equip: "Штанга", emoji: "💪", rest: 75 },
-        { id: 8, name: "Разгибание на трицепс на блоке", cat: "TRICEPS", muscle: "Трицепс", equip: "Блочный тренажер", emoji: "⚙️", rest: 60 },
-        { id: 9, name: "Скручивания на скамье", cat: "CORE", muscle: "Пресс / Кор", equip: "Собственный вес", emoji: "🤸", rest: 45 },
-        { id: 10, name: "Бёрпи / Разминка", cat: "OTHER", muscle: "Прочее", equip: "Собственный вес", emoji: "🌐", rest: 60 }
+        // Грудь
+        { id: 1, name: "Жим штанги лежа", cat: "CHEST", muscle: "Грудь", equip: "Штанга", emoji: "🏋️", rest: 120 },
+        { id: 2, name: "Жим гантелей наклонный", cat: "CHEST", muscle: "Грудь", equip: "Гантели", emoji: "💪", rest: 90 },
+        { id: 3, name: "Отжимания на брусьях", cat: "CHEST", muscle: "Грудь", equip: "Собственный вес", emoji: "🤸", rest: 90 },
+        { id: 4, name: "Сведение рук в кроссовере", cat: "CHEST", muscle: "Грудь", equip: "Блочный тренажер", emoji: "⚙️", rest: 60 },
+
+        // Спина
+        { id: 5, name: "Подтягивания широким хватом", cat: "BACK", muscle: "Спина", equip: "Собственный вес", emoji: "🤸", rest: 120 },
+        { id: 6, name: "Тяга штанги в наклоне", cat: "BACK", muscle: "Спина", equip: "Штанга", emoji: "🏋️", rest: 120 },
+        { id: 7, name: "Тяга верхнего блока", cat: "BACK", muscle: "Спина", equip: "Блочный тренажер", emoji: "⚙️", rest: 90 },
+        { id: 8, name: "Тяга горизонтального блока", cat: "BACK", muscle: "Спина", equip: "Блочный тренажер", emoji: "⚙️", rest: 90 },
+        { id: 9, name: "Становая тяга", cat: "BACK", muscle: "Спина", equip: "Штанга", emoji: "🏋️", rest: 180 },
+
+        // Ноги
+        { id: 10, name: "Приседания со штангой", cat: "LEGS", muscle: "Ноги", equip: "Штанга", emoji: "🏋️", rest: 180 },
+        { id: 11, name: "Жим ногами в тренажере", cat: "LEGS", muscle: "Ноги", equip: "Тренажер", emoji: "⚙️", rest: 120 },
+        { id: 12, name: "Выпады с гантелями", cat: "LEGS", muscle: "Ноги", equip: "Гантели", emoji: "💪", rest: 90 },
+        { id: 13, name: "Сгибания ног лежа", cat: "LEGS", muscle: "Ноги", equip: "Тренажер", emoji: "⚙️", rest: 60 },
+        { id: 14, name: "Подъемы на носки", cat: "LEGS", muscle: "Ноги", equip: "Тренажер", emoji: "⚙️", rest: 60 },
+
+        // Плечи
+        { id: 15, name: "Армейский жим стоя", cat: "SHOULDERS", muscle: "Плечи", equip: "Штанга", emoji: "🏋️", rest: 120 },
+        { id: 16, name: "Жим гантелей сидя", cat: "SHOULDERS", muscle: "Плечи", equip: "Гантели", emoji: "💪", rest: 90 },
+        { id: 17, name: "Махи гантелями в стороны", cat: "SHOULDERS", muscle: "Плечи", equip: "Гантели", emoji: "💪", rest: 60 },
+        { id: 18, name: "Махи в наклоне (задняя дельта)", cat: "SHOULDERS", muscle: "Плечи", equip: "Гантели", emoji: "💪", rest: 60 },
+
+        // Бицепс
+        { id: 19, name: "Подъем штанги на бицепс", cat: "BICEPS", muscle: "Бицепс", equip: "Штанга", emoji: "💪", rest: 75 },
+        { id: 20, name: "Сгибания на бицепс 'Молот'", cat: "BICEPS", muscle: "Бицепс", equip: "Гантели", emoji: "💪", rest: 60 },
+        { id: 21, name: "Сгибания на скамье Скотта", cat: "BICEPS", muscle: "Бицепс", equip: "Штанга", emoji: "🏋️", rest: 60 },
+
+        // Трицепс
+        { id: 22, name: "Французский жим лежа", cat: "TRICEPS", muscle: "Трицепс", equip: "Штанга", emoji: "🏋️", rest: 90 },
+        { id: 23, name: "Разгибание на трицепс на блоке", cat: "TRICEPS", muscle: "Трицепс", equip: "Блочный тренажер", emoji: "⚙️", rest: 60 },
+        { id: 24, name: "Отжимания от скамьи на трицепс", cat: "TRICEPS", muscle: "Трицепс", equip: "Собственный вес", emoji: "🤸", rest: 60 },
+
+        // Пресс / Кор
+        { id: 25, name: "Скручивания на скамье", cat: "CORE", muscle: "Пресс / Кор", equip: "Собственный вес", emoji: "🤸", rest: 45 },
+        { id: 26, name: "Планка на локтях", cat: "CORE", muscle: "Пресс / Кор", equip: "Собственный вес", emoji: "🤸", rest: 60 },
+        { id: 27, name: "Подъем ног в висе", cat: "CORE", muscle: "Пресс / Кор", equip: "Собственный вес", emoji: "🤸", rest: 60 },
+
+        // Прочее
+        { id: 28, name: "Гиперэкстензия", cat: "OTHER", muscle: "Прочее", equip: "Собственный вес", emoji: "🤸", rest: 60 },
+        { id: 29, name: "Бёрпи / Разминка", cat: "OTHER", muscle: "Прочее", equip: "Собственный вес", emoji: "🌐", rest: 60 },
+        { id: 30, name: "Махи гирей (Kettlebell Swing)", cat: "OTHER", muscle: "Прочее", equip: "Гиря", emoji: "⚡", rest: 60 }
     ];
 
     // Таймер тренировки (Секундомер)

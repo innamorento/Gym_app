@@ -3,7 +3,7 @@ package com.gym.core.database.di
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.gym.core.database.DefaultExercises
+import com.gym.core.database.DefaultTemplates
 import com.gym.core.database.GymDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,12 +18,27 @@ val databaseModule = module {
             override fun onCreate(db: SupportSQLiteDatabase) {
                 super.onCreate(db)
                 CoroutineScope(Dispatchers.IO).launch {
-                    databaseInstance?.exerciseDao()?.insertExercises(DefaultExercises.list)
+                    val exDao = databaseInstance?.exerciseDao()
+                    val tmplDao = databaseInstance?.templateDao()
+                    if (exDao != null && tmplDao != null) {
+                        DefaultTemplates.seedDefaultDataIfEmpty(exDao, tmplDao)
+                    }
+                }
+            }
+
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val exDao = databaseInstance?.exerciseDao()
+                    val tmplDao = databaseInstance?.templateDao()
+                    if (exDao != null && tmplDao != null) {
+                        DefaultTemplates.seedDefaultDataIfEmpty(exDao, tmplDao)
+                    }
                 }
             }
         }
 
-        databaseInstance = Room.databaseBuilder(
+        val db = Room.databaseBuilder(
             androidContext(),
             GymDatabase::class.java,
             "gym_tracker.db"
@@ -31,8 +46,14 @@ val databaseModule = module {
             .addCallback(callback)
             .fallbackToDestructiveMigration()
             .build()
+        databaseInstance = db
 
-        databaseInstance
+        // Гарантированный посев данных на IO-потоке сразу после создания инстанса
+        CoroutineScope(Dispatchers.IO).launch {
+            DefaultTemplates.seedDefaultDataIfEmpty(db.exerciseDao(), db.templateDao())
+        }
+
+        db
     }
 
     single { get<GymDatabase>().exerciseDao() }

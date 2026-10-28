@@ -15,6 +15,12 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises ORDER BY name ASC")
     fun getAllExercises(): Flow<List<ExerciseEntity>>
 
+    @Query("SELECT * FROM exercises ORDER BY name ASC")
+    suspend fun getAllExercisesList(): List<ExerciseEntity>
+
+    @Query("SELECT COUNT(*) FROM exercises")
+    suspend fun getExerciseCount(): Int
+
     @Query("SELECT * FROM exercises WHERE primaryMuscleGroup = :muscleGroup ORDER BY name ASC")
     fun getExercisesByMuscleGroup(muscleGroup: MuscleGroup): Flow<List<ExerciseEntity>>
 
@@ -25,7 +31,7 @@ interface ExerciseDao {
     fun getActiveExercises(): Flow<List<ExerciseEntity>>
 
     @Query("UPDATE exercises SET isExcluded = :isExcluded, exclusionReason = :reason WHERE id = :id")
-    suspend fun updateExclusionStatus(id: Long, isExcluded: Boolean, reason: String?)
+    suspend fun updateExclusionStatus(id: Long, isExcluded: Boolean, reason: String?): Int
 
     @Query("SELECT * FROM exercises WHERE name LIKE '%' || :query || '%' ORDER BY name ASC")
     fun searchExercises(query: String): Flow<List<ExerciseEntity>>
@@ -40,5 +46,5 @@ interface ExerciseDao {
     suspend fun updateExercise(exercise: ExerciseEntity)
 
     @Query("DELETE FROM exercises WHERE id = :id AND isCustom = 1")
-    suspend fun deleteCustomExercise(id: Long)
+    suspend fun deleteCustomExercise(id: Long): Int
 }

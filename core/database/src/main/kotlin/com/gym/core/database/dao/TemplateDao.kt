@@ -41,6 +41,9 @@ interface TemplateDao {
     @Query("SELECT * FROM workout_templates ORDER BY lastUsedAt DESC, createdAt DESC")
     fun getAllTemplatesWithExercises(): Flow<List<WorkoutTemplateWithExercises>>
 
+    @Query("SELECT COUNT(*) FROM workout_templates")
+    suspend fun getTemplateCount(): Int
+
     @Transaction
     @Query("SELECT * FROM workout_templates WHERE id = :templateId")
     suspend fun getTemplateWithExercises(templateId: Long): WorkoutTemplateWithExercises?
@@ -52,13 +55,13 @@ interface TemplateDao {
     suspend fun updateTemplate(template: WorkoutTemplateEntity)
 
     @Query("DELETE FROM workout_templates WHERE id = :id")
-    suspend fun deleteTemplate(id: Long)
+    suspend fun deleteTemplate(id: Long): Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTemplateExercises(exercises: List<TemplateExerciseEntity>)
 
     @Query("DELETE FROM template_exercises WHERE templateId = :templateId")
-    suspend fun deleteTemplateExercises(templateId: Long)
+    suspend fun deleteTemplateExercises(templateId: Long): Int
 
     @Transaction
     suspend fun saveTemplateWithExercises(

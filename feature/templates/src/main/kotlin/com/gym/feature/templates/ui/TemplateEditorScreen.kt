@@ -17,7 +17,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -50,6 +54,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gym.core.ui.component.SupersetBadge
@@ -135,21 +142,77 @@ fun TemplateEditorScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
-                OutlinedTextField(
-                    value = state.title,
-                    onValueChange = { viewModel.handleIntent(TemplateEditorIntent.ChangeTitle(it)) },
-                    label = { Text("Название шаблона (напр. 'День спины и бицепса')") },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = GymTextPrimary,
-                        unfocusedTextColor = GymTextPrimary,
-                        focusedBorderColor = GymAccentGreen,
-                        unfocusedBorderColor = GymDarkSurfaceVariant,
-                        focusedLabelColor = GymAccentGreen,
-                        unfocusedLabelColor = GymTextSecondary
-                    ),
-                    singleLine = true
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = state.title,
+                        onValueChange = { viewModel.handleIntent(TemplateEditorIntent.ChangeTitle(it)) },
+                        label = { Text("Название шаблона (напр. 'День спины и бицепса')") },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = GymTextPrimary,
+                            unfocusedTextColor = GymTextPrimary,
+                            focusedBorderColor = GymAccentGreen,
+                            unfocusedBorderColor = GymDarkSurfaceVariant,
+                            focusedLabelColor = GymAccentGreen,
+                            unfocusedLabelColor = GymTextSecondary
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            capitalization = KeyboardCapitalization.Sentences,
+                            imeAction = ImeAction.Done
+                        ),
+                        trailingIcon = {
+                            if (state.title.isNotBlank()) {
+                                IconButton(onClick = { viewModel.handleIntent(TemplateEditorIntent.ChangeTitle("")) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = "Очистить",
+                                        tint = GymTextSecondary
+                                    )
+                                }
+                            }
+                        },
+                        singleLine = true
+                    )
+
+                    // Быстрый выбор популярных названий тренировок в 1 тап
+                    Text(
+                        text = "💡 Готовые названия:",
+                        fontSize = 12.sp,
+                        color = GymTextSecondary
+                    )
+
+                    @OptIn(ExperimentalLayoutApi::class)
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        listOf(
+                            "🥋 Грудь + Трицепс",
+                            "🦅 Спина + Бицепс",
+                            "🦵 Ноги + Плечи",
+                            "⚡ Фулбоди",
+                            "🔥 Верх тела",
+                            "🛡️ Пресс и Кор"
+                        ).forEach { presetTitle ->
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(GymDarkSurfaceVariant)
+                                    .clickable { viewModel.handleIntent(TemplateEditorIntent.ChangeTitle(presetTitle)) }
+                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = presetTitle,
+                                    fontSize = 11.sp,
+                                    color = GymTextPrimary,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             item {
