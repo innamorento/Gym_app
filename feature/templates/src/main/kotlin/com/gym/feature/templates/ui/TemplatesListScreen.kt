@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideoCameraFront
@@ -61,6 +62,7 @@ fun TemplatesListScreen(
     onCreateTemplateClick: () -> Unit,
     onTemplateClick: (Long) -> Unit,
     onStartWorkoutClick: (Long) -> Unit,
+    onAnalyticsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onCoachReviewsClick: () -> Unit = {}
 ) {
@@ -77,6 +79,13 @@ fun TemplatesListScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = onAnalyticsClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                            contentDescription = "Аналитика и прогресс",
+                            tint = GymAccentGreen
+                        )
+                    }
                     IconButton(onClick = onCoachReviewsClick) {
                         Icon(
                             imageVector = Icons.Default.VideoCameraFront,

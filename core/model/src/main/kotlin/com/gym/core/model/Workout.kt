@@ -20,6 +20,7 @@ data class WorkoutExercise(
 
 data class Workout(
     val id: Long = 0,
+    val userId: String = "default_user",
     val templateId: Long? = null,
     val title: String,
     val startTime: Long = System.currentTimeMillis(),

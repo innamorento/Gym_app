@@ -31,8 +31,8 @@ import com.gym.core.database.entity.WorkoutTemplateEntity
         SetVideoReviewEntity::class,
         CoachAssignmentEntity::class
     ],
-    version = 1,
-    exportSchema = true
+    version = 2,
+    exportSchema = false
 )
 @TypeConverters(GymTypeConverters::class)
 abstract class GymDatabase : RoomDatabase() {

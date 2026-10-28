@@ -126,6 +126,7 @@ fun WorkoutExerciseWithSets.toDomain(): WorkoutExercise {
 fun WorkoutWithDetails.toDomain(): Workout {
     return Workout(
         id = workout.id,
+        userId = workout.userId,
         templateId = workout.templateId,
         title = workout.title,
         startTime = workout.startTime,

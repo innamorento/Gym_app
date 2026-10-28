@@ -4,6 +4,78 @@
 
 ---
 
+## [2026-10-28 (Sprint 5)] — Аналитика силового прогресса (1ПМ), баланс мышечных групп и умное каскадирование весов
+
+### 1. Контекст и продуктовые требования
+1. **Умное каскадирование веса и повторов (Smart Set Forwarding):**
+   - *Проблема:* Если пользователь вводил вес и повторы для первого рабочего подхода (например, 80 кг × 10 повт.), последующие незавершенные подходы оставались с нулями или старыми значениями, вынуждая атлета повторять ввод вручную.
+   - *Решение:* При редактировании любого подхода $N$ все последующие незавершенные подходы ($N+1, N+2, \dots$) этого же упражнения автоматически перенимают введенные вес и повторы. При добавлении нового сета по кнопке «+ Подход» он также наследует параметры предыдущего подхода.
+2. **База данных истории подходов и весов по пользователю (`userId`):**
+   - Добавлено поле `userId: String = "default_user"` в сущность `WorkoutEntity` и доменную модель `Workout`.
+   - В `WorkoutDao` добавлены оптимизированные запросы:
+     - `getLatestCompletedSetsForExercise`: извлечение последних фактических рабочих весов и повторов атлета для предзаполнения при старте тренировки или добавлении упражнения.
+     - `getCompletedWorkoutsForUser`: реактивный `Flow` завершенных тренировок пользователя со всеми деталями (упражнения, сеты, тоннаж, 1RM).
+3. **Экран «Аналитика и прогресс» (Analytics & Progress):**
+   - Создан `AnalyticsViewModel` с реактивной фильтрацией по временным окнам (`7 дней`, `30 дней`, `Всё время`).
+   - Подсчет ключевых KPI: суммарный тоннаж (объем в тоннах / кг), число завершенных тренировок и рабочих сетов.
+   - Диаграмма распределения нагрузки по анатомическим группам мышц (Грудь, Спина, Ноги, Плечи, Руки, Кор, Прочее) с процентами и тоннажем.
+   - Автоматический расчет расчетного 1ПМ (One-Repetition Maximum) по формуле Эпли:
+     $$1\text{RM} = \text{Weight} \times \left(1 + \frac{\text{Reps}}{30}\right)$$
+   - Карточка персонального рекорда (PR) с пиковым 1RM и историей динамики силы по завершенным тренировкам.
+
+### 2. Технические изменения
+- **`:core:model`:**
+  - В `Workout` добавлено поле `userId: String`.
+  - В `WorkoutSet` используется формула `estimated1RM` и `volume`.
+- **`:core:database`:**
+  - `WorkoutEntity`: добавлен индекс по `userId`, версия схемы поднята до 2.
+  - `WorkoutDao`: добавлены методы `getLatestCompletedSetsForExercise` и `getCompletedWorkoutsForUser`.
+  - `Mappers.kt`: синхронизировано преобразование `userId`.
+- **`:feature:workout`:**
+  - `WorkoutViewModel`: реализовано умное каскадирование в `updateSetWeightAndReps`, наследование в `addSetToExercise`, предзаполнение из истории в `startWorkoutFromTemplate` и `addExerciseToActiveWorkout`.
+  - `AnalyticsViewModel` & `AnalyticsScreen`: полноценный UI аналитики, карточки KPI, индикаторы распределения объема по группам мышц, селектор упражнений и динамика 1RM.
+  - `WorkoutModule.kt`: регистрация `AnalyticsViewModel` в Koin.
+- **`:app`:**
+  - В `Destinations` добавлен маршрут `ANALYTICS`.
+  - В `TemplatesListScreen` добавлена кнопка в TopAppBar с иконкой `Icons.AutoMirrored.Filled.TrendingUp`.
+- **`preview/index.html`:**
+  - Добавлен экран аналитики и 1ПМ с интерактивным переключением периодов и упражнений.
+  - В симуляторе подходов поддержано умное каскадирование значений на последующие сеты.
+
+### 3. Верификация
+- Полная компиляция: `.\gradlew.bat compileDebugKotlin` — **0 ошибок** (`BUILD SUCCESSFUL in 11s`).
+- Сборка приложения: `.\gradlew.bat assembleDebug` — **0 ошибок** (`BUILD SUCCESSFUL in 9s`).
+
+---
+
+## [2026-10-27 (Sprint 4)] — Устранение Runtime Crash при запуске на эмуляторе (Kotlin Initialization Order)
+
+### 1. Анализ краша из Logcat (`FATAL EXCEPTION: main`)
+- **Симптом:** При дебаг-запуске на эмуляторе (`adb shell am start ... com.gym.tracker.MainActivity`) происходил мгновенный дисконнект и падение процесса:
+  ```text
+  Connected to the target VM, address: 'localhost:60444', transport: 'socket'
+  Disconnected from the target VM, address: 'localhost:60444', transport: 'socket'
+  ```
+- **Стек-трейс из `adb logcat`:**
+  ```text
+  FATAL EXCEPTION: main
+  Process: com.gym.tracker, PID: 12085
+  java.lang.NullPointerException: Attempt to invoke interface method 'java.lang.Object kotlinx.coroutines.flow.Flow.collect(kotlinx.coroutines.flow.FlowCollector, kotlin.coroutines.Continuation)' on a null object reference
+      at com.gym.feature.workout.WorkoutViewModel.<init>(WorkoutViewModel.kt:59)
+      at com.gym.feature.workout.di.WorkoutModuleKt...
+  ```
+- **Первопричина (Kotlin Execution Order):**
+  В классе `WorkoutViewModel` блок `init { viewModelScope.launch { uiState.collectLatest { ... } } }` был объявлен выше, чем свойство `val uiState = workoutDao.getActiveWorkout()...`.
+  В Kotlin инициализаторы свойств и блоки `init` выполняются строго сверху вниз. В момент исполнения `init` поле `uiState` ещё содержало `null`, что приводило к `NullPointerException` при попытке подписаться на `Flow`.
+
+### 2. Исправление и верификация
+1. Перемещено объявление `val uiState: StateFlow<WorkoutUiState>` в самое начало класса `WorkoutViewModel`, до блока `init`.
+2. Проект пересобран (`BUILD SUCCESSFUL in 46s`).
+3. Новый APK `app-debug.apk` установлен на запущенный эмулятор `emulator-5554` через `adb install -r`.
+4. Activity `com.gym.tracker.MainActivity` успешно запущена, проверен статус процесса: PID `12248` активен в памяти, в `logcat` 0 ошибок.
+
+---
+
 ## [2026-10-27 (Sprint 3)] — Восстановление стабильности Gradle-сборки и запуск в Android Studio
 
 ### 1. Диагностика и первопричины сбоя (Root Cause Analysis)
@@ -186,5 +258,8 @@
 - [x] Интерактивный ввод и редактирование веса и повторений подхода (`SetEditDialog`, степперы +/- 2.5кг и +/- 1 повт., удаление сета).
 - [x] Редактирование подходов и отдыха в конструкторе шаблонов (`TemplateEditorScreen`) и быстрый запуск тренировки по кнопке.
 - [x] Система таймеров: секундомер длительности тренировки в TopAppBar + гибкий таймер отдыха между подходами с автостартом и регулировкой (-15с / +30с / пресеты).
+- [x] Устранение ошибки сборки JVM Target compatibility:
+  - Настроен `jvmTarget = 17` через `kotlin.compilerOptions` в `:core:model:build.gradle.kts` для устранения несоответствия между `compileJava` (17) и `compileKotlin` (21).
+  - Сборка и прохождение всех Unit-тестов подтверждены (`gradlew assemble`, `gradlew test`).
 - [ ] Доработка таймера отдыха с Android Foreground Service для уведомлений при заблокированном экране.
 - [ ] Добавление аналитики (расчет прогресса 1RM, графики объема).

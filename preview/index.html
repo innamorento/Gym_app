@@ -200,7 +200,10 @@
                     <span style="color: #22c55e;" id="header-stats"> • Объем: 1 480 кг • Сеты: 4</span>
                 </div>
             </div>
-            <button class="finish-btn" onclick="alert('Тренировка завершена и сохранена в Room SQLite!')">Завершить</button>
+            <div style="display: flex; gap: 6px;">
+                <button class="finish-btn" style="background: #27272a; color: #22c55e; border: 1px solid #3f3f46;" onclick="openAnalytics()">📊 1ПМ</button>
+                <button class="finish-btn" onclick="alert('Тренировка завершена и сохранена в Room SQLite!')">Завершить</button>
+            </div>
         </div>
 
         <!-- Плашка таймера отдыха между подходами (обратный отсчет) -->
@@ -391,10 +394,156 @@
         </div>
     </div>
 
+    <!-- Экран: Аналитика и расчет 1ПМ -->
+    <div class="catalog-screen" id="analytics-screen" style="z-index: 250; overflow-y: auto;">
+        <div class="catalog-header">
+            <div>
+                <h2>Аналитика и прогресс</h2>
+                <div style="font-size: 11px; color: #9ca3af;">Тоннаж, 1ПМ и баланс мышечных групп</div>
+            </div>
+            <button class="close-catalog" onclick="closeAnalytics()">✕</button>
+        </div>
+
+        <!-- Переключатель диапазона -->
+        <div class="flow-row" style="margin-bottom: 12px;">
+            <div class="chip" onclick="filterAnalytics('WEEK', this)">7 дней</div>
+            <div class="chip active" onclick="filterAnalytics('MONTH', this)">30 дней</div>
+            <div class="chip" onclick="filterAnalytics('ALL', this)">Всё время</div>
+        </div>
+
+        <!-- Карточки KPI -->
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+            <div style="background: #1e1e24; border: 1px solid #2a2a32; border-radius: 12px; padding: 10px;">
+                <div style="font-size: 10px; color: #9ca3af;">Тоннаж</div>
+                <div style="font-size: 16px; font-weight: 800; color: #60a5fa;" id="stat-tonnage">24.8 т</div>
+                <div style="font-size: 9px; color: #6b7280;">общий объем</div>
+            </div>
+            <div style="background: #1e1e24; border: 1px solid #2a2a32; border-radius: 12px; padding: 10px;">
+                <div style="font-size: 10px; color: #9ca3af;">Тренировок</div>
+                <div style="font-size: 16px; font-weight: 800; color: #22c55e;" id="stat-workouts">8</div>
+                <div style="font-size: 9px; color: #6b7280;">завершено</div>
+            </div>
+            <div style="background: #1e1e24; border: 1px solid #2a2a32; border-radius: 12px; padding: 10px;">
+                <div style="font-size: 10px; color: #9ca3af;">Подходов</div>
+                <div style="font-size: 16px; font-weight: 800; color: #fbbf24;" id="stat-sets">72</div>
+                <div style="font-size: 9px; color: #6b7280;">рабочих сетов</div>
+            </div>
+        </div>
+
+        <!-- Распределение тоннажа по мышцам -->
+        <div class="card" style="margin-bottom: 14px; background: #1e1e24;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 13px; font-weight: 700;">Баланс мышечных групп</span>
+                <span style="font-size: 11px; color: #60a5fa;">Объем нагрузки</span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px;" id="muscle-breakdown-list">
+                <!-- Строка 1: Грудь -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px;">
+                        <span>🥋 Грудь · <b>34%</b></span>
+                        <span style="color: #9ca3af;">8 430 кг (24 сета)</span>
+                    </div>
+                    <div style="height: 6px; background: #27272a; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 34%; height: 100%; background: #60a5fa; border-radius: 3px;"></div>
+                    </div>
+                </div>
+
+                <!-- Строка 2: Спина -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px;">
+                        <span>🦅 Спина · <b>28%</b></span>
+                        <span style="color: #9ca3af;">6 940 кг (20 сетов)</span>
+                    </div>
+                    <div style="height: 6px; background: #27272a; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 28%; height: 100%; background: #c084fc; border-radius: 3px;"></div>
+                    </div>
+                </div>
+
+                <!-- Строка 3: Ноги -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px;">
+                        <span>🦵 Ноги · <b>22%</b></span>
+                        <span style="color: #9ca3af;">5 450 кг (16 сетов)</span>
+                    </div>
+                    <div style="height: 6px; background: #27272a; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 22%; height: 100%; background: #f87171; border-radius: 3px;"></div>
+                    </div>
+                </div>
+
+                <!-- Строка 4: Руки (Бицепс + Трицепс) -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px;">
+                        <span>🦾 Руки · <b>16%</b></span>
+                        <span style="color: #9ca3af;">3 980 кг (12 сетов)</span>
+                    </div>
+                    <div style="height: 6px; background: #27272a; border-radius: 3px; overflow: hidden;">
+                        <div style="width: 16%; height: 100%; background: #22c55e; border-radius: 3px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Раздел 1ПМ (One Rep Max) -->
+        <div class="card" style="background: #1e1e24;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                    <div style="font-size: 13px; font-weight: 700;">Силовой максимум (1ПМ)</div>
+                    <div style="font-size: 10px; color: #9ca3af;">Формула Эпли: W × (1 + R/30)</div>
+                </div>
+                <span style="font-size: 18px;">📈</span>
+            </div>
+
+            <!-- Чипсы выбора упражнения -->
+            <div class="flow-row" style="margin-bottom: 12px;">
+                <div class="chip active" onclick="switch1RmEx('bench', this)">Жим лежа</div>
+                <div class="chip" onclick="switch1RmEx('squat', this)">Приседания</div>
+                <div class="chip" onclick="switch1RmEx('deadlift', this)">Становая тяга</div>
+            </div>
+
+            <!-- Карточка рекорда PR -->
+            <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 10px; font-weight: 800; color: #fbbf24; letter-spacing: 0.5px;">🏆 ЛИЧНЫЙ РЕКОРД (PR)</div>
+                    <div style="font-size: 22px; font-weight: 900; color: #f3f4f6;" id="pr-1rm-val">112.5 кг</div>
+                    <div style="font-size: 11px; color: #9ca3af;" id="pr-set-desc">из подхода 100.0 кг × 4 повт.</div>
+                </div>
+                <div style="background: rgba(34, 197, 94, 0.2); color: #22c55e; padding: 4px 8px; border-radius: 8px; font-size: 11px; font-weight: 700;">1RM Peak</div>
+            </div>
+
+            <!-- История динамики 1RM -->
+            <div style="font-size: 11px; font-weight: 700; color: #d1d5db; margin-bottom: 6px;">Динамика силы:</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;" id="pr-history-list">
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600;">26 окт 2026</div>
+                        <div style="font-size: 10px; color: #9ca3af;">Сет: 100.0 кг × 4 повт.</div>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">112.5 кг (+5.0)</div>
+                </div>
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600;">19 окт 2026</div>
+                        <div style="font-size: 10px; color: #9ca3af;">Сет: 95.0 кг × 4 повт.</div>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">107.5 кг (+2.5)</div>
+                </div>
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 12px; font-weight: 600;">12 окт 2026</div>
+                        <div style="font-size: 10px; color: #9ca3af;">Сет: 92.5 кг × 4 повт.</div>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">105.0 кг</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Нижняя панель навигации -->
     <div class="bottom-nav">
         <div class="nav-item active"><span>🏋️‍♂️</span>Тренировка</div>
         <div class="nav-item" onclick="openCatalog()"><span>📖</span>Каталог</div>
+        <div class="nav-item" onclick="openAnalytics()"><span>📊</span>1ПМ & Аналитика</div>
         <div class="nav-item" onclick="alert('Кабинет тренера: видеоотчеты подопечных и оценки 1-5 звезд')"><span>🎓</span>Тренер</div>
         <div class="nav-item" onclick="alert('Настройки шага весов: гантели (шаг 1кг/2кг), блоки 2.5кг, штанги')"><span>⚙️</span>Тренажеры</div>
     </div>
@@ -507,6 +656,20 @@
             const btns = row.querySelectorAll('.set-val-btn');
             if (btns[0]) btns[0].innerText = `${currentEditingWeight.toFixed(1)} кг ✏️`;
             if (btns[1]) btns[1].innerText = `${currentEditingReps} повт. ✏️`;
+
+            // Умное каскадирование: переносим введенные вес и повторы на последующие незавершенные подходы
+            let nextNum = currentEditingSetNum + 1;
+            while (true) {
+                const nextRow = document.getElementById('row-' + nextNum);
+                if (!nextRow) break;
+                const nextChk = document.getElementById('chk-' + nextNum);
+                if (nextChk && !nextChk.classList.contains('checked')) {
+                    const nextBtns = nextRow.querySelectorAll('.set-val-btn');
+                    if (nextBtns[0]) nextBtns[0].innerText = `${currentEditingWeight.toFixed(1)} кг ✏️`;
+                    if (nextBtns[1]) nextBtns[1].innerText = `${currentEditingReps} повт. ✏️`;
+                }
+                nextNum++;
+            }
         }
         closeSetEditor();
     }
@@ -644,6 +807,78 @@
         const cam = document.getElementById('cam-' + num);
         cam.classList.toggle('active');
         alert('📹 Запущена системная камера Android: видеоотчет техники для наставника (лимит 60 секунд).');
+    }
+
+    function openAnalytics() {
+        document.getElementById('analytics-screen').classList.add('visible');
+    }
+
+    function closeAnalytics() {
+        document.getElementById('analytics-screen').classList.remove('visible');
+    }
+
+    function filterAnalytics(range, chip) {
+        chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        if (range === 'WEEK') {
+            document.getElementById('stat-tonnage').innerText = '6.4 т';
+            document.getElementById('stat-workouts').innerText = '2';
+            document.getElementById('stat-sets').innerText = '18';
+        } else if (range === 'MONTH') {
+            document.getElementById('stat-tonnage').innerText = '24.8 т';
+            document.getElementById('stat-workouts').innerText = '8';
+            document.getElementById('stat-sets').innerText = '72';
+        } else {
+            document.getElementById('stat-tonnage').innerText = '88.5 т';
+            document.getElementById('stat-workouts').innerText = '31';
+            document.getElementById('stat-sets').innerText = '280';
+        }
+    }
+
+    function switch1RmEx(ex, chip) {
+        chip.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        const prVal = document.getElementById('pr-1rm-val');
+        const prDesc = document.getElementById('pr-set-desc');
+        const hist = document.getElementById('pr-history-list');
+
+        if (ex === 'bench') {
+            prVal.innerText = '112.5 кг';
+            prDesc.innerText = 'из подхода 100.0 кг × 4 повт.';
+            hist.innerHTML = `
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="font-size: 12px; font-weight: 600;">26 окт 2026</div><div style="font-size: 10px; color: #9ca3af;">Сет: 100.0 кг × 4 повт.</div></div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">112.5 кг (+5.0)</div>
+                </div>
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="font-size: 12px; font-weight: 600;">19 окт 2026</div><div style="font-size: 10px; color: #9ca3af;">Сет: 95.0 кг × 4 повт.</div></div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">107.5 кг (+2.5)</div>
+                </div>
+            `;
+        } else if (ex === 'squat') {
+            prVal.innerText = '145.0 кг';
+            prDesc.innerText = 'из подхода 130.0 кг × 4 повт.';
+            hist.innerHTML = `
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="font-size: 12px; font-weight: 600;">24 окт 2026</div><div style="font-size: 10px; color: #9ca3af;">Сет: 130.0 кг × 4 повт.</div></div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">145.0 кг (+5.0)</div>
+                </div>
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="font-size: 12px; font-weight: 600;">17 окт 2026</div><div style="font-size: 10px; color: #9ca3af;">Сет: 125.0 кг × 4 повт.</div></div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">140.0 кг</div>
+                </div>
+            `;
+        } else if (ex === 'deadlift') {
+            prVal.innerText = '175.0 кг';
+            prDesc.innerText = 'из подхода 155.0 кг × 4 повт.';
+            hist.innerHTML = `
+                <div style="background: #27272a; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div><div style="font-size: 12px; font-weight: 600;">22 окт 2026</div><div style="font-size: 10px; color: #9ca3af;">Сет: 155.0 кг × 4 повт.</div></div>
+                    <div style="font-size: 13px; font-weight: 800; color: #60a5fa;">175.0 кг (+7.5)</div>
+                </div>
+            `;
+        }
     }
 
     function setScale(isLarge) {

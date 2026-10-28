@@ -45,6 +45,20 @@ class WorkoutViewModel(
     private val coachAndReviewDao: CoachAndReviewDao
 ) : ViewModel() {
 
+    val uiState: StateFlow<WorkoutUiState> = workoutDao.getActiveWorkout()
+        .map { workoutWithDetails ->
+            if (workoutWithDetails != null) {
+                WorkoutUiState.Active(workoutWithDetails.toDomain())
+            } else {
+                WorkoutUiState.Idle
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = WorkoutUiState.Idle
+        )
+
     private val _workoutDurationSeconds = MutableStateFlow(0L)
     val workoutDurationSeconds: StateFlow<Long> = _workoutDurationSeconds.asStateFlow()
 
@@ -154,20 +168,6 @@ class WorkoutViewModel(
         }
     }
 
-    val uiState: StateFlow<WorkoutUiState> = workoutDao.getActiveWorkout()
-        .map { workoutWithDetails ->
-            if (workoutWithDetails != null) {
-                WorkoutUiState.Active(workoutWithDetails.toDomain())
-            } else {
-                WorkoutUiState.Idle
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = WorkoutUiState.Idle
-        )
-
     fun startWorkoutFromTemplate(templateId: Long) {
         viewModelScope.launch {
             val templateWithExercises = templateDao.getTemplateWithExercises(templateId) ?: return@launch
@@ -175,6 +175,7 @@ class WorkoutViewModel(
 
             val workoutId = workoutDao.insertWorkout(
                 WorkoutEntity(
+                    userId = "default_user",
                     templateId = template.id,
                     title = template.title,
                     startTime = System.currentTimeMillis(),
@@ -192,14 +193,18 @@ class WorkoutViewModel(
                     )
                 )
 
-                // Создаем начальные подходы
+                // Запрашиваем историю последних подходов этого упражнения для предзаполнения
+                val prevSets = workoutDao.getLatestCompletedSetsForExercise(templateExercise.exercise.id, "default_user")
                 val sets = (1..templateExercise.targetSetsCount).map { setNumber ->
+                    val prevForSet = prevSets.getOrNull(setNumber - 1) ?: prevSets.firstOrNull()
+                    val defaultWeight = prevForSet?.weight ?: 0.0
+                    val defaultReps = prevForSet?.reps ?: 0
                     WorkoutSetEntity(
                         workoutExerciseId = workoutExerciseId,
                         setNumber = setNumber,
                         setType = SetType.NORMAL,
-                        weight = 0.0,
-                        reps = 0,
+                        weight = defaultWeight,
+                        reps = defaultReps,
                         isCompleted = false
                     )
                 }
@@ -221,11 +226,32 @@ class WorkoutViewModel(
 
     fun updateSetWeightAndReps(setId: Long, weight: Double, reps: Int) {
         viewModelScope.launch {
+            val safeWeight = weight.coerceAtLeast(0.0)
+            val safeReps = reps.coerceAtLeast(0)
             workoutDao.updateSetWeightAndReps(
                 setId = setId,
-                weight = weight.coerceAtLeast(0.0),
-                reps = reps.coerceAtLeast(0)
+                weight = safeWeight,
+                reps = safeReps
             )
+
+            // Умное каскадирование: переносим введенные вес и повторы на последующие еще не завершенные подходы
+            val activeWorkout = (uiState.value as? WorkoutUiState.Active)?.workout ?: return@launch
+            for (exercise in activeWorkout.exercises) {
+                val setIndex = exercise.sets.indexOfFirst { it.id == setId }
+                if (setIndex != -1) {
+                    val subsequentSets = exercise.sets.drop(setIndex + 1)
+                    for (nextSet in subsequentSets) {
+                        if (!nextSet.isCompleted) {
+                            workoutDao.updateSetWeightAndReps(
+                                setId = nextSet.id,
+                                weight = safeWeight,
+                                reps = safeReps
+                            )
+                        }
+                    }
+                    break
+                }
+            }
         }
     }
 
@@ -237,13 +263,19 @@ class WorkoutViewModel(
 
     fun addSetToExercise(workoutExerciseId: Long, currentSetsCount: Int) {
         viewModelScope.launch {
+            val activeWorkout = (uiState.value as? WorkoutUiState.Active)?.workout
+            val exercise = activeWorkout?.exercises?.find { it.id == workoutExerciseId }
+            val lastSet = exercise?.sets?.lastOrNull()
+            val defaultWeight = lastSet?.weight ?: 0.0
+            val defaultReps = lastSet?.reps ?: 0
+
             workoutDao.insertWorkoutSet(
                 WorkoutSetEntity(
                     workoutExerciseId = workoutExerciseId,
                     setNumber = currentSetsCount + 1,
                     setType = SetType.NORMAL,
-                    weight = 0.0,
-                    reps = 0,
+                    weight = defaultWeight,
+                    reps = defaultReps,
                     isCompleted = false
                 )
             )
@@ -269,13 +301,16 @@ class WorkoutViewModel(
                 )
             )
 
+            // Предзаполняем веса и повторы из предыдущей тренировки пользователя
+            val prevSets = workoutDao.getLatestCompletedSetsForExercise(exercise.id, current.userId)
             val initialSets = (1..3).map { setNumber ->
+                val prevForSet = prevSets.getOrNull(setNumber - 1) ?: prevSets.firstOrNull()
                 WorkoutSetEntity(
                     workoutExerciseId = workoutExerciseId,
                     setNumber = setNumber,
                     setType = SetType.NORMAL,
-                    weight = 0.0,
-                    reps = 0,
+                    weight = prevForSet?.weight ?: 0.0,
+                    reps = prevForSet?.reps ?: 0,
                     isCompleted = false
                 )
             }

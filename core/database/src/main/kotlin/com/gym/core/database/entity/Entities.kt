@@ -67,10 +67,17 @@ data class TemplateExerciseEntity(
     val defaultRestSeconds: Int = 90
 )
 
-@Entity(tableName = "workouts")
+@Entity(
+    tableName = "workouts",
+    indices = [
+        Index("userId"),
+        Index("status")
+    ]
+)
 data class WorkoutEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
+    val userId: String = "default_user",
     val templateId: Long? = null,
     val title: String,
     val startTime: Long = System.currentTimeMillis(),

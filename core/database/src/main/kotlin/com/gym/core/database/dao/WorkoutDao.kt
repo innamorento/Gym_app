@@ -54,8 +54,34 @@ interface WorkoutDao {
     fun getCompletedWorkouts(): Flow<List<WorkoutWithDetails>>
 
     @Transaction
+    @Query("SELECT * FROM workouts WHERE status = 'COMPLETED' AND userId = :userId ORDER BY startTime DESC")
+    fun getCompletedWorkoutsForUser(userId: String = "default_user"): Flow<List<WorkoutWithDetails>>
+
+    @Transaction
     @Query("SELECT * FROM workouts WHERE id = :workoutId")
     suspend fun getWorkoutById(workoutId: Long): WorkoutWithDetails?
+
+    @Query("""
+        SELECT ws.* FROM workout_sets ws
+        INNER JOIN workout_exercises we ON ws.workoutExerciseId = we.id
+        INNER JOIN workouts w ON we.workoutId = w.id
+        WHERE we.exerciseId = :exerciseId 
+          AND w.userId = :userId 
+          AND ws.isCompleted = 1
+        ORDER BY ws.completedAt DESC, ws.id DESC
+        LIMIT :limit
+    """)
+    suspend fun getLatestCompletedSetsForExercise(
+        exerciseId: Long,
+        userId: String = "default_user",
+        limit: Int = 10
+    ): List<WorkoutSetEntity>
+
+    @Query("SELECT workoutExerciseId FROM workout_sets WHERE id = :setId")
+    suspend fun getWorkoutExerciseIdBySetId(setId: Long): Long?
+
+    @Query("SELECT * FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId ORDER BY setNumber ASC")
+    suspend fun getSetsForWorkoutExercise(workoutExerciseId: Long): List<WorkoutSetEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkout(workout: WorkoutEntity): Long

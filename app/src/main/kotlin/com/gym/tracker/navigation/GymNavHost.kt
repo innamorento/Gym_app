@@ -15,6 +15,8 @@ import com.gym.feature.templates.ui.EquipmentSettingsScreen
 import com.gym.feature.templates.ui.TemplateEditorScreen
 import com.gym.feature.templates.ui.TemplatesListScreen
 import com.gym.feature.workout.WorkoutViewModel
+import com.gym.feature.workout.analytics.AnalyticsScreen
+import com.gym.feature.workout.analytics.AnalyticsViewModel
 import com.gym.feature.workout.ui.CoachReviewScreen
 import com.gym.feature.workout.ui.LiveWorkoutScreen
 import org.koin.androidx.compose.koinViewModel
@@ -26,6 +28,7 @@ object Destinations {
     const val LIVE_WORKOUT = "live_workout"
     const val EQUIPMENT_SETTINGS = "equipment_settings"
     const val COACH_REVIEWS = "coach_reviews"
+    const val ANALYTICS = "analytics"
 
     fun templateEditorRoute(templateId: Long) = "template_editor/$templateId"
     fun exercisePickerRoute(target: String = "template") = "exercise_picker?target=$target"
@@ -63,9 +66,20 @@ fun GymNavHost(
                 onSettingsClick = {
                     navController.navigate(Destinations.EQUIPMENT_SETTINGS)
                 },
+                onAnalyticsClick = {
+                    navController.navigate(Destinations.ANALYTICS)
+                },
                 onCoachReviewsClick = {
                     navController.navigate(Destinations.COACH_REVIEWS)
                 }
+            )
+        }
+
+        composable(Destinations.ANALYTICS) {
+            val analyticsViewModel: AnalyticsViewModel = koinViewModel()
+            AnalyticsScreen(
+                viewModel = analyticsViewModel,
+                onBackClick = { navController.popBackStack() }
             )
         }
 
