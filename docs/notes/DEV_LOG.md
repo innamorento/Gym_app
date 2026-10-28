@@ -37,9 +37,23 @@
   - Разрешения зарегистрированы в `app/src/main/AndroidManifest.xml`: `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SPECIAL_USE`, `VIBRATE`, `POST_NOTIFICATIONS`.
   - В `WorkoutViewModel` внедрен двусторонний мост с `RestTimerService`: при наличии `Context` таймер управляется системным сервисом, а при его отсутствии (в тестах) — прозрачно откатывается на локальные корутины.
 
-### 2. Верификация
+### 2. Анализ и устранение сбоя при запуске на эмуляторе (Room Schema Integrity)
+- **Симптом из Logcat:** При старте `com.gym.tracker.MainActivity` на `emulator-5554` происходил мгновенный дисконнект от VM и падение:
+  ```text
+  FATAL EXCEPTION: DefaultDispatcher-worker-1
+  java.lang.IllegalStateException: Room cannot verify the data integrity. Looks like you've changed schema but forgot to update the version number. Expected identity hash: c080b5c4ece3af70edc2b0417f8d65b0, found: 40af83e90c2564ef1b03dca1f7833013
+  ```
+- **Первопричина:** При добавлении `UserProfileEntity` в `GymDatabase.kt` изменился состав таблиц Room и хэш схемы, однако номер версии базы данных оставался равен `2`. Так как номер версии не изменился, миграция `fallbackToDestructiveMigration()` не активировалась, и Room аварийно завершил запуск из-за несовпадения хэшей.
+- **Исправление:** 
+  1. В `GymDatabase.kt` номер версии поднят до `version = 3`.
+  2. KSP заново сгенерировал обновленные классы БД `GymDatabase_Impl`.
+  3. Собран и установлен свежий APK через `adb install -r`.
+  4. Процесс приложения запущен на эмуляторе, статус PID `15655` активен в памяти, фатальные исключения отсутствуют.
+
+### 3. Верификация
 - `.\gradlew.bat compileDebugKotlin` — **BUILD SUCCESSFUL in 15s** (0 ошибок во всех модулях).
-- `.\gradlew.bat assembleDebug` — Сборка APK подтверждена.
+- `.\gradlew.bat assembleDebug` — **BUILD SUCCESSFUL in 16s** (Debug APK собран).
+- Установка и запуск на `emulator-5554`: **Success**, PID `15655` активен в памяти, падений нет.
 - Обновлен стратегический мастер-план `gym_tracker_master_plan.md` до версии 1.1.0 с учетом Фазы 0 и детального графика спринтов.
 
 ---
