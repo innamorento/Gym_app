@@ -39,4 +39,6 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.koin.androidx.compose)
+
+    testImplementation(libs.junit)
 }
