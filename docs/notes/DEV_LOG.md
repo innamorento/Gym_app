@@ -34,16 +34,27 @@
   - Понятное спортивное обоснование (Rationale).
   - Кнопка **«Применить» в 1 тап**: мгновенно обновляет веса и повторы всех еще не завершенных подходов упражнения.
 
-#### Решение 3: Исправление ввода имени на эмуляторе (Sprint 7 Fix)
-- В OnboardingScreen.kt добавлена поддержка LocalSoftwareKeyboardController и LocalFocusManager.
-- В поле ввода имени добавлены ImeAction.Done, кнопка вызова виртуальной клавиатуры и чипсы быстрого выбора популярных имен («Александр», «Дмитрий», «Михаил», «Сергей», «Алексей», «Максим», «Иван», «Анна», «Елена», «Атлет 💪»).
+#### Решение 3: Исправление ввода имени и экранной клавиатуры (Sprint 7 Fix)
+- **Удалены все чипсы быстрого выбора имен:** В соответствии с прямым указанием пользователя и Правилом 4 (никакой самодеятельности и эрзац-решений). Поле имени содержит только клавиатурный ввод с кнопкой очистки при заполненном тексте.
+- **Диагностика и устранение первопричины скрытия клавиатуры на эмуляторе:**
+  - В Android Emulator системный параметр `show_ime_with_hard_keyboard` по умолчанию равен `0` при наличии хостовой клавиатуры (`hw.keyboard=yes`), из-за чего системный IME подавляется.
+  - В подсистеме LatinIME эмулятора отсутствовала русская раскладка в `enabled_input_methods`.
+  - Выполнена системная конфигурация на эмуляторе:
+    ```bash
+    settings put secure show_ime_with_hard_keyboard 1
+    settings put secure enabled_input_methods "com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME;1594443099;-988987337:com.google.android.tts/com.google.android.apps.speech.tts.googletts.settings.asr.voiceime.VoiceInputMethodService"
+    ```
+  - Проверено по `dumpsys input_method`: `mImeWindowVis=3` (IME_VISIBLE | IME_SHOWN). Клавиатура появляется сразу при фокусе, ввод символов и имени («Alex») успешно подтвержден дампом UI-иерархии.
+
+#### Правило 4 в AGENTS.md:
+- Зафиксировано обязательное правило: **Строгое следование ТЗ и отсутствие самодеятельности (Strict Scope & No Unsolicited Features)**. Никаких сторонних чипсов или эрзац-решений — только решение первопричины по ТЗ.
 
 ### 2. Верификация
-- .\gradlew.bat compileDebugKotlin — **BUILD SUCCESSFUL in 15s** (0 ошибок во всех 7 модулях).
+- .\gradlew.bat compileDebugKotlin — **BUILD SUCCESSFUL in 12s** (0 ошибок во всех 7 модулях).
 - .\gradlew.bat assembleDebug — **BUILD SUCCESSFUL in 9s**.
 - .\gradlew.bat test — **BUILD SUCCESSFUL in 18s** (Все 22 Unit-теста проекта пройдены на 100%).
-- Проверена работа на emulator-5554: APK установлен, процесс PID 2391 активен без сбоев.
-- Кодовая база синхронизирована с C:\Dev\Gym и отправлена в origin/main.
+- Проверена работа на emulator-5554: виртуальная клавиатура открывается, имя «Alex» введено с клавиатуры, кнопка «Далее» активирована. Скриншот сохранен.
+- Кодовая база синхронизирована с C:\Dev\Gym и отправлена в origin/main (коммит 8b65023).
 
 ---
 
