@@ -72,6 +72,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gym.core.model.PerceivedEffort
+import com.gym.core.model.ProgressionDecision
+import com.gym.core.model.ProgressionRecommendation
 import com.gym.core.model.Workout
 import com.gym.core.model.WorkoutExercise
 import com.gym.core.model.WorkoutSet
@@ -102,6 +104,7 @@ fun LiveWorkoutScreen(
     val state by viewModel.uiState.collectAsState()
     val elapsedSeconds by viewModel.workoutDurationSeconds.collectAsState()
     val restTimer by viewModel.restTimerState.collectAsState()
+    val recommendations by viewModel.progressionRecommendations.collectAsState()
 
     var editingSet by remember { mutableStateOf<WorkoutSet?>(null) }
 
@@ -121,6 +124,8 @@ fun LiveWorkoutScreen(
                 workout = current.workout,
                 elapsedSeconds = elapsedSeconds,
                 restTimer = restTimer,
+                recommendations = recommendations,
+                onApplyRecommendation = { exId, rec -> viewModel.applyProgressionRecommendation(exId, rec) },
                 onFinishClick = {
                     viewModel.finishWorkout(current.workout.id)
                     onFinishClick()
@@ -169,6 +174,8 @@ fun ActiveWorkoutContent(
     workout: Workout,
     elapsedSeconds: Long,
     restTimer: RestTimerState,
+    recommendations: Map<Long, ProgressionRecommendation> = emptyMap(),
+    onApplyRecommendation: (Long, ProgressionRecommendation) -> Unit = { _, _ -> },
     onFinishClick: () -> Unit,
     onAddSet: (Long, Int) -> Unit,
     onAddExerciseClick: () -> Unit = {},
@@ -253,7 +260,10 @@ fun ActiveWorkoutContent(
             }
 
             items(workout.exercises, key = { it.id }) { exercise ->
+                val rec = recommendations[exercise.id]
                 WorkoutExerciseCard(
+                    recommendation = rec,
+                    onApplyRecommendation = { onApplyRecommendation(exercise.id, it) },
                     exercise = exercise,
                     onAddSetClick = { onAddSet(exercise.id, exercise.sets.size) },
                     onEditSet = onEditSet,
@@ -389,6 +399,8 @@ fun RestTimerBanner(
 @Composable
 fun WorkoutExerciseCard(
     exercise: WorkoutExercise,
+    recommendation: ProgressionRecommendation? = null,
+    onApplyRecommendation: (ProgressionRecommendation) -> Unit = {},
     onAddSetClick: () -> Unit,
     onEditSet: (WorkoutSet) -> Unit,
     onAttachVideo: (Long, String) -> Unit,
@@ -432,6 +444,14 @@ fun WorkoutExerciseCard(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            if (recommendation != null) {
+                SmartProgressionBanner(
+                    recommendation = recommendation,
+                    onApplyClick = { onApplyRecommendation(recommendation) }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+            }
 
             // Таблица подходов
             Row(
@@ -753,4 +773,84 @@ fun SetEditDialog(
             }
         }
     )
+}
+
+@Composable
+fun SmartProgressionBanner(
+    recommendation: ProgressionRecommendation,
+    onApplyClick: () -> Unit
+) {
+    val borderColor = when (recommendation.decision) {
+        ProgressionDecision.INCREASE_WEIGHT -> GymAccentGreen
+        ProgressionDecision.DECREASE_WEIGHT -> Color(0xFFF59E0B)
+        ProgressionDecision.MAINTAIN_WEIGHT -> GymDarkSurfaceVariant
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, borderColor.copy(alpha = 0.6f), RoundedCornerShape(12.dp)),
+        colors = CardDefaults.cardColors(containerColor = GymDarkSurfaceVariant.copy(alpha = 0.5f)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "💡 Рекомендация ИИ",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GymAccentGreen
+                    )
+                    if (recommendation.goalTitle.isNotBlank()) {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "•  ",
+                            fontSize = 11.sp,
+                            color = GymTextSecondary
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = onApplyClick,
+                    modifier = Modifier.height(32.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (recommendation.decision == ProgressionDecision.INCREASE_WEIGHT) GymAccentGreen else GymDarkSurfaceVariant,
+                        contentColor = if (recommendation.decision == ProgressionDecision.INCREASE_WEIGHT) GymDarkBackground else GymTextPrimary
+                    ),
+                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 0.dp)
+                ) {
+                    Text(
+                        text = "Применить",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = " кг •  повт.",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = GymTextPrimary
+            )
+
+            Spacer(modifier = Modifier.height(2.dp))
+
+            Text(
+                text = recommendation.rationaleRu,
+                fontSize = 11.sp,
+                color = GymTextSecondary,
+                lineHeight = 16.sp
+            )
+        }
+    }
 }

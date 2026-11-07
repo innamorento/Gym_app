@@ -7,6 +7,6 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val workoutModule = module {
-    viewModel { WorkoutViewModel(get(), get(), get(), androidContext()) }
+    viewModel { WorkoutViewModel(get(), get(), get(), getOrNull(), androidContext()) }
     viewModel { AnalyticsViewModel(get(), get()) }
 }

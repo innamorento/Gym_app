@@ -4,7 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gym.core.database.dao.CoachAndReviewDao
 import com.gym.core.database.dao.TemplateDao
+import com.gym.core.database.dao.UserProfileDao
 import com.gym.core.database.dao.WorkoutDao
+import com.gym.core.model.EquipmentWeightProfile
+import com.gym.core.model.ProgressionRecommendation
+import com.gym.core.model.SmartProgressionEngine
+import com.gym.core.model.UserProfile
+import kotlinx.coroutines.Dispatchers
 import com.gym.core.database.entity.SetVideoReviewEntity
 import com.gym.core.database.entity.WorkoutEntity
 import com.gym.core.database.entity.WorkoutExerciseEntity
@@ -43,6 +49,7 @@ class WorkoutViewModel(
     private val workoutDao: WorkoutDao,
     private val templateDao: TemplateDao,
     private val coachAndReviewDao: CoachAndReviewDao,
+    private val userProfileDao: UserProfileDao? = null,
     private val context: android.content.Context? = null
 ) : ViewModel() {
 
@@ -66,6 +73,9 @@ class WorkoutViewModel(
     private val _restTimerState = MutableStateFlow(RestTimerState())
     val restTimerState: StateFlow<RestTimerState> = _restTimerState.asStateFlow()
 
+    private val _progressionRecommendations = MutableStateFlow<Map<Long, ProgressionRecommendation>>(emptyMap())
+    val progressionRecommendations: StateFlow<Map<Long, ProgressionRecommendation>> = _progressionRecommendations.asStateFlow()
+
     private var durationTimerJob: Job? = null
     private var restTimerJob: Job? = null
 
@@ -83,11 +93,13 @@ class WorkoutViewModel(
                 when (state) {
                     is WorkoutUiState.Active -> {
                         startDurationTicker(state.workout.startTime)
+                        loadProgressionRecommendations(state.workout)
                     }
                     is WorkoutUiState.Idle -> {
                         durationTimerJob?.cancel()
                         _workoutDurationSeconds.value = 0L
                         stopRestTimer()
+                        _progressionRecommendations.value = emptyMap()
                     }
                 }
             }
@@ -166,6 +178,45 @@ class WorkoutViewModel(
                     durationSeconds = 60
                 )
             )
+        }
+    }
+
+    fun loadProgressionRecommendations(workout: Workout) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val userProfile = userProfileDao?.getUserProfileSync()?.toDomain() ?: UserProfile()
+            val recs = mutableMapOf<Long, ProgressionRecommendation>()
+            for (exercise in workout.exercises) {
+                val prevSets = workoutDao.getLatestCompletedSetsForExercise(exercise.exercise.id, userProfile.id)
+                    .map { it.toDomain() }
+                val profile = EquipmentWeightProfile.defaultFor(exercise.exercise.equipment)
+                val rec = SmartProgressionEngine.calculateGoalAwareLoad(
+                    previousSets = prevSets,
+                    equipmentProfile = profile,
+                    goal = userProfile.primaryGoal,
+                    experience = userProfile.experience
+                )
+                recs[exercise.id] = rec
+            }
+            _progressionRecommendations.value = recs
+        }
+    }
+
+    fun applyProgressionRecommendation(workoutExerciseId: Long, recommendation: ProgressionRecommendation) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val activeWorkout = (uiState.value as? WorkoutUiState.Active)?.workout ?: return@launch
+            val exercise = activeWorkout.exercises.find { it.id == workoutExerciseId } ?: return@launch
+            val safeWeight = recommendation.suggestedWeight.coerceAtLeast(0.0)
+            val parsedReps = recommendation.suggestedReps.split("-").firstOrNull()?.toIntOrNull() ?: 10
+
+            for (set in exercise.sets) {
+                if (!set.isCompleted) {
+                    workoutDao.updateSetWeightAndReps(
+                        setId = set.id,
+                        weight = safeWeight,
+                        reps = parsedReps
+                    )
+                }
+            }
         }
     }
 
@@ -349,6 +400,7 @@ class WorkoutViewModel(
                 )
             )
             stopRestTimer()
+                        _progressionRecommendations.value = emptyMap()
         }
     }
 }
