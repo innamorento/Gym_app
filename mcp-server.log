@@ -1,0 +1,10 @@
+2026-11-07 15:17:42.196 [main] INFO  r.a.context.McpServerApplicationKt - Starting McpServerApplicationKt v0.3.2 using Java 17.0.18 with PID 16356 (C:\Users\Thinkpad X1\Documents\Работа\Рабочая база\Выгрузка\.agents\mcp\mcp-bsl-context-0.3.2.jar started by Thinkpad X1 in c:\Users\Thinkpad X1\Downloads\Gym)
+2026-11-07 15:17:42.201 [main] DEBUG r.a.context.McpServerApplicationKt - Running with Spring Boot v3.5.3, Spring v6.2.8
+2026-11-07 15:17:42.202 [main] INFO  r.a.context.McpServerApplicationKt - The following 1 profile is active: "stdio"
+2026-11-07 15:17:45.220 [main] INFO  o.s.a.m.s.a.McpServerAutoConfiguration - Enable tools capabilities, notification: true
+2026-11-07 15:17:45.356 [main] INFO  o.s.a.m.s.a.McpServerAutoConfiguration - Registered tools: 5
+2026-11-07 15:17:45.357 [main] INFO  o.s.a.m.s.a.McpServerAutoConfiguration - Enable resources capabilities, notification: true
+2026-11-07 15:17:45.358 [main] INFO  o.s.a.m.s.a.McpServerAutoConfiguration - Enable prompts capabilities, notification: true
+2026-11-07 15:17:45.359 [main] INFO  o.s.a.m.s.a.McpServerAutoConfiguration - Enable completions capabilities
+2026-11-07 15:17:45.754 [pool-2-thread-1] INFO  i.m.server.McpAsyncServer - Client initialize request - Protocol: 2025-11-25, Capabilities: ClientCapabilities[experimental=null, roots=null, sampling=null], Info: Implementation[name=antigravity-client, version=v1.0.0]
+2026-11-07 15:17:45.761 [pool-2-thread-1] WARN  i.m.server.McpAsyncServer - Client requested unsupported protocol version: 2025-11-25, so the server will suggest the 2024-11-05 version instead
