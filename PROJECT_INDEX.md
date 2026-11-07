@@ -1,8 +1,8 @@
 # Gym Workout Tracker — Project Index & AI Context
 
-> **Version:** 0.4.0  
+> **Version:** 0.5.0  
 > **Role:** Fullstack Android Developer & Systems/Product Analyst  
-> **Status:** Phase 0 & Phase 1 Completed. Phase 2 (Smart Progression Engine) Ready  
+> **Status:** Phase 0, 1, 2 Completed. Phase 3 (Advanced Analytics & Canvas Charts) Next  
 > **Target Platform:** Android (Offline-First Mobile App) + Sync/Backend Service  
 > **Current Workspace:** `C:\Users\Thinkpad X1\Downloads\Gym` (synced with `C:\Dev\Gym`)  
 > **Remote Repository:** `https://github.com/innamorento/Gym_app` (branch `main`)
@@ -95,4 +95,8 @@
 - [x] Доменная модель и база данных профиля атлета (Фаза 0): `UserProfile`, `UserProfileEntity`, `UserProfileDao`, TypeConverters, мапперы, расчет ИМТ и автоподбор программ.
 - [x] Обновлен Генеральный стратегический мастер-план `gym_tracker_master_plan.md` до версии 1.1.0 с Фазой 0 и графиком спринтов.
 - [ ] UI интерактивного онбординга атлета (`OnboardingScreen` / `OnboardingViewModel`) и роутинг в `GymNavHost`.
-- [ ] Алгоритм динамического изменения и подбора весов на следующих тренировках (Double Progression / RPE).
+- [x] Алгоритм динамического изменения и автопрогрессии весов (Фаза 2 / Спринт 8):
+  - Научно обоснованная авторегуляция нагрузки под цели атлета (HYPERTROPHY, STRENGTH, FAT_LOSS, HEALTH_FITNESS) в связке со стажем и RPE;
+  - Двойная прогрессия с шагом оборудования зала (EquipmentWeightProfile);
+  - Интеграция SmartProgressionBanner в экран живой тренировки LiveWorkoutScreen с применением нагрузки в 1 клик.
+- [ ] Продвинутая аналитика и графики прогресса (Фаза 3 / Спринт 9): Canvas-графики динамики 1RM, объема по неделям, радар баланса мышц.
