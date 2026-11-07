@@ -21,7 +21,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Keyboard
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -214,6 +222,9 @@ private fun PersonalInfoStep(
             lineHeight = 22.sp
         )
 
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val focusManager = LocalFocusManager.current
+
         // Имя
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
@@ -229,8 +240,35 @@ private fun PersonalInfoStep(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
-                    capitalization = KeyboardCapitalization.Sentences
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Done
                 ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        keyboardController?.hide()
+                    }
+                ),
+                trailingIcon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (name.isNotBlank()) {
+                            IconButton(onClick = { onNameChange("") }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Очистить",
+                                    tint = GymTextSecondary
+                                )
+                            }
+                        }
+                        IconButton(onClick = { keyboardController?.show() }) {
+                            Icon(
+                                imageVector = Icons.Default.Keyboard,
+                                contentDescription = "Показать клавиатуру",
+                                tint = GymAccentGreen
+                            )
+                        }
+                    }
+                },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = GymTextPrimary,
                     unfocusedTextColor = GymTextPrimary,
@@ -242,6 +280,52 @@ private fun PersonalInfoStep(
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
             )
+
+            // Быстрый выбор популярных имен в 1 клик
+            Text(
+                text = "💡 Быстрый выбор или примеры:",
+                fontSize = 12.sp,
+                color = GymTextSecondary
+            )
+
+            @OptIn(ExperimentalLayoutApi::class)
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                listOf(
+                    "Александр",
+                    "Дмитрий",
+                    "Михаил",
+                    "Сергей",
+                    "Алексей",
+                    "Максим",
+                    "Иван",
+                    "Анна",
+                    "Елена",
+                    "Атлет 💪"
+                ).forEach { presetName ->
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(GymDarkSurfaceVariant)
+                            .clickable {
+                                onNameChange(presetName)
+                                focusManager.clearFocus()
+                                keyboardController?.hide()
+                            }
+                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                    ) {
+                        Text(
+                            text = presetName,
+                            fontSize = 12.sp,
+                            color = GymTextPrimary,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
         }
 
         // Пол
