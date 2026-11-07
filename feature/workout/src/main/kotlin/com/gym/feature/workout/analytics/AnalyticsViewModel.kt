@@ -5,16 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.gym.core.database.dao.ExerciseDao
 import com.gym.core.database.dao.WorkoutDao
 import com.gym.core.database.mapper.toDomain
+import com.gym.core.model.AnalyticsCalculator
+import com.gym.core.model.CompoundPrTrophy
 import com.gym.core.model.Exercise
 import com.gym.core.model.MuscleCategory
+import com.gym.core.model.MuscleGroupBalance
+import com.gym.core.model.OneRmTrendPoint
 import com.gym.core.model.SetType
+import com.gym.core.model.WeeklyVolumePoint
 import com.gym.core.model.Workout
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 enum class AnalyticsTimeRange(val titleRu: String) {
@@ -34,7 +38,8 @@ data class OneRmRecord(
     val workoutDate: Long,
     val weight: Double,
     val reps: Int,
-    val estimated1Rm: Double
+    val estimated1Rm: Double,
+    val isPr: Boolean = false
 )
 
 data class ExercisePrSummary(
@@ -43,7 +48,13 @@ data class ExercisePrSummary(
     val best1Rm: Double,
     val bestWeight: Double,
     val bestReps: Int,
-    val records: List<OneRmRecord>
+    val records: List<OneRmRecord>,
+    val trendPoints: List<OneRmTrendPoint> = emptyList()
+)
+
+data class QuickCompoundChip(
+    val displayName: String,
+    val exerciseId: Long?
 )
 
 data class AnalyticsUiState(
@@ -52,6 +63,10 @@ data class AnalyticsUiState(
     val totalWorkoutsCount: Int = 0,
     val totalCompletedSets: Int = 0,
     val muscleBreakdown: List<MuscleCategoryVolume> = emptyList(),
+    val muscleBalance: MuscleGroupBalance? = null,
+    val weeklyVolumeHistory: List<WeeklyVolumePoint> = emptyList(),
+    val compoundTrophies: List<CompoundPrTrophy> = emptyList(),
+    val quickCompoundChips: List<QuickCompoundChip> = emptyList(),
     val availableExercises: List<Exercise> = emptyList(),
     val selectedExerciseId: Long? = null,
     val selectedExercisePr: ExercisePrSummary? = null,
@@ -116,6 +131,15 @@ class AnalyticsViewModel(
             )
         }.sortedByDescending { it.volumeKg }
 
+        // Расчет баланса Push / Pull / Legs и рекомендаций
+        val muscleBalance = AnalyticsCalculator.calculateMuscleBalance(completedWorkouts)
+
+        // Группировка тоннажа по 4 неделям для Canvas Bar Chart
+        val weeklyVolumeHistory = AnalyticsCalculator.calculateWeeklyVolume(completedWorkouts, numberOfWeeks = 4)
+
+        // Зал славы личных рекордов в базовых компаундных движениях
+        val compoundTrophies = AnalyticsCalculator.findCompoundTrophies(completedWorkouts)
+
         // Упражнения, по которым есть выполненные тренировки
         val performedExerciseIds = completedWorkouts
             .flatMap { it.exercises }
@@ -124,6 +148,24 @@ class AnalyticsViewModel(
 
         val availableExercises = allExercises.filter { it.id in performedExerciseIds }.ifEmpty {
             allExercises.take(10)
+        }
+
+        // Быстрые чипсы для базовых движений
+        val baseExercisesTerms = listOf(
+            "Жим лежа" to listOf("жим лежа", "жим штанги лежа", "bench press"),
+            "Приседания" to listOf("приседания", "присед", "squat"),
+            "Становая тяга" to listOf("становая тяга", "тяга становая", "deadlift"),
+            "Армейский жим" to listOf("армейский жим", "жим стоя", "overhead")
+        )
+
+        val quickChips = baseExercisesTerms.map { (label, searchTerms) ->
+            val foundEx = allExercises.find { ex ->
+                searchTerms.any { term -> ex.name.lowercase().contains(term) }
+            }
+            QuickCompoundChip(
+                displayName = label,
+                exerciseId = foundEx?.id
+            )
         }
 
         val effectiveExerciseId = selectedExId ?: availableExercises.firstOrNull()?.id
@@ -140,6 +182,10 @@ class AnalyticsViewModel(
             totalWorkoutsCount = totalWorkouts,
             totalCompletedSets = totalSets,
             muscleBreakdown = muscleBreakdown,
+            muscleBalance = muscleBalance,
+            weeklyVolumeHistory = weeklyVolumeHistory,
+            compoundTrophies = compoundTrophies,
+            quickCompoundChips = quickChips,
             availableExercises = availableExercises,
             selectedExerciseId = effectiveExerciseId,
             selectedExercisePr = selectedPrSummary,
@@ -157,45 +203,25 @@ class AnalyticsViewModel(
         allExercises: List<Exercise>
     ): ExercisePrSummary? {
         val exercise = allExercises.find { it.id == exerciseId } ?: return null
-        val records = mutableListOf<OneRmRecord>()
+        val trendPoints = AnalyticsCalculator.calculate1RmTrend(exerciseId, allCompletedWorkouts)
 
         var best1Rm = 0.0
         var bestWeight = 0.0
         var bestReps = 0
 
-        // Проходим по хронологии тренировок
-        for (workout in allCompletedWorkouts.sortedBy { it.startTime }) {
-            val matchingExercises = workout.exercises.filter { it.exercise.id == exerciseId }
-            var max1RmInWorkout = 0.0
-            var bestSetInWorkoutWeight = 0.0
-            var bestSetInWorkoutReps = 0
-
-            for (we in matchingExercises) {
-                for (set in we.sets.filter { it.isCompleted && it.setType != SetType.WARMUP }) {
-                    val rm = set.estimated1RM
-                    if (rm > max1RmInWorkout) {
-                        max1RmInWorkout = rm
-                        bestSetInWorkoutWeight = set.weight
-                        bestSetInWorkoutReps = set.reps
-                    }
-                    if (rm > best1Rm) {
-                        best1Rm = rm
-                        bestWeight = set.weight
-                        bestReps = set.reps
-                    }
-                }
+        val records = trendPoints.map { p ->
+            if (p.estimated1Rm > best1Rm) {
+                best1Rm = p.estimated1Rm
+                bestWeight = p.weight
+                bestReps = p.reps
             }
-
-            if (max1RmInWorkout > 0.0) {
-                records.add(
-                    OneRmRecord(
-                        workoutDate = workout.startTime,
-                        weight = bestSetInWorkoutWeight,
-                        reps = bestSetInWorkoutReps,
-                        estimated1Rm = max1RmInWorkout
-                    )
-                )
-            }
+            OneRmRecord(
+                workoutDate = p.workoutDateMillis,
+                weight = p.weight,
+                reps = p.reps,
+                estimated1Rm = p.estimated1Rm,
+                isPr = p.isPersonalRecord
+            )
         }
 
         return ExercisePrSummary(
@@ -204,7 +230,8 @@ class AnalyticsViewModel(
             best1Rm = (best1Rm * 10.0).roundToInt() / 10.0,
             bestWeight = bestWeight,
             bestReps = bestReps,
-            records = records
+            records = records,
+            trendPoints = trendPoints
         )
     }
 

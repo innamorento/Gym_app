@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.Timer
@@ -32,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,6 +50,7 @@ import com.gym.core.model.Exercise
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymAccentPurple
+import com.gym.core.ui.theme.GymAccentRed
 import com.gym.core.ui.theme.GymDarkBackground
 import com.gym.core.ui.theme.GymDarkSurface
 import com.gym.core.ui.theme.GymDarkSurfaceVariant
@@ -59,7 +62,8 @@ import com.gym.core.ui.theme.GymTextSecondary
 fun ExerciseDetailSheet(
     exercise: Exercise?,
     onDismiss: () -> Unit,
-    onSelectExercise: (Exercise) -> Unit
+    onSelectExercise: (Exercise) -> Unit,
+    onDeleteExercise: ((Exercise) -> Unit)? = null
 ) {
     if (exercise == null) return
 
@@ -83,13 +87,22 @@ fun ExerciseDetailSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = exercise.name,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = GymTextPrimary,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = exercise.name,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GymTextPrimary
+                    )
+                    if (exercise.isCustom) {
+                        Text(
+                            text = "⭐ Пользовательское упражнение",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFFFFD700)
+                        )
+                    }
+                }
                 IconButton(onClick = onDismiss) {
                     Icon(Icons.Default.Close, contentDescription = "Закрыть", tint = GymTextSecondary)
                 }
@@ -155,7 +168,7 @@ fun ExerciseDetailSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Целевые мышечные группы с FlowRow (автоперенос на новую строку при любом масштабе)
+            // Целевые мышечные группы с FlowRow
             Text("Задействованные мышцы:", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = GymTextPrimary)
             Spacer(modifier = Modifier.height(6.dp))
             FlowRow(
@@ -253,6 +266,26 @@ fun ExerciseDetailSheet(
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )
+            }
+
+            // Удаление пользовательского упражнения
+            if (exercise.isCustom && onDeleteExercise != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedButton(
+                    onClick = {
+                        onDeleteExercise(exercise)
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = GymAccentRed
+                    )
+                ) {
+                    Icon(Icons.Default.Delete, contentDescription = null, tint = GymAccentRed)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Удалить из каталога", color = GymAccentRed, fontWeight = FontWeight.SemiBold)
+                }
             }
         }
     }

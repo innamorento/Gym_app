@@ -37,6 +37,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -83,6 +84,7 @@ fun ExercisesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var selectedExerciseForDetail by remember { mutableStateOf<Exercise?>(null) }
+    var showCreateDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -104,6 +106,13 @@ fun ExercisesScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showCreateDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Создать упражнение",
+                            tint = GymAccentGreen
+                        )
+                    }
                     IconButton(onClick = viewModel::toggleShowExcluded) {
                         Icon(
                             imageVector = if (state.showExcluded) Icons.Default.Visibility else Icons.Default.VisibilityOff,
@@ -114,6 +123,19 @@ fun ExercisesScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = GymDarkBackground)
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showCreateDialog = true },
+                containerColor = GymAccentGreen,
+                contentColor = GymDarkBackground,
+                shape = CircleShape
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Создать упражнение"
+                )
+            }
         },
         containerColor = GymDarkBackground
     ) { paddingValues ->
@@ -231,7 +253,7 @@ fun ExercisesScreen(
         }
     }
 
-    // Модальная карточка упражнения с описанием, иллюстрацией техники и заготовкой под 3D анимацию
+    // Модальная карточка упражнения с описанием, иллюстрацией техники и удалением
     if (selectedExerciseForDetail != null) {
         ExerciseDetailSheet(
             exercise = selectedExerciseForDetail,
@@ -239,6 +261,29 @@ fun ExercisesScreen(
             onSelectExercise = { exercise ->
                 onExerciseSelect(exercise)
                 selectedExerciseForDetail = null
+            },
+            onDeleteExercise = { exercise ->
+                viewModel.deleteCustomExercise(exercise.id)
+                selectedExerciseForDetail = null
+            }
+        )
+    }
+
+    // Модальный конструктор нового пользовательского упражнения
+    if (showCreateDialog) {
+        CreateExerciseDialog(
+            onDismiss = { showCreateDialog = false },
+            onCreateExercise = { name, muscleGroup, equipment, defaultRestSeconds, initialPosition, execution, commonMistakes ->
+                viewModel.createCustomExercise(
+                    name = name,
+                    muscleGroup = muscleGroup,
+                    equipment = equipment,
+                    defaultRestSeconds = defaultRestSeconds,
+                    initialPosition = initialPosition,
+                    execution = execution,
+                    commonMistakes = commonMistakes
+                )
+                showCreateDialog = false
             }
         )
     }
@@ -300,12 +345,21 @@ fun ExerciseListItem(
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = exercise.name,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (exercise.isExcluded) GymTextSecondary else GymTextPrimary
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = exercise.name,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = if (exercise.isExcluded) GymTextSecondary else GymTextPrimary
+                    )
+                    if (exercise.isCustom) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "⭐",
+                            fontSize = 12.sp
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(3.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
