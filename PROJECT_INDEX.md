@@ -1,8 +1,8 @@
 # Gym Workout Tracker — Project Index & AI Context
 
-> **Version:** 0.3.0  
+> **Version:** 0.4.0  
 > **Role:** Fullstack Android Developer & Systems/Product Analyst  
-> **Status:** Phase 0 (Onboarding & Profile) & Phase 1 (Foreground Timer) Active  
+> **Status:** Phase 0 & Phase 1 Completed. Phase 2 (Smart Progression Engine) Ready  
 > **Target Platform:** Android (Offline-First Mobile App) + Sync/Backend Service  
 > **Current Workspace:** `C:\Users\Thinkpad X1\Downloads\Gym` (synced with `C:\Dev\Gym`)  
 > **Remote Repository:** `https://github.com/innamorento/Gym_app` (branch `main`)

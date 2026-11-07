@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
@@ -64,7 +65,8 @@ fun TemplatesListScreen(
     onStartWorkoutClick: (Long) -> Unit,
     onAnalyticsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
-    onCoachReviewsClick: () -> Unit = {}
+    onCoachReviewsClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     val state by viewModel.listUiState.collectAsState()
 
@@ -79,6 +81,13 @@ fun TemplatesListScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = onProfileClick) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Профиль атлета",
+                            tint = GymTextPrimary
+                        )
+                    }
                     IconButton(onClick = onAnalyticsClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.TrendingUp,

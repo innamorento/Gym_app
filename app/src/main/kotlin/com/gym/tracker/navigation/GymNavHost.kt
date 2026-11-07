@@ -1,16 +1,31 @@
 package com.gym.tracker.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.gym.core.database.dao.UserProfileDao
+import com.gym.core.ui.theme.GymAccentGreen
+import com.gym.core.ui.theme.GymDarkBackground
 import com.gym.feature.exercises.ExercisesViewModel
 import com.gym.feature.exercises.ui.ExercisesScreen
 import com.gym.feature.templates.TemplateEditorIntent
 import com.gym.feature.templates.TemplatesViewModel
+import com.gym.feature.templates.onboarding.OnboardingScreen
+import com.gym.feature.templates.onboarding.OnboardingViewModel
 import com.gym.feature.templates.ui.EquipmentSettingsScreen
 import com.gym.feature.templates.ui.TemplateEditorScreen
 import com.gym.feature.templates.ui.TemplatesListScreen
@@ -19,9 +34,13 @@ import com.gym.feature.workout.analytics.AnalyticsScreen
 import com.gym.feature.workout.analytics.AnalyticsViewModel
 import com.gym.feature.workout.ui.CoachReviewScreen
 import com.gym.feature.workout.ui.LiveWorkoutScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 object Destinations {
+    const val ONBOARDING = "onboarding"
     const val TEMPLATES_LIST = "templates_list"
     const val TEMPLATE_EDITOR = "template_editor/{templateId}"
     const val EXERCISE_PICKER = "exercise_picker?target={target}"
@@ -39,15 +58,53 @@ fun GymNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val userProfileDao: UserProfileDao = koinInject()
+    var hasCompletedProfile by remember { mutableStateOf<Boolean?>(null) }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            val count = userProfileDao.hasCompletedProfile()
+            hasCompletedProfile = count > 0
+        }
+    }
+
+    if (hasCompletedProfile == null) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(GymDarkBackground),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = GymAccentGreen)
+        }
+        return
+    }
+
     val templatesViewModel: TemplatesViewModel = koinViewModel()
     val exercisesViewModel: ExercisesViewModel = koinViewModel()
     val workoutViewModel: WorkoutViewModel = koinViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = Destinations.TEMPLATES_LIST,
+        startDestination = if (hasCompletedProfile == true) Destinations.TEMPLATES_LIST else Destinations.ONBOARDING,
         modifier = modifier
     ) {
+        composable(Destinations.ONBOARDING) {
+            val onboardingViewModel: OnboardingViewModel = koinViewModel()
+            OnboardingScreen(
+                viewModel = onboardingViewModel,
+                onOnboardingComplete = {
+                    if (navController.previousBackStackEntry != null) {
+                        navController.popBackStack()
+                    } else {
+                        navController.navigate(Destinations.TEMPLATES_LIST) {
+                            popUpTo(Destinations.ONBOARDING) { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
+
         composable(Destinations.TEMPLATES_LIST) {
             TemplatesListScreen(
                 viewModel = templatesViewModel,
@@ -71,6 +128,9 @@ fun GymNavHost(
                 },
                 onCoachReviewsClick = {
                     navController.navigate(Destinations.COACH_REVIEWS)
+                },
+                onProfileClick = {
+                    navController.navigate(Destinations.ONBOARDING)
                 }
             )
         }
