@@ -23,6 +23,7 @@ object DefaultTemplates {
             val array = JSONArray(jsonString)
             for (i in 0 until array.length()) {
                 val obj = array.getJSONObject(i)
+                val id = obj.optLong("id", (i + 1).toLong())
                 val name = obj.getString("name")
                 val nameEn = obj.optString("nameEn").takeIf { it.isNotBlank() }
                 val primaryMuscleGroup = try {
@@ -43,7 +44,7 @@ object DefaultTemplates {
 
                 list.add(
                     ExerciseEntity(
-                        id = 0,
+                        id = id,
                         name = name,
                         nameEn = nameEn,
                         primaryMuscleGroup = primaryMuscleGroup,
@@ -67,24 +68,25 @@ object DefaultTemplates {
 
     suspend fun seedDefaultDataIfEmpty(context: Context? = null, exerciseDao: ExerciseDao, templateDao: TemplateDao) {
         seedMutex.withLock {
-            // 1. Проверяем и наполняем упражнения
-            val existingNames = exerciseDao.getAllExercisesList().map { it.name }.toSet()
+            // 1. Проверяем и наполняем/обновляем каталог упражнений
             val catalogExercises = if (context != null) {
                 loadCatalogFromAssets(context)
             } else {
                 emptyList()
             }
 
-            val exercisesToInsert = if (catalogExercises.isNotEmpty()) {
-                catalogExercises.filter { it.name !in existingNames }
-            } else if (existingNames.isEmpty()) {
-                DefaultExercises.list
-            } else {
-                emptyList()
-            }
-
-            if (exercisesToInsert.isNotEmpty()) {
-                exerciseDao.insertExercises(exercisesToInsert)
+            if (catalogExercises.isNotEmpty()) {
+                val existingCount = exerciseDao.getExerciseCount()
+                if (existingCount == 0) {
+                    exerciseDao.insertExercises(catalogExercises)
+                } else {
+                    // Обновляем существующие записи каталога (переводы на русский, миниатюры),
+                    // не удаляя строки и не нарушая FOREIGN KEY RESTRICT в template_exercises
+                    exerciseDao.updateExercises(catalogExercises)
+                    exerciseDao.insertExercises(catalogExercises)
+                }
+            } else if (exerciseDao.getExerciseCount() == 0) {
+                exerciseDao.insertExercises(DefaultExercises.list)
             }
 
             // 2. Проверяем и наполняем стартовые шаблоны

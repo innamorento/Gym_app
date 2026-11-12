@@ -16,7 +16,7 @@
   },
   {
     "id": 2,
-    "name": "45° side bend",
+    "name": "Наклоны в сторону под 45°",
     "nameEn": "45° Side Bend",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -46,7 +46,7 @@
   },
   {
     "id": 4,
-    "name": "All fours squad stretch",
+    "name": "Растяжка квадрицепсов на четвереньках",
     "nameEn": "All Fours Squad Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -106,7 +106,7 @@
   },
   {
     "id": 8,
-    "name": "Archer pull up",
+    "name": "Подтягивания лучника",
     "nameEn": "Archer Pull Up",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,FOREARMS",
@@ -121,7 +121,7 @@
   },
   {
     "id": 9,
-    "name": "Archer push up",
+    "name": "Отжимания лучника",
     "nameEn": "Archer Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS,CORE",
@@ -136,7 +136,7 @@
   },
   {
     "id": 10,
-    "name": "Arm slingers hanging bent knee legs",
+    "name": "Вращения согнутыми ногами в висе на турнике",
     "nameEn": "Arm Slingers Hanging Bent Knee Legs",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,BACK",
@@ -151,7 +151,7 @@
   },
   {
     "id": 11,
-    "name": "Arm slingers hanging straight legs",
+    "name": "Вращения прямыми ногами в висе на турнике",
     "nameEn": "Arm Slingers Hanging Straight Legs",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,BACK",
@@ -166,7 +166,7 @@
   },
   {
     "id": 12,
-    "name": "Arms apart circular toe touch (male)",
+    "name": "Круговые наклоны к носкам стоя",
     "nameEn": "Arms Apart Circular Toe Touch (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CALVES",
@@ -211,7 +211,7 @@
   },
   {
     "id": 15,
-    "name": "Assisted hanging knee raise",
+    "name": "Подъемы коленей в висе в гравитроне",
     "nameEn": "Assisted Hanging Knee Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -241,7 +241,7 @@
   },
   {
     "id": 17,
-    "name": "Assisted lying calves stretch лежа",
+    "name": "Растяжка икроножных лежа с ассистентом",
     "nameEn": "Assisted Lying Calves Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -256,7 +256,7 @@
   },
   {
     "id": 18,
-    "name": "Assisted lying glutes stretch лежа",
+    "name": "Растяжка ягодичных мышц лежа с ассистентом",
     "nameEn": "Assisted Lying Glutes Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -271,7 +271,7 @@
   },
   {
     "id": 19,
-    "name": "Assisted lying gluteus and piriformis stretch лежа",
+    "name": "Растяжка ягодичной и грушевидной мышц с ассистентом",
     "nameEn": "Assisted Lying Gluteus And Piriformis Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -316,7 +316,7 @@
   },
   {
     "id": 22,
-    "name": "Assisted motion russian twist",
+    "name": "Русский твист с медболом (с поддержкой)",
     "nameEn": "Assisted Motion Russian Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -346,7 +346,7 @@
   },
   {
     "id": 24,
-    "name": "Assisted prone hamstring лежа на животе",
+    "name": "Растяжка задней поверхности бедра лежа на животе",
     "nameEn": "Assisted Prone Hamstring",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES,LOWER_BACK",
@@ -361,7 +361,7 @@
   },
   {
     "id": 25,
-    "name": "Assisted prone lying quads stretch лежа",
+    "name": "Растяжка квадрицепсов лежа на животе с ассистентом",
     "nameEn": "Assisted Prone Lying Quads Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -376,7 +376,7 @@
   },
   {
     "id": 26,
-    "name": "Assisted prone rectus femoris stretch лежа на животе",
+    "name": "Растяжка прямой мышцы бедра лежа с ассистентом",
     "nameEn": "Assisted Prone Rectus Femoris Stretch",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "QUADRICEPS",
@@ -406,7 +406,7 @@
   },
   {
     "id": 28,
-    "name": "Assisted seated pectoralis major stretch with stability ball сидя",
+    "name": "Растяжка больших грудных мышц сидя на фитболе с ассистентом",
     "nameEn": "Assisted Seated Pectoralis Major Stretch With Stability Ball",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -421,7 +421,7 @@
   },
   {
     "id": 29,
-    "name": "Assisted side lying adductor stretch лежа",
+    "name": "Растяжка приводящих мышц лежа на боку с ассистентом",
     "nameEn": "Assisted Side Lying Adductor Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -526,7 +526,7 @@
   },
   {
     "id": 36,
-    "name": "Astride jumps (male)",
+    "name": "Прыжки с разведением ног и хлопком (Jumping Jack)",
     "nameEn": "Astride Jumps (Male)",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -541,7 +541,7 @@
   },
   {
     "id": 37,
-    "name": "Back and forth step",
+    "name": "Шаги вперед-назад в приседе",
     "nameEn": "Back And Forth Step",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES,CALVES",
@@ -556,7 +556,7 @@
   },
   {
     "id": 38,
-    "name": "Back extension on exercise ball",
+    "name": "Гиперэкстензия на фитболе",
     "nameEn": "Back Extension On Exercise Ball",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -571,7 +571,7 @@
   },
   {
     "id": 39,
-    "name": "Back lever",
+    "name": "Горизонтальный вис сзади (Back lever)",
     "nameEn": "Back Lever",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,FOREARMS,CORE",
@@ -586,7 +586,7 @@
   },
   {
     "id": 40,
-    "name": "Back pec stretch",
+    "name": "Растяжка грудных мышц со сведением лопаток",
     "nameEn": "Back Pec Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,CHEST",
@@ -601,7 +601,7 @@
   },
   {
     "id": 41,
-    "name": "Backward jump",
+    "name": "Прыжок назад на двух ногах",
     "nameEn": "Backward Jump",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES,CALVES",
@@ -646,7 +646,7 @@
   },
   {
     "id": 44,
-    "name": "Band alternating v-up с резиной",
+    "name": "Попеременные V-складки на пресс с фитнес-резиной",
     "nameEn": "Band Alternating V-Up",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -676,7 +676,7 @@
   },
   {
     "id": 46,
-    "name": "Band assisted wheel rollerout с резиной",
+    "name": "Выкатывание с роликом с поддержкой резины",
     "nameEn": "Band Assisted Wheel Rollerout",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "LOWER_BACK",
@@ -706,7 +706,7 @@
   },
   {
     "id": 48,
-    "name": "Band bent-over hip extension с резиной",
+    "name": "Разгибание бедра в наклоне с резиной",
     "nameEn": "Band Bent-Over Hip Extension",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -841,7 +841,7 @@
   },
   {
     "id": 57,
-    "name": "Band hip lift с резиной",
+    "name": "Подъем таза (ягодичный мостик) с кольцевой резинкой",
     "nameEn": "Band Hip Lift",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -916,7 +916,7 @@
   },
   {
     "id": 62,
-    "name": "Band lying hip internal rotation с резиной лежа",
+    "name": "Внутренняя ротация бедра лежа с эспандером",
     "nameEn": "Band Lying Hip Internal Rotation",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -1021,7 +1021,7 @@
   },
   {
     "id": 69,
-    "name": "Band pull through с резиной",
+    "name": "Тяга эспандера между ног (Pull Through)",
     "nameEn": "Band Pull Through",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -1081,7 +1081,7 @@
   },
   {
     "id": 73,
-    "name": "Band seated hip internal rotation с резиной сидя",
+    "name": "Внутренняя ротация бедра сидя с фитнес-резиной",
     "nameEn": "Band Seated Hip Internal Rotation",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -1096,7 +1096,7 @@
   },
   {
     "id": 74,
-    "name": "Band seated twist с резиной сидя",
+    "name": "Скручивания корпуса сидя с фитнес-резиной",
     "nameEn": "Band Seated Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -1276,7 +1276,7 @@
   },
   {
     "id": 86,
-    "name": "Band step-up с резиной",
+    "name": "Зашагивания на возвышение с фитнес-резиной (Step-Up)",
     "nameEn": "Band Step-Up",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -1381,7 +1381,7 @@
   },
   {
     "id": 93,
-    "name": "Band v-up с резиной",
+    "name": "V-складка на пресс с фитнес-резинкой на ногах",
     "nameEn": "Band V-Up",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -1426,7 +1426,7 @@
   },
   {
     "id": 96,
-    "name": "Band y-raise с резиной",
+    "name": "Y-подъемы рук стоя с эспандером/резиной",
     "nameEn": "Band Y-Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPS,RHOMBOIDS",
@@ -1876,7 +1876,7 @@
   },
   {
     "id": 126,
-    "name": "Barbell glute bridge two legs on bench (male) со штангой",
+    "name": "Ягодичный мостик со штангой с опорой на скамью",
     "nameEn": "Barbell Glute Bridge Two Legs On Bench (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,CORE",
@@ -2041,7 +2041,7 @@
   },
   {
     "id": 137,
-    "name": "Жим JM (JM Press) со штангой",
+    "name": "Жим JM со штангой узким хватом (JM Press)",
     "nameEn": "Barbell Jm Bench Press",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "CHEST,SHOULDERS",
@@ -2116,7 +2116,7 @@
   },
   {
     "id": 142,
-    "name": "Barbell lying back of the head tricep extension со штангой лежа",
+    "name": "Французский жим из-за головы лежа со штангой",
     "nameEn": "Barbell Lying Back Of The Head Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -2161,7 +2161,7 @@
   },
   {
     "id": 145,
-    "name": "Barbell lying extension со штангой лежа",
+    "name": "Разгибания рук со штангой лежа (Французский жим)",
     "nameEn": "Barbell Lying Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -2176,7 +2176,7 @@
   },
   {
     "id": 146,
-    "name": "Barbell lying lifting (on hip) со штангой лежа",
+    "name": "Подъем штанги на бедрах (ягодичный мост лежа)",
     "nameEn": "Barbell Lying Lifting (On Hip)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -2296,7 +2296,7 @@
   },
   {
     "id": 154,
-    "name": "Barbell one arm snatch со штангой",
+    "name": "Рывок штанги одной рукой",
     "nameEn": "Barbell One Arm Snatch",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPS,FOREARMS,CORE",
@@ -2476,7 +2476,7 @@
   },
   {
     "id": 166,
-    "name": "Barbell rack pull со штангой",
+    "name": "Тяга штанги с плинтов / стоек (Rack Pull)",
     "nameEn": "Barbell Rack Pull",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -2656,7 +2656,7 @@
   },
   {
     "id": 178,
-    "name": "Barbell reverse grip skullcrusher со штангой",
+    "name": "Французский жим обратным хватом со штангой",
     "nameEn": "Barbell Reverse Grip Skullcrusher",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -2701,7 +2701,7 @@
   },
   {
     "id": 181,
-    "name": "Barbell rollerout со штангой",
+    "name": "Выкатывания со штангой на полу для пресса",
     "nameEn": "Barbell Rollerout",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "LOWER_BACK",
@@ -2716,7 +2716,7 @@
   },
   {
     "id": 182,
-    "name": "Barbell rollerout from bench со штангой",
+    "name": "Выкатывания со штангой с упором колен на скамью",
     "nameEn": "Barbell Rollerout From Bench",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -2881,7 +2881,7 @@
   },
   {
     "id": 193,
-    "name": "Barbell seated twist со штангой сидя",
+    "name": "Повороты корпуса со штангой на плечах сидя",
     "nameEn": "Barbell Seated Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -2911,7 +2911,7 @@
   },
   {
     "id": 195,
-    "name": "Barbell side bent v. 2 со штангой",
+    "name": "Боковые наклоны со штангой на плечах",
     "nameEn": "Barbell Side Bent V. 2",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -3016,7 +3016,7 @@
   },
   {
     "id": 202,
-    "name": "Barbell skier со штангой",
+    "name": "Упражнение 'Лыжник' со штангой",
     "nameEn": "Barbell Skier",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CORE",
@@ -3091,7 +3091,7 @@
   },
   {
     "id": 207,
-    "name": "Barbell standing ab rollerout со штангой стоя",
+    "name": "Выкатывание со штангой из стойки на ногах",
     "nameEn": "Barbell Standing Ab Rollerout",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,LOWER_BACK",
@@ -3271,7 +3271,7 @@
   },
   {
     "id": 219,
-    "name": "Barbell standing twist со штангой стоя",
+    "name": "Повороты корпуса со штангой на плечах стоя",
     "nameEn": "Barbell Standing Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -3331,7 +3331,7 @@
   },
   {
     "id": 223,
-    "name": "Barbell step-up со штангой",
+    "name": "Зашагивания на скамью со штангой на плечах",
     "nameEn": "Barbell Step-Up",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -3391,7 +3391,7 @@
   },
   {
     "id": 227,
-    "name": "Barbell thruster со штангой",
+    "name": "Трастеры со штангой (Выбросы из приседа)",
     "nameEn": "Barbell Thruster",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "QUADRICEPS,GLUTES,HAMSTRINGS,CORE",
@@ -3556,7 +3556,7 @@
   },
   {
     "id": 238,
-    "name": "Basic toe touch (male)",
+    "name": "Наклоны вперед с касанием носков",
     "nameEn": "Basic Toe Touch (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,CALVES",
@@ -3586,7 +3586,7 @@
   },
   {
     "id": 240,
-    "name": "Bear crawl",
+    "name": "Медвежья походка (Bear crawl)",
     "nameEn": "Bear Crawl",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "CORE,SHOULDERS,TRICEPS",
@@ -3646,7 +3646,7 @@
   },
   {
     "id": 244,
-    "name": "Bench hip extension",
+    "name": "Разгибания бедра на горизонтальной скамье",
     "nameEn": "Bench Hip Extension",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -3676,7 +3676,7 @@
   },
   {
     "id": 246,
-    "name": "Bent knee lying twist (male) лежа",
+    "name": "Скручивания лежа с согнутыми коленями",
     "nameEn": "Bent Knee Lying Twist (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -3766,7 +3766,7 @@
   },
   {
     "id": 252,
-    "name": "Bodyweight incline side plank на наклонной скамье",
+    "name": "Боковая планка на предплечье с опорой на наклонную скамью",
     "nameEn": "Bodyweight Incline Side Plank",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,SHOULDERS",
@@ -3946,7 +3946,7 @@
   },
   {
     "id": 264,
-    "name": "Bottoms-up",
+    "name": "Жим перевернутой гири (Bottoms-up)",
     "nameEn": "Bottoms-Up",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -3961,7 +3961,7 @@
   },
   {
     "id": 265,
-    "name": "Box jump down with one leg stabilization",
+    "name": "Спрыгивание с тумбы со стабилизацией на одной ноге",
     "nameEn": "Box Jump Down With One Leg Stabilization",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES",
@@ -3976,7 +3976,7 @@
   },
   {
     "id": 266,
-    "name": "Bridge - mountain climber (cross body)",
+    "name": "Ягодичный мостик с диагональным подтягиванием колен",
     "nameEn": "Bridge - Mountain Climber (Cross Body)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "GLUTES,QUADRICEPS,HAMSTRINGS,SHOULDERS,TRICEPS",
@@ -3991,7 +3991,7 @@
   },
   {
     "id": 267,
-    "name": "Burpee",
+    "name": "Бёрпи (Burpee)",
     "nameEn": "Burpee",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES,SHOULDERS,CHEST",
@@ -4141,7 +4141,7 @@
   },
   {
     "id": 277,
-    "name": "Cable concentration extension (on knee) на блоке",
+    "name": "Концентрированное разгибание на трицепс на нижнем блоке с упором в колено",
     "nameEn": "Cable Concentration Extension (On Knee)",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -4186,7 +4186,7 @@
   },
   {
     "id": 280,
-    "name": "Cable cross-over variation на блоке",
+    "name": "Кроссовер на грудные мышцы с перекрещиванием тросов",
     "nameEn": "Cable Cross-Over Variation",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "DELTOIDS,TRICEPS",
@@ -4321,7 +4321,7 @@
   },
   {
     "id": 289,
-    "name": "Cable forward raise на блоке",
+    "name": "Подъем рукояти блока вперед перед собой на переднюю дельту",
     "nameEn": "Cable Forward Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,FOREARMS",
@@ -4351,7 +4351,7 @@
   },
   {
     "id": 291,
-    "name": "Cable front shoulder raise на блоке",
+    "name": "Фронтальные подъемы на блоке двумя руками",
     "nameEn": "Cable Front Shoulder Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,BICEPS",
@@ -4381,7 +4381,7 @@
   },
   {
     "id": 293,
-    "name": "Cable high pulley overhead tricep extension на блоке",
+    "name": "Разгибание на трицепс из-за головы на верхнем блоке",
     "nameEn": "Cable High Pulley Overhead Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -4876,7 +4876,7 @@
   },
   {
     "id": 326,
-    "name": "Cable one arm lateral bent-over на блоке",
+    "name": "Тяга рукояти одной рукой в наклоне на нижнем блоке",
     "nameEn": "Cable One Arm Lateral Bent-Over",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "DELTOIDS,TRAPEZIUS",
@@ -5086,7 +5086,7 @@
   },
   {
     "id": 340,
-    "name": "Cable pull through (with rope) на блоке",
+    "name": "Тяга каната между ног на нижнем блоке (Pull Through)",
     "nameEn": "Cable Pull Through (With Rope)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -5221,7 +5221,7 @@
   },
   {
     "id": 349,
-    "name": "Cable rear drive на блоке",
+    "name": "Отведение руки назад на блоке на заднюю дельту",
     "nameEn": "Cable Rear Drive",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS,BACK",
@@ -5431,7 +5431,7 @@
   },
   {
     "id": 363,
-    "name": "Cable rope high pulley overhead tricep extension на блоке",
+    "name": "Разгибание каната из-за головы на верхнем блоке",
     "nameEn": "Cable Rope High Pulley Overhead Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -5446,7 +5446,7 @@
   },
   {
     "id": 364,
-    "name": "Cable rope incline tricep extension на блоке на наклонной скамье",
+    "name": "Разгибание на трицепс с канатом на наклонной скамье",
     "nameEn": "Cable Rope Incline Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -5461,7 +5461,7 @@
   },
   {
     "id": 365,
-    "name": "Cable rope lying on floor tricep extension на блоке лежа",
+    "name": "Французский жим с канатной рукоятью лежа на полу на блоке",
     "nameEn": "Cable Rope Lying On Floor Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -5506,7 +5506,7 @@
   },
   {
     "id": 368,
-    "name": "Cable russian twists (on stability ball) на блоке",
+    "name": "Русский твист на блоке сидя на фитболе",
     "nameEn": "Cable Russian Twists (On Stability Ball)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -5656,7 +5656,7 @@
   },
   {
     "id": 378,
-    "name": "Cable seated shoulder internal rotation на блоке сидя",
+    "name": "Внутренняя ротация плеча на блоке сидя",
     "nameEn": "Cable Seated Shoulder Internal Rotation",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "ROTATOR_CUFF,TRICEPS",
@@ -5671,7 +5671,7 @@
   },
   {
     "id": 379,
-    "name": "Cable seated twist на блоке сидя",
+    "name": "Повороты корпуса на блоке сидя",
     "nameEn": "Cable Seated Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -5731,7 +5731,7 @@
   },
   {
     "id": 383,
-    "name": "Cable side bend на блоке",
+    "name": "Боковые наклоны на блоке стоя",
     "nameEn": "Cable Side Bend",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -5896,7 +5896,7 @@
   },
   {
     "id": 394,
-    "name": "Cable standing hip extension на блоке стоя",
+    "name": "На блоке: стоя бедра разгибания стоя",
     "nameEn": "Cable Standing Hip Extension",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -5926,7 +5926,7 @@
   },
   {
     "id": 396,
-    "name": "Cable standing lift на блоке стоя",
+    "name": "Диагональные подъемы рукояти блока снизу-вверх стоя (Дровосек)",
     "nameEn": "Cable Standing Lift",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -6001,7 +6001,7 @@
   },
   {
     "id": 401,
-    "name": "Cable standing reverse grip one arm overhead tricep extension на блоке стоя",
+    "name": "Разгибание руки на трицепс из-за головы обратным хватом на блоке",
     "nameEn": "Cable Standing Reverse Grip One Arm Overhead Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -6031,7 +6031,7 @@
   },
   {
     "id": 403,
-    "name": "Cable standing shoulder external rotation на блоке стоя",
+    "name": "Внешняя ротация плеча на блоке стоя",
     "nameEn": "Cable Standing Shoulder External Rotation",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "ROTATOR_CUFF,TRAPEZIUS",
@@ -6196,7 +6196,7 @@
   },
   {
     "id": 414,
-    "name": "Cable twist на блоке",
+    "name": "Скручивания на блоке стоя (Дровосек)",
     "nameEn": "Cable Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -6211,7 +6211,7 @@
   },
   {
     "id": 415,
-    "name": "Cable twist (up-down) на блоке",
+    "name": "Диагональные скручивания на блоке сверху-вниз (Дровосек)",
     "nameEn": "Cable Twist (Up-Down)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -6226,7 +6226,7 @@
   },
   {
     "id": 416,
-    "name": "Cable twisting pull на блоке",
+    "name": "Тяга рукояти блока с разворотом корпуса",
     "nameEn": "Cable Twisting Pull",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,BICEPS",
@@ -6361,7 +6361,7 @@
   },
   {
     "id": 425,
-    "name": "Calf push stretch with hands against wall",
+    "name": "Растяжка икроножных с упором руками в стену",
     "nameEn": "Calf Push Stretch With Hands Against Wall",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -6376,7 +6376,7 @@
   },
   {
     "id": 426,
-    "name": "Calf stretch with hands against wall",
+    "name": "Растяжка икр у стены с выпрямленным коленом",
     "nameEn": "Calf Stretch With Hands Against Wall",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -6391,7 +6391,7 @@
   },
   {
     "id": 427,
-    "name": "Calf stretch with rope",
+    "name": "Растяжка икроножных с эспандером/лентой",
     "nameEn": "Calf Stretch With Rope",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -6511,7 +6511,7 @@
   },
   {
     "id": 435,
-    "name": "Chest stretch with exercise ball",
+    "name": "Растяжка груди на фитболе",
     "nameEn": "Chest Stretch With Exercise Ball",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -6571,7 +6571,7 @@
   },
   {
     "id": 439,
-    "name": "Circles knee stretch",
+    "name": "Круговая мобилизация коленей стоя",
     "nameEn": "Circles Knee Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -6586,7 +6586,7 @@
   },
   {
     "id": 440,
-    "name": "Clap push up",
+    "name": "Отжимания с хлопком",
     "nameEn": "Clap Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -6676,7 +6676,7 @@
   },
   {
     "id": 446,
-    "name": "Crab twist toe touch",
+    "name": "Касание носков в позе краба с разворотом",
     "nameEn": "Crab Twist Toe Touch",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -6796,7 +6796,7 @@
   },
   {
     "id": 454,
-    "name": "Cycle cross trainer",
+    "name": "Занятие на эллиптическом тренажере (Cross trainer)",
     "nameEn": "Cycle Cross Trainer",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES",
@@ -6871,7 +6871,7 @@
   },
   {
     "id": 459,
-    "name": "Deep push up",
+    "name": "Глубокие отжимания с пола",
     "nameEn": "Deep Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -6916,7 +6916,7 @@
   },
   {
     "id": 462,
-    "name": "Drop push up",
+    "name": "Плиометрические дроп-отжимания (Drop push up)",
     "nameEn": "Drop Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -7276,7 +7276,7 @@
   },
   {
     "id": 486,
-    "name": "Dumbbell burpee с гантелями",
+    "name": "Бёрпи с гантелями (Dumbbell Burpee)",
     "nameEn": "Dumbbell Burpee",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES,SHOULDERS,TRICEPS,CORE",
@@ -7816,7 +7816,7 @@
   },
   {
     "id": 522,
-    "name": "Dumbbell incline breeding с гантелями на наклонной скамье",
+    "name": "Разведение гантелей на наклонной скамье",
     "nameEn": "Dumbbell Incline Breeding",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -8086,7 +8086,7 @@
   },
   {
     "id": 540,
-    "name": "Dumbbell incline raise с гантелями на наклонной скамье",
+    "name": "Гантели: на наклонной скамье подъем на наклонной скамье",
     "nameEn": "Dumbbell Incline Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,TRICEPS",
@@ -8161,7 +8161,7 @@
   },
   {
     "id": 545,
-    "name": "Dumbbell incline t-raise с гантелями на наклонной скамье",
+    "name": "Т-подъемы гантелей на наклонной скамье на заднюю дельту",
     "nameEn": "Dumbbell Incline T-Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPS,RHOMBOIDS",
@@ -8206,7 +8206,7 @@
   },
   {
     "id": 548,
-    "name": "Dumbbell incline two arm extension с гантелями на наклонной скамье",
+    "name": "Гантели: на наклонной скамье двумя руками разгибания на наклонной скамье",
     "nameEn": "Dumbbell Incline Two Arm Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -8221,7 +8221,7 @@
   },
   {
     "id": 549,
-    "name": "Dumbbell incline y-raise с гантелями на наклонной скамье",
+    "name": "Y-подъемы гантелей на наклонной скамье на плечи",
     "nameEn": "Dumbbell Incline Y-Raise",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,REAR_DELTOIDS",
@@ -8236,7 +8236,7 @@
   },
   {
     "id": 550,
-    "name": "Dumbbell iron cross с гантелями",
+    "name": "Удержание гантелей в стороны крестом (Iron Cross)",
     "nameEn": "Dumbbell Iron Cross",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CHEST",
@@ -8356,7 +8356,7 @@
   },
   {
     "id": 558,
-    "name": "Dumbbell lying extension (across face) с гантелями лежа",
+    "name": "Гантели: лежа разгибания (across face) лежа",
     "nameEn": "Dumbbell Lying Extension (Across Face)",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -8371,7 +8371,7 @@
   },
   {
     "id": 559,
-    "name": "Dumbbell lying alternate extension с гантелями лежа",
+    "name": "Попеременные французские разгибания рук с гантелями лежа",
     "nameEn": "Dumbbell Lying Alternate Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -8401,7 +8401,7 @@
   },
   {
     "id": 561,
-    "name": "Dumbbell lying external shoulder rotation с гантелями лежа",
+    "name": "Внешняя ротация плеча с гантелью лежа на боку",
     "nameEn": "Dumbbell Lying External Shoulder Rotation",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "ROTATOR_CUFF,TRICEPS",
@@ -8416,7 +8416,7 @@
   },
   {
     "id": 562,
-    "name": "Dumbbell lying femoral с гантелями лежа",
+    "name": "Сгибание ног с гантелью лежа на животе (на бицепс бедра)",
     "nameEn": "Dumbbell Lying Femoral",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES",
@@ -8461,7 +8461,7 @@
   },
   {
     "id": 565,
-    "name": "Dumbbell lying one arm deltoid rear с гантелями лежа",
+    "name": "Отведение одной руки с гантелью лежа на скамье на заднюю дельту",
     "nameEn": "Dumbbell Lying One Arm Deltoid Rear",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,RHOMBOIDS",
@@ -8566,7 +8566,7 @@
   },
   {
     "id": 572,
-    "name": "Dumbbell lying pronation on floor с гантелями лежа",
+    "name": "Пронация предплечья с гантелью на полу",
     "nameEn": "Dumbbell Lying Pronation On Floor",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "BICEPS,TRICEPS",
@@ -8626,7 +8626,7 @@
   },
   {
     "id": 576,
-    "name": "Dumbbell lying single extension с гантелями лежа",
+    "name": "Французский жим одной рукой с гантелью лежа",
     "nameEn": "Dumbbell Lying Single Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -8656,7 +8656,7 @@
   },
   {
     "id": 578,
-    "name": "Dumbbell lying supination on floor с гантелями лежа",
+    "name": "Супинация предплечья с гантелью на полу",
     "nameEn": "Dumbbell Lying Supination On Floor",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "BICEPS,SHOULDERS",
@@ -9151,7 +9151,7 @@
   },
   {
     "id": 611,
-    "name": "Dumbbell one arm snatch с гантелями",
+    "name": "Рывок одной гантели с пола (Snatch)",
     "nameEn": "Dumbbell One Arm Snatch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CORE",
@@ -9901,7 +9901,7 @@
   },
   {
     "id": 661,
-    "name": "Dumbbell seated alternate shoulder с гантелями сидя",
+    "name": "Попеременный жим гантелей сидя на плечи",
     "nameEn": "Dumbbell Seated Alternate Shoulder",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,UPPER_BACK",
@@ -9916,7 +9916,7 @@
   },
   {
     "id": 662,
-    "name": "Dumbbell seated bench extension с гантелями сидя",
+    "name": "Гантели: сидя на скамье разгибания сидя",
     "nameEn": "Dumbbell Seated Bench Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -10186,7 +10186,7 @@
   },
   {
     "id": 680,
-    "name": "Dumbbell seated one arm rotate с гантелями сидя",
+    "name": "Вращение предплечья с гантелью сидя с упором в бедро",
     "nameEn": "Dumbbell Seated One Arm Rotate",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "SHOULDERS,BICEPS",
@@ -10291,7 +10291,7 @@
   },
   {
     "id": 687,
-    "name": "Dumbbell seated reverse grip one arm overhead tricep extension с гантелями сидя",
+    "name": "Разгибание руки обратным хватом из-за головы с гантелью сидя",
     "nameEn": "Dumbbell Seated Reverse Grip One Arm Overhead Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -10381,7 +10381,7 @@
   },
   {
     "id": 693,
-    "name": "Dumbbell side lying one hand raise с гантелями лежа",
+    "name": "Подъем руки в сторону с гантелью лежа на боку",
     "nameEn": "Dumbbell Side Lying One Hand Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,RHOMBOIDS",
@@ -10411,7 +10411,7 @@
   },
   {
     "id": 695,
-    "name": "Dumbbell single arm overhead carry с гантелями",
+    "name": "Прогулка с гантелью над головой в вытянутой руке",
     "nameEn": "Dumbbell Single Arm Overhead Carry",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPS,CORE",
@@ -10546,7 +10546,7 @@
   },
   {
     "id": 704,
-    "name": "Dumbbell standing alternate raise с гантелями стоя",
+    "name": "Попеременные подъемы гантелей перед собой стоя",
     "nameEn": "Dumbbell Standing Alternate Raise",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPS,FOREARMS",
@@ -10576,7 +10576,7 @@
   },
   {
     "id": 706,
-    "name": "Dumbbell standing around world с гантелями стоя",
+    "name": "Махи гантелями по кругу над головой стоя (Вокруг света)",
     "nameEn": "Dumbbell Standing Around World",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,FOREARMS",
@@ -10756,7 +10756,7 @@
   },
   {
     "id": 718,
-    "name": "Dumbbell standing one arm extension с гантелями стоя",
+    "name": "Гантели: стоя одной рукой разгибания стоя",
     "nameEn": "Dumbbell Standing One Arm Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -10906,7 +10906,7 @@
   },
   {
     "id": 728,
-    "name": "Dumbbell step-up с гантелями",
+    "name": "Зашагивания на возвышение с гантелями (Step-Up)",
     "nameEn": "Dumbbell Step-Up",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -10996,7 +10996,7 @@
   },
   {
     "id": 734,
-    "name": "Dumbbell sumo pull through с гантелями",
+    "name": "Тяга гантели между ног в стойке сумо (Pull Through)",
     "nameEn": "Dumbbell Sumo Pull Through",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CORE",
@@ -11101,7 +11101,7 @@
   },
   {
     "id": 741,
-    "name": "Dumbbell upright shoulder external rotation с гантелями",
+    "name": "Внешняя ротация плеч с гантелями стоя под углом 90°",
     "nameEn": "Dumbbell Upright Shoulder External Rotation",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "ROTATOR_CUFF,TRAPEZIUS",
@@ -11191,7 +11191,7 @@
   },
   {
     "id": 747,
-    "name": "Dynamic chest stretch (male)",
+    "name": "Динамическая растяжка грудных мышц стоя",
     "nameEn": "Dynamic Chest Stretch (Male)",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -11236,7 +11236,7 @@
   },
   {
     "id": 750,
-    "name": "Elbow-to-knee",
+    "name": "Скручивания локоть к колену стоя",
     "nameEn": "Elbow-To-Knee",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -11251,7 +11251,7 @@
   },
   {
     "id": 751,
-    "name": "Elevator",
+    "name": "Подъемы на носки на одной ноге (Elevator)",
     "nameEn": "Elevator",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,TRAPEZIUS",
@@ -11266,7 +11266,7 @@
   },
   {
     "id": 752,
-    "name": "Exercise ball alternating arm ups",
+    "name": "Попеременный подъем рук лежа на фитболе",
     "nameEn": "Exercise Ball Alternating Arm Ups",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,CORE",
@@ -11281,7 +11281,7 @@
   },
   {
     "id": 753,
-    "name": "Exercise ball back extension with arms extended",
+    "name": "Разгибания спины на фитболе с вытянутыми руками",
     "nameEn": "Exercise Ball Back Extension With Arms Extended",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -11296,7 +11296,7 @@
   },
   {
     "id": 754,
-    "name": "Exercise ball back extension with hands behind head",
+    "name": "Гиперэкстензия на фитболе руки за головой",
     "nameEn": "Exercise Ball Back Extension With Hands Behind Head",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -11311,7 +11311,7 @@
   },
   {
     "id": 755,
-    "name": "Exercise ball back extension with knees off ground",
+    "name": "Гиперэкстензия на фитболе с отрывом колен",
     "nameEn": "Exercise Ball Back Extension With Knees Off Ground",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -11326,7 +11326,7 @@
   },
   {
     "id": 756,
-    "name": "Exercise ball back extension with rotation",
+    "name": "Гиперэкстензия на фитболе с поворотом корпуса",
     "nameEn": "Exercise Ball Back Extension With Rotation",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -11356,7 +11356,7 @@
   },
   {
     "id": 758,
-    "name": "Exercise ball hip flexor stretch",
+    "name": "Растяжка сгибателей бедра на фитболе",
     "nameEn": "Exercise Ball Hip Flexor Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS",
@@ -11371,7 +11371,7 @@
   },
   {
     "id": 759,
-    "name": "Exercise ball hug",
+    "name": "Растяжка спины в обхвате фитбола",
     "nameEn": "Exercise Ball Hug",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,CHEST",
@@ -11386,7 +11386,7 @@
   },
   {
     "id": 760,
-    "name": "Exercise ball lat stretch",
+    "name": "Растяжка широчайших мышц на фитболе",
     "nameEn": "Exercise Ball Lat Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -11401,7 +11401,7 @@
   },
   {
     "id": 761,
-    "name": "Exercise ball lower back stretch (pyramid)",
+    "name": "Пирамидальная растяжка поясницы на фитболе",
     "nameEn": "Exercise Ball Lower Back Stretch (Pyramid)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -11416,7 +11416,7 @@
   },
   {
     "id": 762,
-    "name": "Exercise ball lying side lat stretch лежа",
+    "name": "Боковая растяжка широчайших мышц лежа на фитболе",
     "nameEn": "Exercise Ball Lying Side Lat Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -11476,7 +11476,7 @@
   },
   {
     "id": 766,
-    "name": "Exercise ball one leg prone lower body rotation лежа на животе",
+    "name": "Вращение нижней части тела лежа на фитболе",
     "nameEn": "Exercise Ball One Leg Prone Lower Body Rotation",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CORE",
@@ -11506,7 +11506,7 @@
   },
   {
     "id": 768,
-    "name": "Exercise ball pike push up",
+    "name": "Отжимания домиком на фитболе (Pike push up)",
     "nameEn": "Exercise Ball Pike Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS,CORE",
@@ -11536,7 +11536,7 @@
   },
   {
     "id": 770,
-    "name": "Exercise ball seated hamstring stretch сидя",
+    "name": "Растяжка задней поверхности бедра сидя на фитболе",
     "nameEn": "Exercise Ball Seated Hamstring Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES,LOWER_BACK",
@@ -11551,7 +11551,7 @@
   },
   {
     "id": 771,
-    "name": "Exercise ball seated triceps stretch сидя",
+    "name": "Растяжка трицепса сидя на фитболе",
     "nameEn": "Exercise Ball Seated Triceps Stretch",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -11671,7 +11671,7 @@
   },
   {
     "id": 779,
-    "name": "Жим со штангой EZ",
+    "name": "Жим от подбородка с EZ-грифом (Anti Gravity Press)",
     "nameEn": "Ez Barbell Anti Gravity Press",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CHEST",
@@ -11686,7 +11686,7 @@
   },
   {
     "id": 780,
-    "name": "Сгибания со штангой EZ",
+    "name": "Сгибания рук узким хватом на скамье Скотта с EZ-грифом",
     "nameEn": "Ez Barbell Close Grip Preacher Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11701,7 +11701,7 @@
   },
   {
     "id": 781,
-    "name": "Сгибания со штангой EZ",
+    "name": "Сгибания рук на бицепс узким хватом с EZ-грифом стоя",
     "nameEn": "Ez Barbell Close-Grip Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11716,7 +11716,7 @@
   },
   {
     "id": 782,
-    "name": "Сгибания со штангой EZ",
+    "name": "Сгибания рук на бицепс с EZ-грифом стоя",
     "nameEn": "Ez Barbell Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11731,7 +11731,7 @@
   },
   {
     "id": 783,
-    "name": "Жим со штангой EZ на скамье с обратным наклоном",
+    "name": "Французский жим узким хватом с EZ-грифом на скамье с наклоном вниз",
     "nameEn": "Ez Barbell Decline Close Grip Face Press",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "CHEST,SHOULDERS",
@@ -11746,7 +11746,7 @@
   },
   {
     "id": 784,
-    "name": "Разгибания на трицепс со штангой EZ на скамье с обратным наклоном",
+    "name": "Французский жим с EZ-грифом на скамье с наклоном вниз",
     "nameEn": "Ez Barbell Decline Triceps Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -11761,7 +11761,7 @@
   },
   {
     "id": 785,
-    "name": "Разгибания на трицепс со штангой EZ на наклонной скамье",
+    "name": "Французский жим с EZ-грифом на наклонной скамье",
     "nameEn": "Ez Barbell Incline Triceps Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -11776,7 +11776,7 @@
   },
   {
     "id": 786,
-    "name": "Жим JM со штангой EZ",
+    "name": "Жим JM с EZ-грифом узким хватом (JM Press)",
     "nameEn": "Ez Barbell Jm Bench Press",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "CHEST,SHOULDERS",
@@ -11791,7 +11791,7 @@
   },
   {
     "id": 787,
-    "name": "Сгибания со штангой EZ",
+    "name": "Сгибания рук обратным хватом с EZ-грифом (пронация)",
     "nameEn": "Ez Barbell Reverse Grip Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11806,7 +11806,7 @@
   },
   {
     "id": 788,
-    "name": "Сгибания со штангой EZ",
+    "name": "Сгибания рук обратным хватом на скамье Скотта с EZ-грифом",
     "nameEn": "Ez Barbell Reverse Grip Preacher Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11821,7 +11821,7 @@
   },
   {
     "id": 789,
-    "name": "Сгибания со штангой EZ сидя",
+    "name": "Сгибания рук на бицепс сидя с EZ-грифом",
     "nameEn": "Ez Barbell Seated Curls",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11836,7 +11836,7 @@
   },
   {
     "id": 790,
-    "name": "Разгибания на трицепс со штангой EZ сидя",
+    "name": "Французский жим из-за головы сидя с EZ-грифом",
     "nameEn": "Ez Barbell Seated Triceps Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -11851,7 +11851,7 @@
   },
   {
     "id": 791,
-    "name": "Паучьи сгибания со штангой EZ",
+    "name": "Паучьи сгибания на наклонной скамье с EZ-грифом",
     "nameEn": "Ez Barbell Spider Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11866,7 +11866,7 @@
   },
   {
     "id": 792,
-    "name": "Паучьи сгибания со штангой EZ",
+    "name": "Паучьи сгибания узким хватом с EZ-грифом",
     "nameEn": "Ez Barbell Spider Curl",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS",
@@ -11926,7 +11926,7 @@
   },
   {
     "id": 796,
-    "name": "Farmers walk",
+    "name": "Прогулка фермера (Farmer's walk)",
     "nameEn": "Farmers Walk",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "CALVES,FOREARMS,CORE",
@@ -11956,7 +11956,7 @@
   },
   {
     "id": 798,
-    "name": "Flag",
+    "name": "Упражнение 'Флажок' на шведской стенке / пилоне (Human flag)",
     "nameEn": "Flag",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,SHOULDERS",
@@ -11971,7 +11971,7 @@
   },
   {
     "id": 799,
-    "name": "Flexion leg sit up (bent knee)",
+    "name": "Подъемы туловища с согнутыми коленями (Sit up)",
     "nameEn": "Flexion Leg Sit Up (Bent Knee)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -11986,7 +11986,7 @@
   },
   {
     "id": 800,
-    "name": "Flexion leg sit up (straight arm)",
+    "name": "Подъемы туловища с прямыми руками вперед",
     "nameEn": "Flexion Leg Sit Up (Straight Arm)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS,QUADRICEPS",
@@ -12031,7 +12031,7 @@
   },
   {
     "id": 803,
-    "name": "Forward jump",
+    "name": "Прыжки вперед с места на двух ногах",
     "nameEn": "Forward Jump",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "CALVES,HAMSTRINGS,GLUTES",
@@ -12091,7 +12091,7 @@
   },
   {
     "id": 807,
-    "name": "Frog planche",
+    "name": "Стойка 'Лягушка' (Frog planche)",
     "nameEn": "Frog Planche",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,CHEST,TRICEPS",
@@ -12106,7 +12106,7 @@
   },
   {
     "id": 808,
-    "name": "Front lever",
+    "name": "Передний вис (Front lever)",
     "nameEn": "Front Lever",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "LATS,SHOULDERS,FOREARMS",
@@ -12121,7 +12121,7 @@
   },
   {
     "id": 809,
-    "name": "Front lever reps",
+    "name": "Динамические подъемы в передний вис",
     "nameEn": "Front Lever Reps",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "CORE,SHOULDERS",
@@ -12136,7 +12136,7 @@
   },
   {
     "id": 810,
-    "name": "Front plank with twist",
+    "name": "Планка с поворотом корпуса (твист)",
     "nameEn": "Front Plank With Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,SHOULDERS",
@@ -12151,7 +12151,7 @@
   },
   {
     "id": 811,
-    "name": "Full maltese",
+    "name": "Крест на кольцах / полу (Maltese cross)",
     "nameEn": "Full Maltese",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,CHEST",
@@ -12166,7 +12166,7 @@
   },
   {
     "id": 812,
-    "name": "Full planche",
+    "name": "Горизонт (Full planche)",
     "nameEn": "Full Planche",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,CHEST,TRICEPS",
@@ -12196,7 +12196,7 @@
   },
   {
     "id": 814,
-    "name": "Gironda sternum chin",
+    "name": "Подтягивания Жиронды к грудине (Gironda chin-up)",
     "nameEn": "Gironda Sternum Chin",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,RHOMBOIDS,REAR_DELTOIDS",
@@ -12211,7 +12211,7 @@
   },
   {
     "id": 815,
-    "name": "Glute bridge march",
+    "name": "Ягодичный мостик с шаганием ногами (Glute bridge march)",
     "nameEn": "Glute Bridge March",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -12226,7 +12226,7 @@
   },
   {
     "id": 816,
-    "name": "Glute bridge two legs on bench (male)",
+    "name": "Ягодичный мостик с опорой двумя ногами на скамью",
     "nameEn": "Glute Bridge Two Legs On Bench (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,CORE",
@@ -12241,7 +12241,7 @@
   },
   {
     "id": 817,
-    "name": "Glute-ham raise",
+    "name": "Подъемы корпуса на GHR (Glute-Ham Raise)",
     "nameEn": "Glute-Ham Raise",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES,LOWER_BACK",
@@ -12256,7 +12256,7 @@
   },
   {
     "id": 818,
-    "name": "Gorilla chin",
+    "name": "Подтягивания гориллы (Gorilla chin)",
     "nameEn": "Gorilla Chin",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "FOREARMS,BICEPS",
@@ -12316,7 +12316,7 @@
   },
   {
     "id": 822,
-    "name": "Half knee bends (male)",
+    "name": "Полуприседания с собственным весом",
     "nameEn": "Half Knee Bends (Male)",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES",
@@ -12361,7 +12361,7 @@
   },
   {
     "id": 825,
-    "name": "Hands bike",
+    "name": "Ручной велоэргометр (Hands bike)",
     "nameEn": "Hands Bike",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -12376,7 +12376,7 @@
   },
   {
     "id": 826,
-    "name": "Hands clasped circular toe touch (male)",
+    "name": "Круговые наклоны к стопам с замком рук спереди",
     "nameEn": "Hands Clasped Circular Toe Touch (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CALVES",
@@ -12391,7 +12391,7 @@
   },
   {
     "id": 827,
-    "name": "Hands reversed clasped circular toe touch (male)",
+    "name": "Круговые наклоны к стопам с замком рук за спиной",
     "nameEn": "Hands Reversed Clasped Circular Toe Touch (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CALVES",
@@ -12406,7 +12406,7 @@
   },
   {
     "id": 828,
-    "name": "Handstand",
+    "name": "Стойка на руках (Handstand)",
     "nameEn": "Handstand",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS,CORE",
@@ -12436,7 +12436,7 @@
   },
   {
     "id": 830,
-    "name": "Hanging leg hip raise",
+    "name": "Подъемы ног и таза в висе на турнике",
     "nameEn": "Hanging Leg Hip Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS,LOWER_BACK",
@@ -12466,7 +12466,7 @@
   },
   {
     "id": 832,
-    "name": "Hanging oblique knee raise",
+    "name": "Косые подъемы коленей в висе на турнике",
     "nameEn": "Hanging Oblique Knee Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES",
@@ -12496,7 +12496,7 @@
   },
   {
     "id": 834,
-    "name": "Hanging straight leg hip raise",
+    "name": "Подъемы прямых ног к перекладине с отрывом таза",
     "nameEn": "Hanging Straight Leg Hip Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -12526,7 +12526,7 @@
   },
   {
     "id": 836,
-    "name": "Hanging straight twisting leg hip raise",
+    "name": "Подъемы прямых ног в висе со скручиванием таза",
     "nameEn": "Hanging Straight Twisting Leg Hip Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -12541,7 +12541,7 @@
   },
   {
     "id": 837,
-    "name": "High knee against wall",
+    "name": "Бег на месте с высоким подниманием коленей у стены",
     "nameEn": "High Knee Against Wall",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES,CALVES",
@@ -12556,7 +12556,7 @@
   },
   {
     "id": 838,
-    "name": "Hip raise (bent knee)",
+    "name": "Подъем таза лежа с согнутыми коленями",
     "nameEn": "Hip Raise (Bent Knee)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -12571,7 +12571,7 @@
   },
   {
     "id": 839,
-    "name": "Hug keens to chest",
+    "name": "Прижимание коленей к груди лежа (Hug knees)",
     "nameEn": "Hug Keens To Chest",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -12601,7 +12601,7 @@
   },
   {
     "id": 841,
-    "name": "Hyperextension",
+    "name": "Гиперэкстензия на полу / тренажере",
     "nameEn": "Hyperextension",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -12616,7 +12616,7 @@
   },
   {
     "id": 842,
-    "name": "Hyperextension (on bench)",
+    "name": "Гиперэкстензия на наклонной скамье",
     "nameEn": "Hyperextension (On Bench)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -12661,7 +12661,7 @@
   },
   {
     "id": 845,
-    "name": "Inchworm v. 2",
+    "name": "Упражнение 'Гусеница' с выходом в планку (Inchworm)",
     "nameEn": "Inchworm V. 2",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,HAMSTRINGS",
@@ -12691,7 +12691,7 @@
   },
   {
     "id": 847,
-    "name": "Incline leg hip raise (leg straight) на наклонной скамье",
+    "name": "Подъемы прямых ног и таза на наклонной скамье",
     "nameEn": "Incline Leg Hip Raise (Leg Straight)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -12706,7 +12706,7 @@
   },
   {
     "id": 848,
-    "name": "Incline push up depth jump на наклонной скамье",
+    "name": "Отжимания от наклонной скамьи с прыжком на пол",
     "nameEn": "Incline Push Up Depth Jump",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS,CORE",
@@ -12766,7 +12766,7 @@
   },
   {
     "id": 852,
-    "name": "Incline scapula push up на наклонной скамье",
+    "name": "Лопаточные отжимания с опорой на наклонную скамью",
     "nameEn": "Incline Scapula Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -12916,7 +12916,7 @@
   },
   {
     "id": 862,
-    "name": "Iron cross stretch",
+    "name": "Растяжка плеч и груди 'Железный крест'",
     "nameEn": "Iron Cross Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -12931,7 +12931,7 @@
   },
   {
     "id": 863,
-    "name": "Isometric chest squeeze",
+    "name": "Изометрическое сжатие ладоней перед грудью",
     "nameEn": "Isometric Chest Squeeze",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -12961,7 +12961,7 @@
   },
   {
     "id": 865,
-    "name": "Jack burpee",
+    "name": "Бёрпи с прыжком Jumping Jack",
     "nameEn": "Jack Burpee",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES,SHOULDERS,TRICEPS,CORE",
@@ -12976,7 +12976,7 @@
   },
   {
     "id": 866,
-    "name": "Jack jump (male)",
+    "name": "Прыжки с хлопком над головой (Jack jump)",
     "nameEn": "Jack Jump (Male)",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,CALVES",
@@ -13021,7 +13021,7 @@
   },
   {
     "id": 869,
-    "name": "Jump rope",
+    "name": "Прыжки на скакалке (Jump rope)",
     "nameEn": "Jump Rope",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "CALVES,QUADRICEPS,HAMSTRINGS,GLUTES",
@@ -13066,7 +13066,7 @@
   },
   {
     "id": 872,
-    "name": "Kettlebell advanced windmill с гирей",
+    "name": "Мельница с гирей усложненная (Advanced windmill)",
     "nameEn": "Kettlebell Advanced Windmill",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,SHOULDERS",
@@ -13081,7 +13081,7 @@
   },
   {
     "id": 873,
-    "name": "Kettlebell alternating hang clean с гирей",
+    "name": "Взятие гири на грудь из виса поочередно (Hang clean)",
     "nameEn": "Kettlebell Alternating Hang Clean",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "SHOULDERS,TRAPS,CORE",
@@ -13186,7 +13186,7 @@
   },
   {
     "id": 880,
-    "name": "Kettlebell bottoms up clean from the hang position с гирей",
+    "name": "Взятие перевернутой гири на грудь из виса",
     "nameEn": "Kettlebell Bottoms Up Clean From The Hang Position",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS,SHOULDERS",
@@ -13201,7 +13201,7 @@
   },
   {
     "id": 881,
-    "name": "Kettlebell double alternating hang clean с гирей",
+    "name": "Взятие двух гирь на грудь из виса попеременно",
     "nameEn": "Kettlebell Double Alternating Hang Clean",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "FOREARMS,SHOULDERS",
@@ -13216,7 +13216,7 @@
   },
   {
     "id": 882,
-    "name": "Kettlebell double jerk с гирей",
+    "name": "Толчок двух гирь от груди (Double jerk)",
     "nameEn": "Kettlebell Double Jerk",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CORE",
@@ -13246,7 +13246,7 @@
   },
   {
     "id": 884,
-    "name": "Kettlebell double snatch с гирей",
+    "name": "Рывок двух гирь (Double snatch)",
     "nameEn": "Kettlebell Double Snatch",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,FOREARMS,CORE",
@@ -13261,7 +13261,7 @@
   },
   {
     "id": 885,
-    "name": "Kettlebell double windmill с гирей",
+    "name": "Мельница с двумя гирями (Double windmill)",
     "nameEn": "Kettlebell Double Windmill",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,HAMSTRINGS",
@@ -13366,7 +13366,7 @@
   },
   {
     "id": 892,
-    "name": "Kettlebell one arm clean and jerk с гирей",
+    "name": "Взятие и толчок гири одной рукой (Clean and jerk)",
     "nameEn": "Kettlebell One Arm Clean And Jerk",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CORE",
@@ -13396,7 +13396,7 @@
   },
   {
     "id": 894,
-    "name": "Kettlebell one arm jerk с гирей",
+    "name": "Толчок гири одной рукой от груди (One arm jerk)",
     "nameEn": "Kettlebell One Arm Jerk",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CORE",
@@ -13456,7 +13456,7 @@
   },
   {
     "id": 898,
-    "name": "Kettlebell one arm snatch с гирей",
+    "name": "Рывок гири одной рукой (One arm snatch)",
     "nameEn": "Kettlebell One Arm Snatch",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,FOREARMS,CORE",
@@ -13471,7 +13471,7 @@
   },
   {
     "id": 899,
-    "name": "Kettlebell pirate supper legs с гирей",
+    "name": "Круговые перехваты гири вокруг ног 'Пиратские шаги'",
     "nameEn": "Kettlebell Pirate Supper Legs",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,FOREARMS",
@@ -13576,7 +13576,7 @@
   },
   {
     "id": 906,
-    "name": "Kettlebell swing с гирей",
+    "name": "Махи гирей двумя руками (Kettlebell swing)",
     "nameEn": "Kettlebell Swing",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,CORE",
@@ -13621,7 +13621,7 @@
   },
   {
     "id": 909,
-    "name": "Kettlebell two arm clean с гирей",
+    "name": "Взятие гири на грудь двумя руками",
     "nameEn": "Kettlebell Two Arm Clean",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPS,FOREARMS",
@@ -13681,7 +13681,7 @@
   },
   {
     "id": 913,
-    "name": "Kick out sit",
+    "name": "Выпады ногой в сторону из упора сидя (Kick out sit)",
     "nameEn": "Kick Out Sit",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,GLUTES",
@@ -13741,7 +13741,7 @@
   },
   {
     "id": 917,
-    "name": "Kneeling lat stretch",
+    "name": "Растяжка широчайших мышц стоя на коленях",
     "nameEn": "Kneeling Lat Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -13756,7 +13756,7 @@
   },
   {
     "id": 918,
-    "name": "Kneeling plank tap shoulder (male)",
+    "name": "Касание плеч в планке с колен",
     "nameEn": "Kneeling Plank Tap Shoulder (Male)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -13816,7 +13816,7 @@
   },
   {
     "id": 922,
-    "name": "L-sit on floor",
+    "name": "Уголок на полу (L-sit on floor)",
     "nameEn": "L-Sit On Floor",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -13861,7 +13861,7 @@
   },
   {
     "id": 925,
-    "name": "Lean planche",
+    "name": "Горизонт с наклоном вперед (Lean planche)",
     "nameEn": "Lean Planche",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,CHEST,TRICEPS",
@@ -13876,7 +13876,7 @@
   },
   {
     "id": 926,
-    "name": "Left hook. boxing",
+    "name": "Боковой удар левый хук (Бокс)",
     "nameEn": "Left Hook. Boxing",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "BICEPS,TRICEPS,FOREARMS",
@@ -13891,7 +13891,7 @@
   },
   {
     "id": 927,
-    "name": "Leg pull in flat bench",
+    "name": "Подтягивание коленей к груди сидя на скамье",
     "nameEn": "Leg Pull In Flat Bench",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS,LOWER_BACK",
@@ -13906,7 +13906,7 @@
   },
   {
     "id": 928,
-    "name": "Leg up hamstring stretch",
+    "name": "Растяжка задней поверхности бедра лежа с подъемом ноги",
     "nameEn": "Leg Up Hamstring Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES",
@@ -13966,7 +13966,7 @@
   },
   {
     "id": 932,
-    "name": "Lever back extension в тренажере",
+    "name": "Разгибания спины в рычажном тренажере",
     "nameEn": "Lever Back Extension",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -14161,7 +14161,7 @@
   },
   {
     "id": 945,
-    "name": "Lever gripper hands в тренажере",
+    "name": "Сжатие кистевого эспандера в тренажере",
     "nameEn": "Lever Gripper Hands",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "BICEPS,TRICEPS",
@@ -14206,7 +14206,7 @@
   },
   {
     "id": 948,
-    "name": "Lever hip extension v. 2 в тренажере",
+    "name": "Разгибание бедра назад в рычажном тренажере",
     "nameEn": "Lever Hip Extension V. 2",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -14281,7 +14281,7 @@
   },
   {
     "id": 953,
-    "name": "Lever kneeling twist в тренажере",
+    "name": "Повороты корпуса на пресс в тренажере с колен",
     "nameEn": "Lever Kneeling Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -14551,7 +14551,7 @@
   },
   {
     "id": 971,
-    "name": "Lever reverse hyperextension в тренажере",
+    "name": "Обратная гиперэкстензия в тренажере",
     "nameEn": "Lever Reverse Hyperextension",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -14581,7 +14581,7 @@
   },
   {
     "id": 973,
-    "name": "Lever rotary calf в тренажере",
+    "name": "Подъемы на носки в тренажере для икр (Rotary calf)",
     "nameEn": "Lever Rotary Calf",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "SOLEUS,ANKLE_STABILIZERS",
@@ -14716,7 +14716,7 @@
   },
   {
     "id": 982,
-    "name": "Lever seated hip abduction в тренажере сидя",
+    "name": "Разведение ног сидя в тренажере на ягодицы",
     "nameEn": "Lever Seated Hip Abduction",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -14731,7 +14731,7 @@
   },
   {
     "id": 983,
-    "name": "Lever seated hip adduction в тренажере сидя",
+    "name": "Сведение ног сидя в тренажере на приводящие",
     "nameEn": "Lever Seated Hip Adduction",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -14986,7 +14986,7 @@
   },
   {
     "id": 1000,
-    "name": "London bridge",
+    "name": "Ягодичный мостик 'Лондонский мост' (London bridge)",
     "nameEn": "London Bridge",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,BICEPS,FOREARMS",
@@ -15001,7 +15001,7 @@
   },
   {
     "id": 1001,
-    "name": "Low glute bridge on floor",
+    "name": "Низкий ягодичный мостик на полу",
     "nameEn": "Low Glute Bridge On Floor",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,CORE",
@@ -15061,7 +15061,7 @@
   },
   {
     "id": 1005,
-    "name": "Lying (side) quads stretch лежа",
+    "name": "Растяжка квадрицепса лежа на боку",
     "nameEn": "Lying (Side) Quads Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -15076,7 +15076,7 @@
   },
   {
     "id": 1006,
-    "name": "Lying elbow to knee лежа",
+    "name": "Скручивания локоть к колену лежа на спине",
     "nameEn": "Lying Elbow To Knee",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS,LOWER_BACK",
@@ -15106,7 +15106,7 @@
   },
   {
     "id": 1008,
-    "name": "Lying leg-hip raise лежа",
+    "name": "Подъемы ног и таза лежа на полу",
     "nameEn": "Lying Leg-Hip Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -15136,7 +15136,7 @@
   },
   {
     "id": 1010,
-    "name": "March sit (wall)",
+    "name": "Стульчик у стены с шаганием (March sit wall)",
     "nameEn": "March Sit (Wall)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -15181,7 +15181,7 @@
   },
   {
     "id": 1013,
-    "name": "Medicine ball chest push from 3 point stance",
+    "name": "Толчок медицинского мяча от груди из упора",
     "nameEn": "Medicine Ball Chest Push From 3 Point Stance",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -15196,7 +15196,7 @@
   },
   {
     "id": 1014,
-    "name": "Medicine ball chest push multiple response",
+    "name": "Серийные броски медбола от груди в стену",
     "nameEn": "Medicine Ball Chest Push Multiple Response",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -15211,7 +15211,7 @@
   },
   {
     "id": 1015,
-    "name": "Medicine ball chest push single response",
+    "name": "Одиночный взрывной бросок медбола от груди",
     "nameEn": "Medicine Ball Chest Push Single Response",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -15226,7 +15226,7 @@
   },
   {
     "id": 1016,
-    "name": "Medicine ball chest push with run release",
+    "name": "Бросок медбола от груди с переходом в ускорение",
     "nameEn": "Medicine Ball Chest Push With Run Release",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS,CORE",
@@ -15241,7 +15241,7 @@
   },
   {
     "id": 1017,
-    "name": "Medicine ball close grip push up",
+    "name": "Отжимания узким хватом с опорой на медбол",
     "nameEn": "Medicine Ball Close Grip Push Up",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "CHEST,SHOULDERS",
@@ -15256,7 +15256,7 @@
   },
   {
     "id": 1018,
-    "name": "Medicine ball overhead slam",
+    "name": "Бросок медбола в пол из-за головы (Medball slam)",
     "nameEn": "Medicine Ball Overhead Slam",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,CORE",
@@ -15316,7 +15316,7 @@
   },
   {
     "id": 1022,
-    "name": "Modified push up to lower arms",
+    "name": "Модифицированные отжимания с переходом на предплечья",
     "nameEn": "Modified Push Up To Lower Arms",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "TRICEPS,CHEST,SHOULDERS",
@@ -15346,7 +15346,7 @@
   },
   {
     "id": 1024,
-    "name": "Mountain climber",
+    "name": "Упражнение 'Скалолаз' (Mountain climber)",
     "nameEn": "Mountain Climber",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "CORE,SHOULDERS,TRICEPS",
@@ -15376,7 +15376,7 @@
   },
   {
     "id": 1026,
-    "name": "Muscle-up (on vertical bar)",
+    "name": "Выход силой на турнике (Muscle-up)",
     "nameEn": "Muscle-Up (On Vertical Bar)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,TRICEPS,FOREARMS",
@@ -15406,7 +15406,7 @@
   },
   {
     "id": 1028,
-    "name": "Neck side stretch",
+    "name": "Боковая растяжка мышц шеи",
     "nameEn": "Neck Side Stretch",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,STERNOCLEIDOMASTOID",
@@ -15541,7 +15541,7 @@
   },
   {
     "id": 1037,
-    "name": "One arm slam (with medicine ball)",
+    "name": "Бросок медбола в пол одной рукой",
     "nameEn": "One Arm Slam (With Medicine Ball)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,BACK",
@@ -15616,7 +15616,7 @@
   },
   {
     "id": 1042,
-    "name": "Otis up",
+    "name": "Скручивания Отиса с весом перед собой (Otis up)",
     "nameEn": "Otis Up",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS,LOWER_BACK",
@@ -15646,7 +15646,7 @@
   },
   {
     "id": 1044,
-    "name": "Overhead triceps stretch",
+    "name": "Растяжка трицепса из-за головы",
     "nameEn": "Overhead Triceps Stretch",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -15661,7 +15661,7 @@
   },
   {
     "id": 1045,
-    "name": "Pelvic tilt",
+    "name": "Наклоны таза лежа на спине (Pelvic tilt)",
     "nameEn": "Pelvic Tilt",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "LOWER_BACK",
@@ -15721,7 +15721,7 @@
   },
   {
     "id": 1049,
-    "name": "Plyo push up",
+    "name": "Плиометрические взрывные отжимания",
     "nameEn": "Plyo Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS,CORE",
@@ -15736,7 +15736,7 @@
   },
   {
     "id": 1050,
-    "name": "Posterior step to overhead reach",
+    "name": "Шаг назад с вытягиванием рук вверх",
     "nameEn": "Posterior Step To Overhead Reach",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS,QUADRICEPS,SHOULDERS",
@@ -15811,7 +15811,7 @@
   },
   {
     "id": 1055,
-    "name": "Power point plank",
+    "name": "Планка с точечным выходом вперед (Power point)",
     "nameEn": "Power Point Plank",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS,GLUTES",
@@ -15841,7 +15841,7 @@
   },
   {
     "id": 1057,
-    "name": "Prone twist on stability ball лежа на животе",
+    "name": "Повороты корпуса лежа животом на фитболе",
     "nameEn": "Prone Twist On Stability Ball",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -15856,7 +15856,7 @@
   },
   {
     "id": 1058,
-    "name": "Pull up (neutral grip)",
+    "name": "Подтягивания параллельным хватом",
     "nameEn": "Pull Up (Neutral Grip)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,FOREARMS",
@@ -15871,7 +15871,7 @@
   },
   {
     "id": 1059,
-    "name": "Pull-in (on stability ball)",
+    "name": "Подкатывание фитбола коленями к груди (Pull-in)",
     "nameEn": "Pull-In (On Stability Ball)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -15901,7 +15901,7 @@
   },
   {
     "id": 1061,
-    "name": "Push and pull bodyweight",
+    "name": "Тягово-толкающее комбо с собственным весом",
     "nameEn": "Push And Pull Bodyweight",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,DELTOIDS",
@@ -15916,7 +15916,7 @@
   },
   {
     "id": 1062,
-    "name": "Push to run",
+    "name": "Старт в бег из упора лежа (Push to run)",
     "nameEn": "Push To Run",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -15931,7 +15931,7 @@
   },
   {
     "id": 1063,
-    "name": "Push up on bosu ball",
+    "name": "Отжимания на полусфере BOSU",
     "nameEn": "Push Up On Bosu Ball",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS,CORE",
@@ -16126,7 +16126,7 @@
   },
   {
     "id": 1076,
-    "name": "Quads",
+    "name": "Статическая растяжка квадрицепсов стоя",
     "nameEn": "Quads",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -16156,7 +16156,7 @@
   },
   {
     "id": 1078,
-    "name": "Quick feet v. 2",
+    "name": "Упражнение 'Быстрые стопы' (Quick feet)",
     "nameEn": "Quick Feet V. 2",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "CALVES,HAMSTRINGS",
@@ -16186,7 +16186,7 @@
   },
   {
     "id": 1080,
-    "name": "Rear decline bridge на скамье с обратным наклоном",
+    "name": "Ягодичный мостик с плечами на скамье с обратным наклоном",
     "nameEn": "Rear Decline Bridge",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -16201,7 +16201,7 @@
   },
   {
     "id": 1081,
-    "name": "Rear deltoid stretch",
+    "name": "Растяжка задней дельты перед грудью",
     "nameEn": "Rear Deltoid Stretch",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,RHOMBOIDS",
@@ -16231,7 +16231,7 @@
   },
   {
     "id": 1083,
-    "name": "Reclining big toe pose with rope",
+    "name": "Растяжка задней поверхности бедра лежа с ремнем (Супта Падангуштхасана)",
     "nameEn": "Reclining Big Toe Pose With Rope",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "CALVES,GLUTES",
@@ -16306,7 +16306,7 @@
   },
   {
     "id": 1088,
-    "name": "Resistance band seated hip abduction с резиной сидя",
+    "name": "Разведение коленей сидя с фитнес-резинкой",
     "nameEn": "Resistance Band Seated Hip Abduction",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -16411,7 +16411,7 @@
   },
   {
     "id": 1095,
-    "name": "Reverse hyper extension (on stability ball)",
+    "name": "Обратная гиперэкстензия на фитболе",
     "nameEn": "Reverse Hyper Extension (On Stability Ball)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -16426,7 +16426,7 @@
   },
   {
     "id": 1096,
-    "name": "Reverse hyper on flat bench",
+    "name": "Обратная гиперэкстензия на горизонтальной скамье",
     "nameEn": "Reverse Hyper On Flat Bench",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,LOWER_BACK",
@@ -16441,7 +16441,7 @@
   },
   {
     "id": 1097,
-    "name": "Reverse plank with leg lift",
+    "name": "Обратная планка с поочередным подъемом ног",
     "nameEn": "Reverse Plank With Leg Lift",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS,SHOULDERS",
@@ -16471,7 +16471,7 @@
   },
   {
     "id": 1099,
-    "name": "Rocking frog stretch",
+    "name": "Растяжка паховых мышц 'Лягушка' в динамике",
     "nameEn": "Rocking Frog Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -16501,7 +16501,7 @@
   },
   {
     "id": 1101,
-    "name": "Roller back stretch",
+    "name": "Прокатка спины на массажном валике (МФР)",
     "nameEn": "Roller Back Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -16516,7 +16516,7 @@
   },
   {
     "id": 1102,
-    "name": "Roller body saw",
+    "name": "Упражнение 'Пила' в планке на массажном ролике",
     "nameEn": "Roller Body Saw",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS,CORE",
@@ -16531,7 +16531,7 @@
   },
   {
     "id": 1103,
-    "name": "Roller hip lat stretch",
+    "name": "МФР широчайших мышц и бедра на валике",
     "nameEn": "Roller Hip Lat Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -16546,7 +16546,7 @@
   },
   {
     "id": 1104,
-    "name": "Roller hip stretch",
+    "name": "МФР ягодичных и мышц бедра на валике",
     "nameEn": "Roller Hip Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -16576,7 +16576,7 @@
   },
   {
     "id": 1106,
-    "name": "Roller seated shoulder flexor depresor retractor сидя",
+    "name": "Мобилизация и депрессия плечевого пояса сидя на валике",
     "nameEn": "Roller Seated Shoulder Flexor Depresor Retractor",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "DELTOIDS,TRICEPS",
@@ -16591,7 +16591,7 @@
   },
   {
     "id": 1107,
-    "name": "Roller seated single leg shoulder flexor depresor retractor сидя",
+    "name": "Мобилизация плечевого сустава сидя на одной ноге у валика",
     "nameEn": "Roller Seated Single Leg Shoulder Flexor Depresor Retractor",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "DELTOIDS,TRICEPS",
@@ -16606,7 +16606,7 @@
   },
   {
     "id": 1108,
-    "name": "Roller side lat stretch",
+    "name": "Боковой МФР-релиз широчайших на валике",
     "nameEn": "Roller Side Lat Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -16636,7 +16636,7 @@
   },
   {
     "id": 1110,
-    "name": "Run",
+    "name": "Бег на открытом воздухе / дорожке",
     "nameEn": "Run",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -16651,7 +16651,7 @@
   },
   {
     "id": 1111,
-    "name": "Run (equipment)",
+    "name": "Бег на механической беговой дорожке",
     "nameEn": "Run (Equipment)",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -16666,7 +16666,7 @@
   },
   {
     "id": 1112,
-    "name": "Runners stretch",
+    "name": "Выпад бегуна с растяжкой сгибателей бедра",
     "nameEn": "Runners Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "CALVES,QUADRICEPS",
@@ -16741,7 +16741,7 @@
   },
   {
     "id": 1117,
-    "name": "Scissor jumps (male)",
+    "name": "Прыжки 'Ножницы' с разножкой (Scissor jumps)",
     "nameEn": "Scissor Jumps (Male)",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -16756,7 +16756,7 @@
   },
   {
     "id": 1118,
-    "name": "Seated calf stretch (male) сидя",
+    "name": "Растяжка икроножных мышц сидя",
     "nameEn": "Seated Calf Stretch (Male)",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -16771,7 +16771,7 @@
   },
   {
     "id": 1119,
-    "name": "Seated glute stretch сидя",
+    "name": "Растяжка ягодичных мышц сидя на полу",
     "nameEn": "Seated Glute Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -16801,7 +16801,7 @@
   },
   {
     "id": 1121,
-    "name": "Seated lower back stretch сидя",
+    "name": "Растяжка поясничного отдела сидя",
     "nameEn": "Seated Lower Back Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -16816,7 +16816,7 @@
   },
   {
     "id": 1122,
-    "name": "Seated piriformis stretch сидя",
+    "name": "Растяжка грушевидной мышцы сидя",
     "nameEn": "Seated Piriformis Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS",
@@ -16846,7 +16846,7 @@
   },
   {
     "id": 1124,
-    "name": "Seated wide angle pose sequence сидя",
+    "name": "Наклоны вперед с широко разведенными ногами сидя (Упавиштха Конасана)",
     "nameEn": "Seated Wide Angle Pose Sequence",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "QUADRICEPS,CALVES",
@@ -16921,7 +16921,7 @@
   },
   {
     "id": 1129,
-    "name": "Short stride run",
+    "name": "Бег с коротким шагом на частоту (Short stride)",
     "nameEn": "Short Stride Run",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -16951,7 +16951,7 @@
   },
   {
     "id": 1131,
-    "name": "Shoulder tap",
+    "name": "Касания плеч ладонью в планке (Shoulder tap)",
     "nameEn": "Shoulder Tap",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS",
@@ -16981,7 +16981,7 @@
   },
   {
     "id": 1133,
-    "name": "Side bridge hip abduction",
+    "name": "Боковая планка с отведением ноги вверх (Side bridge abduction)",
     "nameEn": "Side Bridge Hip Abduction",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "GLUTES,OBLIQUES",
@@ -16996,7 +16996,7 @@
   },
   {
     "id": 1134,
-    "name": "Side bridge v. 2",
+    "name": "Боковая планка с упором на локоть (Side bridge)",
     "nameEn": "Side Bridge V. 2",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,GLUTES",
@@ -17011,7 +17011,7 @@
   },
   {
     "id": 1135,
-    "name": "Side hip (on parallel bars)",
+    "name": "Уголок с отведением ноги на брусьях",
     "nameEn": "Side Hip (On Parallel Bars)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -17026,7 +17026,7 @@
   },
   {
     "id": 1136,
-    "name": "Side hip abduction",
+    "name": "Отведение ноги в сторону стоя / лежа",
     "nameEn": "Side Hip Abduction",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "GLUTES,QUADRICEPS",
@@ -17041,7 +17041,7 @@
   },
   {
     "id": 1137,
-    "name": "Side lying floor stretch лежа",
+    "name": "Боковая растяжка корпуса лежа на боку на полу",
     "nameEn": "Side Lying Floor Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "OBLIQUES,GLUTES",
@@ -17056,7 +17056,7 @@
   },
   {
     "id": 1138,
-    "name": "Side lying hip adduction (male) лежа",
+    "name": "Приведение верхней ноги лежа на боку",
     "nameEn": "Side Lying Hip Adduction (Male)",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -17071,7 +17071,7 @@
   },
   {
     "id": 1139,
-    "name": "Side plank hip adduction",
+    "name": "Боковая планка с приведением нижней ноги",
     "nameEn": "Side Plank Hip Adduction",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "OBLIQUES,GLUTES",
@@ -17086,7 +17086,7 @@
   },
   {
     "id": 1140,
-    "name": "Side push neck stretch",
+    "name": "Боковая растяжка шеи с мягким упором ладонью",
     "nameEn": "Side Push Neck Stretch",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRAPEZIUS,STERNOCLEIDOMASTOID",
@@ -17116,7 +17116,7 @@
   },
   {
     "id": 1142,
-    "name": "Side wrist pull stretch",
+    "name": "Растяжка сгибателей запястья и предплечья",
     "nameEn": "Side Wrist Pull Stretch",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "WRISTS,HANDS",
@@ -17131,7 +17131,7 @@
   },
   {
     "id": 1143,
-    "name": "Side-to-side chin",
+    "name": "Подтягивания из стороны в сторону (Side-to-side chin)",
     "nameEn": "Side-To-Side Chin",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,FOREARMS",
@@ -17146,7 +17146,7 @@
   },
   {
     "id": 1144,
-    "name": "Side-to-side toe touch (male)",
+    "name": "Попеременные наклоны к носкам стоя",
     "nameEn": "Side-To-Side Toe Touch (Male)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -17176,7 +17176,7 @@
   },
   {
     "id": 1146,
-    "name": "Single leg bridge with outstretched leg",
+    "name": "Ягодичный мостик на одной ноге с вытянутой ногой",
     "nameEn": "Single Leg Bridge With Outstretched Leg",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS",
@@ -17206,7 +17206,7 @@
   },
   {
     "id": 1148,
-    "name": "Single leg platform slide",
+    "name": "Скольжение одной ногой в сторону на слайд-платформе",
     "nameEn": "Single Leg Platform Slide",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES,QUADRICEPS",
@@ -17281,7 +17281,7 @@
   },
   {
     "id": 1153,
-    "name": "Skater hops",
+    "name": "Прыжки конькобежца (Skater hops)",
     "nameEn": "Skater Hops",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES,CALVES",
@@ -17296,7 +17296,7 @@
   },
   {
     "id": 1154,
-    "name": "Ski ergometer",
+    "name": "Тренировка на лыжном тренажере (SkiErg)",
     "nameEn": "Ski Ergometer",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS,FOREARMS",
@@ -17311,7 +17311,7 @@
   },
   {
     "id": 1155,
-    "name": "Ski step",
+    "name": "Имитация лыжного хода в динамике",
     "nameEn": "Ski Step",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES,CALVES",
@@ -17326,7 +17326,7 @@
   },
   {
     "id": 1156,
-    "name": "Skin the cat",
+    "name": "Проворот в кольцах / висе 'Снять кошку' (Skin the cat)",
     "nameEn": "Skin The Cat",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,CORE",
@@ -17536,7 +17536,7 @@
   },
   {
     "id": 1170,
-    "name": "Sledge hammer",
+    "name": "Удары кувалдой по покрышке (Sledge hammer)",
     "nameEn": "Sledge Hammer",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "FOREARMS,SHOULDERS",
@@ -17746,7 +17746,7 @@
   },
   {
     "id": 1184,
-    "name": "Smith hip raise",
+    "name": "Подъем таза со штангой в тренажере Смита",
     "nameEn": "Smith Hip Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -17791,7 +17791,7 @@
   },
   {
     "id": 1187,
-    "name": "Smith incline shoulder raises на наклонной скамье",
+    "name": "Шраги / подъемы плеч на наклонной скамье в тренажере Смита",
     "nameEn": "Smith Incline Shoulder Raises",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "DELTOIDS,TRAPEZIUS",
@@ -17866,7 +17866,7 @@
   },
   {
     "id": 1192,
-    "name": "Smith machine incline tricep extension в тренажере Смита на наклонной скамье",
+    "name": "Французский жим в тренажере Смита на наклонной скамье",
     "nameEn": "Smith Machine Incline Tricep Extension",
     "primaryMuscleGroup": "TRICEPS",
     "secondaryMuscleGroups": "SHOULDERS",
@@ -18211,7 +18211,7 @@
   },
   {
     "id": 1215,
-    "name": "Smith toe raise",
+    "name": "Подъемы на носки в тренажере Смита стоя",
     "nameEn": "Smith Toe Raise",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "ANKLES,SHINS",
@@ -18301,7 +18301,7 @@
   },
   {
     "id": 1221,
-    "name": "Sphinx",
+    "name": "Поза Сфинкса (прогиб грудного отдела)",
     "nameEn": "Sphinx",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -18316,7 +18316,7 @@
   },
   {
     "id": 1222,
-    "name": "Spider crawl push up",
+    "name": "Отжимания 'Человек-паук' с подтягиванием колена к локтю",
     "nameEn": "Spider Crawl Push Up",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "CORE,CHEST,SHOULDERS",
@@ -18331,7 +18331,7 @@
   },
   {
     "id": 1223,
-    "name": "Spine stretch",
+    "name": "Растяжка позвоночника сидя (Spine stretch)",
     "nameEn": "Spine Stretch",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -18346,7 +18346,7 @@
   },
   {
     "id": 1224,
-    "name": "Spine twist",
+    "name": "Скручивания позвоночника сидя (Spine twist)",
     "nameEn": "Spine Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -18466,7 +18466,7 @@
   },
   {
     "id": 1232,
-    "name": "Standing archer стоя",
+    "name": "Упражнение 'Лучник' стоя с фитнес-резиной",
     "nameEn": "Standing Archer",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,BICEPS,FOREARMS",
@@ -18511,7 +18511,7 @@
   },
   {
     "id": 1235,
-    "name": "Standing calves стоя",
+    "name": "Подъемы на носки стоя на полу",
     "nameEn": "Standing Calves",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -18526,7 +18526,7 @@
   },
   {
     "id": 1236,
-    "name": "Standing calves calf stretch стоя",
+    "name": "Растяжка икроножной мышцы в разножке стоя",
     "nameEn": "Standing Calves Calf Stretch",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -18541,7 +18541,7 @@
   },
   {
     "id": 1237,
-    "name": "Standing hamstring and calf stretch with strap стоя",
+    "name": "Растяжка задней поверхности бедра и икры стоя с ремнем",
     "nameEn": "Standing Hamstring And Calf Stretch With Strap",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "CALVES",
@@ -18601,7 +18601,7 @@
   },
   {
     "id": 1241,
-    "name": "Standing wheel rollerout стоя",
+    "name": "Выкатывание с гимнастическим колесом из положения стоя",
     "nameEn": "Standing Wheel Rollerout",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "LOWER_BACK,SHOULDERS",
@@ -18616,7 +18616,7 @@
   },
   {
     "id": 1242,
-    "name": "Star jump (male)",
+    "name": "Взрывные прыжки 'Звезда' (Star jump)",
     "nameEn": "Star Jump (Male)",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -18631,7 +18631,7 @@
   },
   {
     "id": 1243,
-    "name": "Stationary bike run v. 3",
+    "name": "Интенсивная езда на велотренажере (Spin bike)",
     "nameEn": "Stationary Bike Run V. 3",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -18646,7 +18646,7 @@
   },
   {
     "id": 1244,
-    "name": "Stationary bike walk",
+    "name": "Умеренная разминка на велотренажере",
     "nameEn": "Stationary Bike Walk",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -18661,7 +18661,7 @@
   },
   {
     "id": 1245,
-    "name": "Straddle maltese",
+    "name": "Горизонт ноги врозь на кольцах (Straddle maltese)",
     "nameEn": "Straddle Maltese",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,CHEST",
@@ -18676,7 +18676,7 @@
   },
   {
     "id": 1246,
-    "name": "Straddle planche",
+    "name": "Горизонт ноги врозь (Straddle planche)",
     "nameEn": "Straddle Planche",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,TRICEPS,CHEST",
@@ -18691,7 +18691,7 @@
   },
   {
     "id": 1247,
-    "name": "Straight leg outer hip abductor",
+    "name": "Отведение прямой ноги стоя в сторону",
     "nameEn": "Straight Leg Outer Hip Abductor",
     "primaryMuscleGroup": "LEGS_QUADS",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -18721,7 +18721,7 @@
   },
   {
     "id": 1249,
-    "name": "Suspended abdominal fallout",
+    "name": "Выкатывание вперед на подвесных петлях TRX",
     "nameEn": "Suspended Abdominal Fallout",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -18796,7 +18796,7 @@
   },
   {
     "id": 1254,
-    "name": "Swimmer kicks v. 2 (male)",
+    "name": "Удары ногами кролем лежа на животе (Swimmer kicks)",
     "nameEn": "Swimmer Kicks V. 2 (Male)",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "HAMSTRINGS,QUADRICEPS,CALVES",
@@ -18811,7 +18811,7 @@
   },
   {
     "id": 1255,
-    "name": "Swing 360",
+    "name": "Вращение булавы / гири на 360 градусов",
     "nameEn": "Swing 360",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "SHOULDERS,CORE",
@@ -18991,7 +18991,7 @@
   },
   {
     "id": 1267,
-    "name": "Twist hip lift",
+    "name": "Подъем таза со скручиванием лежа",
     "nameEn": "Twist Hip Lift",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "OBLIQUES,HAMSTRINGS",
@@ -19036,7 +19036,7 @@
   },
   {
     "id": 1270,
-    "name": "Two toe touch (male)",
+    "name": "Двойное касание носков пальцами рук",
     "nameEn": "Two Toe Touch (Male)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "HAMSTRINGS,GLUTES",
@@ -19066,7 +19066,7 @@
   },
   {
     "id": 1272,
-    "name": "Upward facing dog",
+    "name": "Собака мордой вверх (Урдхва Мукха Шванасана)",
     "nameEn": "Upward Facing Dog",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "SHOULDERS,CHEST",
@@ -19081,7 +19081,7 @@
   },
   {
     "id": 1273,
-    "name": "V-sit on floor",
+    "name": "Удержание уголка V-sit на полу",
     "nameEn": "V-Sit On Floor",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS",
@@ -19111,7 +19111,7 @@
   },
   {
     "id": 1275,
-    "name": "Walk elliptical cross trainer",
+    "name": "Ходьба на эллиптическом тренажере",
     "nameEn": "Walk Elliptical Cross Trainer",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES,CALVES",
@@ -19156,7 +19156,7 @@
   },
   {
     "id": 1278,
-    "name": "Walking on incline treadmill на наклонной скамье",
+    "name": "Ходьба в горку на наклонной беговой дорожке",
     "nameEn": "Walking On Incline Treadmill",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -19171,7 +19171,7 @@
   },
   {
     "id": 1279,
-    "name": "Walking on stepmill",
+    "name": "Ходьба по лестнице-эскалатору (Stepmill)",
     "nameEn": "Walking On Stepmill",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,GLUTES,CALVES",
@@ -19276,7 +19276,7 @@
   },
   {
     "id": 1286,
-    "name": "Weighted drop push up",
+    "name": "Плиометрические отжимания с диском на спине",
     "nameEn": "Weighted Drop Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -19291,7 +19291,7 @@
   },
   {
     "id": 1287,
-    "name": "Weighted front plank",
+    "name": "Планка с диском на спине",
     "nameEn": "Weighted Front Plank",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "SHOULDERS,LOWER_BACK",
@@ -19321,7 +19321,7 @@
   },
   {
     "id": 1289,
-    "name": "Weighted hanging leg-hip raise",
+    "name": "Подъемы ног в висе с утяжелителями на лодыжках",
     "nameEn": "Weighted Hanging Leg-Hip Raise",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "HIP_FLEXORS,LOWER_BACK",
@@ -19336,7 +19336,7 @@
   },
   {
     "id": 1290,
-    "name": "Weighted hyperextension (on stability ball)",
+    "name": "Гиперэкстензия на фитболе с гантелью / диском",
     "nameEn": "Weighted Hyperextension (On Stability Ball)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "GLUTES,HAMSTRINGS",
@@ -19351,7 +19351,7 @@
   },
   {
     "id": 1291,
-    "name": "Weighted kneeling step with swing",
+    "name": "Выпад с колена с махом гири / гантели",
     "nameEn": "Weighted Kneeling Step With Swing",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,CORE",
@@ -19381,7 +19381,7 @@
   },
   {
     "id": 1293,
-    "name": "Weighted muscle up",
+    "name": "Выход силой с дополнительным весом на поясе",
     "nameEn": "Weighted Muscle Up",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,TRICEPS,SHOULDERS,CHEST",
@@ -19396,7 +19396,7 @@
   },
   {
     "id": 1294,
-    "name": "Weighted muscle up (on bar)",
+    "name": "Выход силой на турнике с отягощением",
     "nameEn": "Weighted Muscle Up (On Bar)",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,TRICEPS,SHOULDERS,FOREARMS",
@@ -19411,7 +19411,7 @@
   },
   {
     "id": 1295,
-    "name": "Weighted one hand pull up",
+    "name": "Подтягивания на одной руке с компенсатором / весом",
     "nameEn": "Weighted One Hand Pull Up",
     "primaryMuscleGroup": "BACK",
     "secondaryMuscleGroups": "BICEPS,FOREARMS",
@@ -19456,7 +19456,7 @@
   },
   {
     "id": 1298,
-    "name": "Weighted round arm",
+    "name": "Вращения руками с гантелями вокруг туловища",
     "nameEn": "Weighted Round Arm",
     "primaryMuscleGroup": "SHOULDERS",
     "secondaryMuscleGroups": "TRICEPS,UPPER_BACK",
@@ -19471,7 +19471,7 @@
   },
   {
     "id": 1299,
-    "name": "Weighted russian twist",
+    "name": "Русский твист с диском / гантелью",
     "nameEn": "Weighted Russian Twist",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -19486,7 +19486,7 @@
   },
   {
     "id": 1300,
-    "name": "Weighted russian twist (legs up)",
+    "name": "Русский твист с весом и поднятыми ногами",
     "nameEn": "Weighted Russian Twist (Legs Up)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,HIP_FLEXORS",
@@ -19501,7 +19501,7 @@
   },
   {
     "id": 1301,
-    "name": "Weighted russian twist v. 2",
+    "name": "Русский твист с весом на наклонной скамье",
     "nameEn": "Weighted Russian Twist V. 2",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -19531,7 +19531,7 @@
   },
   {
     "id": 1303,
-    "name": "Weighted seated twist (on stability ball) сидя",
+    "name": "Повороты корпуса сидя на фитболе с гантелью / диском",
     "nameEn": "Weighted Seated Twist (On Stability Ball)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -19546,7 +19546,7 @@
   },
   {
     "id": 1304,
-    "name": "Weighted side bend (on stability ball)",
+    "name": "Боковые наклоны на фитболе с гантелью",
     "nameEn": "Weighted Side Bend (On Stability Ball)",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "OBLIQUES,LOWER_BACK",
@@ -19606,7 +19606,7 @@
   },
   {
     "id": 1308,
-    "name": "Weighted standing hand squeeze стоя",
+    "name": "Сжатие кистевого эспандера стоя",
     "nameEn": "Weighted Standing Hand Squeeze",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "BICEPS,TRICEPS",
@@ -19711,7 +19711,7 @@
   },
   {
     "id": 1315,
-    "name": "Wheel rollerout",
+    "name": "Выкатывания с гимнастическим роликом для пресса",
     "nameEn": "Wheel Rollerout",
     "primaryMuscleGroup": "CORE",
     "secondaryMuscleGroups": "LOWER_BACK",
@@ -19726,7 +19726,7 @@
   },
   {
     "id": 1316,
-    "name": "Wheel run",
+    "name": "Бег с колесом сопротивления",
     "nameEn": "Wheel Run",
     "primaryMuscleGroup": "FULL_BODY",
     "secondaryMuscleGroups": "QUADRICEPS,HAMSTRINGS,CALVES",
@@ -19771,7 +19771,7 @@
   },
   {
     "id": 1319,
-    "name": "Wide hand push up",
+    "name": "Отжимания широкой постановкой рук",
     "nameEn": "Wide Hand Push Up",
     "primaryMuscleGroup": "CHEST",
     "secondaryMuscleGroups": "TRICEPS,SHOULDERS",
@@ -19816,7 +19816,7 @@
   },
   {
     "id": 1322,
-    "name": "World greatest stretch",
+    "name": "Комплексная растяжка всего тела (World's greatest stretch)",
     "nameEn": "World Greatest Stretch",
     "primaryMuscleGroup": "LEGS_HAMSTRINGS",
     "secondaryMuscleGroups": "GLUTES,QUADRICEPS,CALVES",
@@ -19846,7 +19846,7 @@
   },
   {
     "id": 1324,
-    "name": "Wrist rollerer",
+    "name": "Скручивания на предплечья с валиком (Wrist roller)",
     "nameEn": "Wrist Rollerer",
     "primaryMuscleGroup": "BICEPS",
     "secondaryMuscleGroups": "BICEPS,TRICEPS",

@@ -39,11 +39,14 @@ interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(exercise: ExerciseEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertExercises(exercises: List<ExerciseEntity>)
 
     @Update
     suspend fun updateExercise(exercise: ExerciseEntity)
+
+    @Update
+    suspend fun updateExercises(exercises: List<ExerciseEntity>)
 
     @Query("DELETE FROM exercises WHERE id = :id AND isCustom = 1")
     suspend fun deleteCustomExercise(id: Long): Int

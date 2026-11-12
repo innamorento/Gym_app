@@ -57,13 +57,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gym.core.model.Equipment
 import com.gym.core.model.Exercise
 import com.gym.core.model.MuscleCategory
 import com.gym.core.ui.component.ExerciseDetailSheet
+import com.gym.core.ui.component.ExerciseThumbnail
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymAccentPurple
@@ -297,24 +302,6 @@ fun ExerciseListItem(
     onExclude: () -> Unit,
     onRestore: () -> Unit
 ) {
-    val iconBgGradient = when (exercise.equipment) {
-        Equipment.BARBELL -> Brush.linearGradient(listOf(GymAccentGreen.copy(alpha = 0.25f), GymAccentBlue.copy(alpha = 0.15f)))
-        Equipment.DUMBBELL -> Brush.linearGradient(listOf(GymAccentBlue.copy(alpha = 0.25f), GymAccentPurple.copy(alpha = 0.15f)))
-        Equipment.CABLE -> Brush.linearGradient(listOf(GymAccentPurple.copy(alpha = 0.25f), GymDarkSurfaceVariant))
-        Equipment.MACHINE -> Brush.linearGradient(listOf(Color(0xFFEAB308).copy(alpha = 0.25f), GymDarkSurfaceVariant))
-        Equipment.BODYWEIGHT -> Brush.linearGradient(listOf(Color(0xFF06B6D4).copy(alpha = 0.25f), GymDarkSurfaceVariant))
-        else -> Brush.linearGradient(listOf(GymDarkSurfaceVariant, GymDarkBackground))
-    }
-
-    val equipmentBadgeEmoji = when (exercise.equipment) {
-        Equipment.BARBELL -> "🏋️"
-        Equipment.DUMBBELL -> "💪"
-        Equipment.CABLE -> "⚙️"
-        Equipment.MACHINE -> "🏗️"
-        Equipment.BODYWEIGHT -> "🤸"
-        else -> "🎯"
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -331,16 +318,15 @@ fun ExerciseListItem(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(iconBgGradient)
-                    .border(1.dp, GymDarkSurfaceVariant, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = equipmentBadgeEmoji, fontSize = 22.sp)
-            }
+            ExerciseThumbnail(
+                thumbnailUrl = exercise.thumbnailUrl,
+                gifUrl = exercise.gifUrl,
+                primaryMuscleGroup = exercise.primaryMuscleGroup,
+                equipment = exercise.equipment,
+                modifier = Modifier.size(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                contentDescription = exercise.name
+            )
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -361,19 +347,25 @@ fun ExerciseListItem(
                     }
                 }
                 Spacer(modifier = Modifier.height(3.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = exercise.primaryMuscleGroup.displayNameRu,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (exercise.isExcluded) GymTextSecondary else GymAccentGreen
-                    )
-                    Text(
-                        text = " • ${exercise.equipment.displayNameRu}",
-                        fontSize = 11.sp,
-                        color = GymTextSecondary
-                    )
+                val subtitle = buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(
+                            color = if (exercise.isExcluded) GymTextSecondary else GymAccentGreen,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    ) {
+                        append(exercise.primaryMuscleGroup.displayNameRu)
+                    }
+                    withStyle(SpanStyle(color = GymTextSecondary)) {
+                        append(" • ${exercise.equipment.displayNameRu}")
+                    }
                 }
+                Text(
+                    text = subtitle,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
 
                 if (exercise.isExcluded) {
                     Spacer(modifier = Modifier.height(3.dp))
