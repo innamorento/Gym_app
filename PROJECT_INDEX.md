@@ -28,6 +28,7 @@
 2. **Document Decisions & Logic:** Любое архитектурное решение, изменение схемы данных или смена приоритетов фиксируется в `docs/decisions/` и `docs/notes/DEV_LOG.md`.
 3. **Ergonomics First:** Любой UI/UX сценарий оценивается с позиции атлета в зале (усталость, 1 рука, пот/магнезия, плохой свет, отсутствие сети).
 4. **Adaptive Scaling (FlowRow):** Все фильтры и чипы обязаны поддерживать нестандартный масштаб шрифтов и экранов с автоматическим переносом на новую строку.
+5. **Knowledge Graph Continuity (Memory MCP):** Обращение к локальному графу памяти (`@modelcontextprotocol/server-memory`) и файлу `memory.jsonl` перед началом решения системных инцидентов и обязательная фиксация извлеченных уроков.
 
 ---
 
@@ -38,6 +39,8 @@
 |---|---|
 | [`PROJECT_INDEX.md`](./PROJECT_INDEX.md) | Главная точка входа, статус проекта, общие соглашения |
 | [`AGENTS.md`](./AGENTS.md) | Системные правила и регламент для AI-агентов (всегда в контексте) |
+| [`C:\Users\ThinkpadX1\.gemini\memory.jsonl`](file:///C:/Users/ThinkpadX1/.gemini/memory.jsonl) | Персистентный граф долговременной памяти AI-агентов (Knowledge Graph Memory) |
+| [`C:\Users\ThinkpadX1\.gemini\config\mcp_config.json`](file:///C:/Users/ThinkpadX1/.gemini/config/mcp_config.json) | Конфигурация MCP-серверов (включая локальный `memory`) |
 | [`.agents/skills/gym-architecture-and-standards/SKILL.md`](./.agents/skills/gym-architecture-and-standards/SKILL.md) | Навык и стандарты разработки фичей, MVI и Room |
 | [`.agents/mcp/gym_sqlite_mcp.py`](./.agents/mcp/gym_sqlite_mcp.py) | Локальный MCP-сервер для Room/SQLite инспекции и 1RM расчетов |
 | [`docs/analysis/PRD.md`](./docs/analysis/PRD.md) | Продуктовые требования, User Stories, анализ предметной области |
