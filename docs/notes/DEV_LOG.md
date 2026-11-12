@@ -4,6 +4,29 @@
 
 ---
 
+## [2026-11-12] — Настройка локального MCP-сервера долговременной памяти (Knowledge Graph Memory)
+
+### 1. Архитектурное решение (Agentic Memory)
+- **Выбранный стек:** Официальный `@modelcontextprotocol/server-memory` (Knowledge Graph Memory от Anthropic/MCP core).
+- **Локальное хранилище:** `C:\Users\ThinkpadX1\.gemini\memory.jsonl` (полностью автономно, 0 внешних API-ключей, формат JSONL).
+- **Конфигурация в `C:\Users\ThinkpadX1\.gemini\config\mcp_config.json`:**
+  ```json
+  "memory": {
+    "command": "cmd.exe",
+    "args": ["/c", "npx", "-y", "@modelcontextprotocol/server-memory"],
+    "env": {
+      "MEMORY_FILE_PATH": "C:\\Users\\ThinkpadX1\\.gemini\\memory.jsonl"
+    }
+  }
+  ```
+- **Начальный посев базы знаний (Initial Seed):**
+  - `AndroidEmulatorKeyboard`: фиксация первопричины подавления клавиатуры на Windows (`show_ime_with_hard_keyboard 1`) и включение русской раскладки.
+  - `PluginTelemetryHook`: исправление бага с кавычками в хуках плагина DataCloud.
+  - `RuleStrictScope`: безусловное соблюдение Правила 4 (никакой самодеятельности, чипсов и эрзац-решений).
+  - `GymTrackerArchitecture`: стек проекта (Kotlin 2.0.21, Jetpack Compose, Room SQLite, Koin 4, Media3 ExoPlayer) и статус спринтов.
+
+---
+
 ## [2026-11-07 (Sprints 9, 10, 11)] — Продвинутая аналитика (Canvas-графики), Конструктор упражнений и Встроенный видеоплеер тренера (Media3)
 
 ### 1. Архитектурные развилки и продуктовые решения (Reasoning & Implementation)
