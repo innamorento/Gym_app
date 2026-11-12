@@ -33,12 +33,15 @@ fun ExerciseEntity.toDomain(): Exercise {
     return Exercise(
         id = id,
         name = name,
+        nameEn = nameEn,
         primaryMuscleGroup = primaryMuscleGroup,
         secondaryMuscleGroups = secondary,
         equipment = equipment,
         isCustom = isCustom,
         defaultRestSeconds = defaultRestSeconds,
         instructions = instructions,
+        gifUrl = gifUrl,
+        thumbnailUrl = thumbnailUrl,
         isExcluded = isExcluded,
         exclusionReason = exclusionReason
     )
@@ -48,12 +51,15 @@ fun Exercise.toEntity(): ExerciseEntity {
     return ExerciseEntity(
         id = id,
         name = name,
+        nameEn = nameEn,
         primaryMuscleGroup = primaryMuscleGroup,
         secondaryMuscleGroups = secondaryMuscleGroups.joinToString(",") { it.name },
         equipment = equipment,
         isCustom = isCustom,
         defaultRestSeconds = defaultRestSeconds,
         instructions = instructions,
+        gifUrl = gifUrl,
+        thumbnailUrl = thumbnailUrl,
         isExcluded = isExcluded,
         exclusionReason = exclusionReason
     )

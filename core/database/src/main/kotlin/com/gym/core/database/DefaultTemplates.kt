@@ -1,20 +1,94 @@
 package com.gym.core.database
 
+import android.content.Context
 import com.gym.core.database.dao.ExerciseDao
 import com.gym.core.database.dao.TemplateDao
+import com.gym.core.database.entity.ExerciseEntity
 import com.gym.core.database.entity.TemplateExerciseEntity
 import com.gym.core.database.entity.WorkoutTemplateEntity
+import com.gym.core.model.Equipment
+import com.gym.core.model.MuscleGroup
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import org.json.JSONArray
 
 object DefaultTemplates {
 
-    suspend fun seedDefaultDataIfEmpty(exerciseDao: ExerciseDao, templateDao: TemplateDao) {
-        // 1. Проверяем и наполняем упражнения
-        if (exerciseDao.getExerciseCount() == 0) {
-            exerciseDao.insertExercises(DefaultExercises.list)
-        }
+    private val seedMutex = Mutex()
 
-        // 2. Проверяем и наполняем стартовые шаблоны
-        if (templateDao.getTemplateCount() == 0) {
+    private fun loadCatalogFromAssets(context: Context): List<ExerciseEntity> {
+        val list = mutableListOf<ExerciseEntity>()
+        try {
+            val jsonString = context.assets.open("exercises_catalog.json").bufferedReader().use { it.readText() }
+            val array = JSONArray(jsonString)
+            for (i in 0 until array.length()) {
+                val obj = array.getJSONObject(i)
+                val name = obj.getString("name")
+                val nameEn = obj.optString("nameEn").takeIf { it.isNotBlank() }
+                val primaryMuscleGroup = try {
+                    MuscleGroup.valueOf(obj.getString("primaryMuscleGroup"))
+                } catch (e: Exception) {
+                    MuscleGroup.FULL_BODY
+                }
+                val secondaryMuscleGroups = obj.optString("secondaryMuscleGroups", "")
+                val equipment = try {
+                    Equipment.valueOf(obj.getString("equipment"))
+                } catch (e: Exception) {
+                    Equipment.OTHER
+                }
+                val defaultRestSeconds = obj.optInt("defaultRestSeconds", 90)
+                val instructions = obj.optString("instructions").takeIf { it.isNotBlank() }
+                val gifUrl = obj.optString("gifUrl").takeIf { it.isNotBlank() }
+                val thumbnailUrl = obj.optString("thumbnailUrl").takeIf { it.isNotBlank() }
+
+                list.add(
+                    ExerciseEntity(
+                        id = 0,
+                        name = name,
+                        nameEn = nameEn,
+                        primaryMuscleGroup = primaryMuscleGroup,
+                        secondaryMuscleGroups = secondaryMuscleGroups,
+                        equipment = equipment,
+                        isCustom = false,
+                        defaultRestSeconds = defaultRestSeconds,
+                        instructions = instructions,
+                        gifUrl = gifUrl,
+                        thumbnailUrl = thumbnailUrl,
+                        isExcluded = false,
+                        exclusionReason = null
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return list
+    }
+
+    suspend fun seedDefaultDataIfEmpty(context: Context? = null, exerciseDao: ExerciseDao, templateDao: TemplateDao) {
+        seedMutex.withLock {
+            // 1. Проверяем и наполняем упражнения
+            val existingNames = exerciseDao.getAllExercisesList().map { it.name }.toSet()
+            val catalogExercises = if (context != null) {
+                loadCatalogFromAssets(context)
+            } else {
+                emptyList()
+            }
+
+            val exercisesToInsert = if (catalogExercises.isNotEmpty()) {
+                catalogExercises.filter { it.name !in existingNames }
+            } else if (existingNames.isEmpty()) {
+                DefaultExercises.list
+            } else {
+                emptyList()
+            }
+
+            if (exercisesToInsert.isNotEmpty()) {
+                exerciseDao.insertExercises(exercisesToInsert)
+            }
+
+            // 2. Проверяем и наполняем стартовые шаблоны
+            if (templateDao.getTemplateCount() == 0) {
             val exercisesMap = exerciseDao.getAllExercisesList().associateBy { it.name }
 
             // Шаблон 1: Грудь + Трицепс (Push)
@@ -125,4 +199,5 @@ object DefaultTemplates {
             templateDao.insertTemplateExercises(fullBodyExercises)
         }
     }
+}
 }

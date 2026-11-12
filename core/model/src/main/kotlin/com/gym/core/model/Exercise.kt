@@ -3,12 +3,15 @@ package com.gym.core.model
 data class Exercise(
     val id: Long = 0,
     val name: String,
+    val nameEn: String? = null,
     val primaryMuscleGroup: MuscleGroup,
     val secondaryMuscleGroups: List<MuscleGroup> = emptyList(),
     val equipment: Equipment,
     val isCustom: Boolean = false,
     val defaultRestSeconds: Int = 90,
     val instructions: String? = null,
+    val gifUrl: String? = null,
+    val thumbnailUrl: String? = null,
     val isExcluded: Boolean = false,
     val exclusionReason: String? = null
 ) {

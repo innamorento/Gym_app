@@ -13,6 +13,7 @@ import org.koin.dsl.module
 
 val databaseModule = module {
     single<GymDatabase> {
+        val context = androidContext()
         var databaseInstance: GymDatabase? = null
         val callback = object : RoomDatabase.Callback() {
             override fun onCreate(db: SupportSQLiteDatabase) {
@@ -21,7 +22,7 @@ val databaseModule = module {
                     val exDao = databaseInstance?.exerciseDao()
                     val tmplDao = databaseInstance?.templateDao()
                     if (exDao != null && tmplDao != null) {
-                        DefaultTemplates.seedDefaultDataIfEmpty(exDao, tmplDao)
+                        DefaultTemplates.seedDefaultDataIfEmpty(context, exDao, tmplDao)
                     }
                 }
             }
@@ -32,14 +33,14 @@ val databaseModule = module {
                     val exDao = databaseInstance?.exerciseDao()
                     val tmplDao = databaseInstance?.templateDao()
                     if (exDao != null && tmplDao != null) {
-                        DefaultTemplates.seedDefaultDataIfEmpty(exDao, tmplDao)
+                        DefaultTemplates.seedDefaultDataIfEmpty(context, exDao, tmplDao)
                     }
                 }
             }
         }
 
         val db = Room.databaseBuilder(
-            androidContext(),
+            context,
             GymDatabase::class.java,
             "gym_tracker.db"
         )
@@ -50,7 +51,7 @@ val databaseModule = module {
 
         // Гарантированный посев данных на IO-потоке сразу после создания инстанса
         CoroutineScope(Dispatchers.IO).launch {
-            DefaultTemplates.seedDefaultDataIfEmpty(db.exerciseDao(), db.templateDao())
+            DefaultTemplates.seedDefaultDataIfEmpty(context, db.exerciseDao(), db.templateDao())
         }
 
         db

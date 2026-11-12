@@ -94,6 +94,73 @@ def tool_gym_calculate_1rm(weight: float, reps: int) -> Dict[str, Any]:
         "training_percentages_of_max": percentages
     }
 
+CATALOG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "core", "database", "src", "main", "assets", "exercises_catalog.json")
+
+def tool_gym_exercise_catalog(action: str = "stats", query: str = "", muscle: str = "", equipment: str = "", exercise_id: int = 0) -> Dict[str, Any]:
+    """Inspect and search the comprehensive offline exercise catalog with GIFs and instructions."""
+    if not os.path.exists(CATALOG_PATH):
+        return {"error": f"Catalog not found at: {CATALOG_PATH}"}
+
+    try:
+        with open(CATALOG_PATH, "r", encoding="utf-8") as f:
+            catalog = json.load(f)
+    except Exception as e:
+        return {"error": f"Failed to load catalog: {e}"}
+
+    if action == "stats":
+        muscles = {}
+        equipments = {}
+        has_gif = 0
+        for x in catalog:
+            m = x.get("primaryMuscleGroup", "UNKNOWN")
+            e = x.get("equipment", "UNKNOWN")
+            muscles[m] = muscles.get(m, 0) + 1
+            equipments[e] = equipments.get(e, 0) + 1
+            if x.get("gifUrl"):
+                has_gif += 1
+        return {
+            "total_exercises": len(catalog),
+            "exercises_with_gif": has_gif,
+            "gif_coverage_pct": round(has_gif / len(catalog) * 100, 1) if catalog else 0,
+            "muscles_breakdown": muscles,
+            "equipments_breakdown": equipments
+        }
+    elif action == "get":
+        for x in catalog:
+            if x.get("id") == exercise_id:
+                return {"exercise": x}
+        return {"error": f"Exercise with id {exercise_id} not found."}
+    elif action == "search":
+        q = query.strip().lower()
+        m_filter = muscle.strip().upper()
+        e_filter = equipment.strip().upper()
+        matches = []
+        for x in catalog:
+            if m_filter and x.get("primaryMuscleGroup") != m_filter:
+                continue
+            if e_filter and x.get("equipment") != e_filter:
+                continue
+            if q:
+                name_ru = x.get("name", "").lower()
+                name_en = x.get("nameEn", "").lower()
+                if q not in name_ru and q not in name_en:
+                    continue
+            matches.append({
+                "id": x.get("id"),
+                "name": x.get("name"),
+                "nameEn": x.get("nameEn"),
+                "primaryMuscleGroup": x.get("primaryMuscleGroup"),
+                "equipment": x.get("equipment"),
+                "has_gif": bool(x.get("gifUrl")),
+                "gifUrl": x.get("gifUrl"),
+                "instructions_preview": (x.get("instructions", "")[:120] + "...") if x.get("instructions") else ""
+            })
+            if len(matches) >= 50:
+                break
+        return {"count": len(matches), "matches": matches}
+    else:
+        return {"error": f"Unknown action: {action}. Use 'stats', 'search', or 'get'."}
+
 TOOLS = [
     {
         "name": "gym_db_schema",
@@ -127,6 +194,20 @@ TOOLS = [
                 "reps": {"type": "integer", "description": "Количество повторений в подходе"}
             },
             "required": ["weight", "reps"]
+        }
+    },
+    {
+        "name": "gym_exercise_catalog",
+        "description": "Поиск, фильтрация и инспекция базы из 1324 упражнений (GIF-анимации, русские методические инструкции, группы мышц, снаряды).",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "action": {"type": "string", "enum": ["stats", "search", "get"], "description": "Действие: 'stats' (статистика каталога), 'search' (поиск по имени/фильтрам), 'get' (получить по ID)"},
+                "query": {"type": "string", "description": "Поисковый запрос (русский или английский, напр. 'жим лежа', 'sissy', 'тейта', 'arm')"},
+                "muscle": {"type": "string", "description": "Фильтр по группе мышц: CHEST, BACK, LEGS_QUADS, LEGS_HAMSTRINGS, CALVES, SHOULDERS, BICEPS, TRICEPS, CORE, FULL_BODY"},
+                "equipment": {"type": "string", "description": "Фильтр по снаряду: BARBELL, DUMBBELL, MACHINE, CABLE, BODYWEIGHT, KETTLEBELL, RESISTANCE_BAND, OTHER"},
+                "exercise_id": {"type": "integer", "description": "ID упражнения для действия 'get'"}
+            }
         }
     }
 ]
@@ -170,6 +251,14 @@ def handle_request(req):
                 res = tool_gym_db_query(args.get("sql", ""), args.get("db_path", ""))
             elif tname == "gym_calculate_1rm":
                 res = tool_gym_calculate_1rm(args.get("weight", 0.0), args.get("reps", 0))
+            elif tname == "gym_exercise_catalog":
+                res = tool_gym_exercise_catalog(
+                    action=args.get("action", "stats"),
+                    query=args.get("query", ""),
+                    muscle=args.get("muscle", ""),
+                    equipment=args.get("equipment", ""),
+                    exercise_id=args.get("exercise_id", 0)
+                )
             else:
                 return {
                     "jsonrpc": "2.0",

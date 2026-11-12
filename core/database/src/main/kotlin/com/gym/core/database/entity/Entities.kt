@@ -15,12 +15,15 @@ data class ExerciseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val name: String,
+    val nameEn: String? = null,
     val primaryMuscleGroup: MuscleGroup,
     val secondaryMuscleGroups: String, // Comma-separated enums
     val equipment: Equipment,
     val isCustom: Boolean = false,
     val defaultRestSeconds: Int = 90,
     val instructions: String? = null,
+    val gifUrl: String? = null,
+    val thumbnailUrl: String? = null,
     val isExcluded: Boolean = false,
     val exclusionReason: String? = null
 )

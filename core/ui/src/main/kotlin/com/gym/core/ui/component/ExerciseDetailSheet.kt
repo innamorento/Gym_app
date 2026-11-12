@@ -1,5 +1,6 @@
 package com.gym.core.ui.component
 
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,14 +40,22 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.ImageLoader
+import coil.compose.SubcomposeAsyncImage
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
 import com.gym.core.model.Equipment
 import com.gym.core.model.Exercise
 import com.gym.core.ui.theme.GymAccentBlue
@@ -94,6 +105,15 @@ fun ExerciseDetailSheet(
                         fontWeight = FontWeight.Bold,
                         color = GymTextPrimary
                     )
+                    val nameEn = exercise.nameEn
+                    if (!nameEn.isNullOrBlank()) {
+                        Text(
+                            text = nameEn,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = GymTextSecondary
+                        )
+                    }
                     if (exercise.isCustom) {
                         Text(
                             text = "⭐ Пользовательское упражнение",
@@ -110,11 +130,25 @@ fun ExerciseDetailSheet(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Большой визуальный медиа-контейнер (Иллюстрация техники / контейнер под 3D-анимацию)
+            // Большой визуальный медиа-контейнер (GIF анимация техники или иллюстрация)
+            val context = LocalContext.current
+            val imageLoader = remember(context) {
+                ImageLoader.Builder(context)
+                    .components {
+                        if (Build.VERSION.SDK_INT >= 28) {
+                            add(ImageDecoderDecoder.Factory())
+                        } else {
+                            add(GifDecoder.Factory())
+                        }
+                    }
+                    .crossfade(true)
+                    .build()
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
+                    .height(210.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(
                         Brush.verticalGradient(
@@ -124,45 +158,39 @@ fun ExerciseDetailSheet(
                     .border(1.dp, GymDarkSurfaceVariant, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if (!exercise.gifUrl.isNullOrBlank()) {
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(exercise.gifUrl)
+                            .crossfade(true)
+                            .build(),
+                        imageLoader = imageLoader,
+                        contentDescription = exercise.name,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Fit,
+                        loading = {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator(color = GymAccentGreen, modifier = Modifier.size(36.dp))
+                            }
+                        },
+                        error = {
+                            ExerciseFallbackIllustration(exercise)
+                        }
+                    )
                     Box(
                         modifier = Modifier
-                            .size(64.dp)
-                            .clip(RoundedCornerShape(32.dp))
-                            .background(GymAccentGreen.copy(alpha = 0.2f)),
-                        contentAlignment = Alignment.Center
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color.Black.copy(alpha = 0.6f))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.FitnessCenter,
-                            contentDescription = null,
-                            tint = GymAccentGreen,
-                            modifier = Modifier.size(36.dp)
-                        )
+                        Text("GIF 🎬", fontSize = 10.sp, color = GymAccentGreen, fontWeight = FontWeight.Bold)
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayCircleOutline,
-                            contentDescription = null,
-                            tint = GymAccentBlue,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Text(
-                            text = "3D Анимация и техника выполнения",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = GymAccentBlue
-                        )
-                    }
-                    Text(
-                        text = "Снаряд: ${exercise.equipment.displayNameRu}",
-                        fontSize = 11.sp,
-                        color = GymTextSecondary,
-                        modifier = Modifier.padding(top = 2.dp)
-                    )
+                } else {
+                    ExerciseFallbackIllustration(exercise)
                 }
             }
 
@@ -288,5 +316,49 @@ fun ExerciseDetailSheet(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ExerciseFallbackIllustration(exercise: Exercise) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(RoundedCornerShape(32.dp))
+                .background(GymAccentGreen.copy(alpha = 0.2f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.FitnessCenter,
+                contentDescription = null,
+                tint = GymAccentGreen,
+                modifier = Modifier.size(36.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.PlayCircleOutline,
+                contentDescription = null,
+                tint = GymAccentBlue,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                text = "Анимация и техника выполнения",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = GymAccentBlue
+            )
+        }
+        Text(
+            text = "Снаряд: ${exercise.equipment.displayNameRu}",
+            fontSize = 11.sp,
+            color = GymTextSecondary,
+            modifier = Modifier.padding(top = 2.dp)
+        )
     }
 }
