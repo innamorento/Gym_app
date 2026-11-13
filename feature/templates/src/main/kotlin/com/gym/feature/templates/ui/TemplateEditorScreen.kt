@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.LinkOff
 import androidx.compose.material.icons.filled.PlayArrow
@@ -59,6 +60,9 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.model.Exercise
+import com.gym.core.ui.component.ExerciseDetailSheet
+import com.gym.core.ui.component.ExerciseThumbnail
 import com.gym.core.ui.component.SupersetBadge
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
@@ -84,6 +88,7 @@ fun TemplateEditorScreen(
 ) {
     val state by viewModel.editorUiState.collectAsState()
     var selectedForSuperset by remember { mutableStateOf<String?>(null) }
+    var selectedExerciseForDetail by remember { mutableStateOf<Exercise?>(null) }
 
     LaunchedEffect(templateId) {
         viewModel.initEditor(templateId)
@@ -243,6 +248,7 @@ fun TemplateEditorScreen(
                 TemplateExerciseItemView(
                     item = item,
                     isSelectedForSuperset = selectedForSuperset == item.tempId,
+                    onExerciseClick = { exercise -> selectedExerciseForDetail = exercise },
                     onSelectForSuperset = {
                         if (selectedForSuperset == null) {
                             selectedForSuperset = item.tempId
@@ -300,6 +306,15 @@ fun TemplateEditorScreen(
                 }
             }
         }
+
+        // Модальная шторка техники выполнения упражнения с GIF-анимацией
+        selectedExerciseForDetail?.let { exercise ->
+            ExerciseDetailSheet(
+                exercise = exercise,
+                onDismiss = { selectedExerciseForDetail = null },
+                onSelectExercise = { selectedExerciseForDetail = null }
+            )
+        }
     }
 }
 
@@ -310,6 +325,7 @@ fun TemplateExerciseItemView(
     onSelectForSuperset: () -> Unit,
     onUnlinkSuperset: () -> Unit,
     onRemove: () -> Unit,
+    onExerciseClick: (Exercise) -> Unit = {},
     onUpdateSetsCount: (Int) -> Unit = {},
     onUpdateRestSeconds: (Int) -> Unit = {}
 ) {
@@ -335,18 +351,50 @@ fun TemplateExerciseItemView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = item.exercise.name,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = GymTextPrimary
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable { onExerciseClick(item.exercise) }
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ExerciseThumbnail(
+                        thumbnailUrl = item.exercise.thumbnailUrl,
+                        gifUrl = item.exercise.gifUrl,
+                        primaryMuscleGroup = item.exercise.primaryMuscleGroup,
+                        equipment = item.exercise.equipment,
+                        modifier = Modifier.size(48.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        contentDescription = item.exercise.name
                     )
-                    Text(
-                        text = "${item.exercise.primaryMuscleGroup.displayNameRu} • ${item.exercise.equipment.displayNameRu}",
-                        fontSize = 12.sp,
-                        color = GymTextSecondary
-                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = item.exercise.name,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GymTextPrimary,
+                                modifier = Modifier.weight(1f, fill = false)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Посмотреть технику упражнения",
+                                tint = GymAccentBlue,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "${item.exercise.primaryMuscleGroup.displayNameRu} • ${item.exercise.equipment.displayNameRu}",
+                            fontSize = 12.sp,
+                            color = GymTextSecondary
+                        )
+                    }
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -391,84 +439,84 @@ fun TemplateExerciseItemView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Подходы со степпером [-] 3 [+]
+                // Подходы со степпером (Touch Target >= 44dp)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Подходов:", fontSize = 13.sp, color = GymTextSecondary)
                     Spacer(modifier = Modifier.width(6.dp))
                     Box(
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(44.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
                         IconButton(
                             onClick = { onUpdateSetsCount((item.targetSetsCount - 1).coerceAtLeast(1)) },
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(44.dp)
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "Минус подход", tint = GymTextPrimary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Remove, contentDescription = "Минус подход", tint = GymTextPrimary, modifier = Modifier.size(20.dp))
                         }
                     }
                     Text(
                         text = "${item.targetSetsCount}",
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = GymAccentGreen,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
                     Box(
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(44.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
                         IconButton(
                             onClick = { onUpdateSetsCount(item.targetSetsCount + 1) },
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(44.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "Плюс подход", tint = GymTextPrimary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Add, contentDescription = "Плюс подход", tint = GymTextPrimary, modifier = Modifier.size(20.dp))
                         }
                     }
                 }
 
-                // Отдых со степпером [-15с] 90с [+15с]
+                // Отдых со степпером [-15с] 90с [+15с] (Touch Target >= 44dp)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("Отдых:", fontSize = 13.sp, color = GymTextSecondary)
                     Spacer(modifier = Modifier.width(6.dp))
                     Box(
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(44.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
                         IconButton(
                             onClick = { onUpdateRestSeconds((item.defaultRestSeconds - 15).coerceAtLeast(15)) },
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(44.dp)
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "Меньше отдых", tint = GymTextPrimary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Remove, contentDescription = "Меньше отдых", tint = GymTextPrimary, modifier = Modifier.size(20.dp))
                         }
                     }
                     Text(
                         text = "${item.defaultRestSeconds}с",
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = GymAccentBlue,
                         modifier = Modifier.padding(horizontal = 6.dp)
                     )
                     Box(
                         modifier = Modifier
-                            .size(28.dp)
+                            .size(44.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
                         IconButton(
                             onClick = { onUpdateRestSeconds(item.defaultRestSeconds + 15) },
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(44.dp)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "Больше отдых", tint = GymTextPrimary, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Add, contentDescription = "Больше отдых", tint = GymTextPrimary, modifier = Modifier.size(20.dp))
                         }
                     }
                 }

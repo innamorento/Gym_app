@@ -1,5 +1,7 @@
 package com.gym.feature.exercises.ui
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -177,46 +179,28 @@ fun ExercisesScreen(
                 singleLine = true
             )
 
-            // Понятные анатомические категории мышц с FlowRow автопереносом
-            Text(
-                text = "Группы мышц:",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = GymTextSecondary,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-            )
-
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                // Все упражнения
-                FilterChip(
-                    selected = state.selectedRegion == null,
-                    onClick = { viewModel.onRegionSelected(null) },
-                    label = { Text("Все (${state.exercises.size})", fontSize = 12.sp) },
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = GymAccentGreen,
-                        selectedLabelColor = GymDarkBackground,
-                        containerColor = GymDarkSurface,
-                        labelColor = GymTextSecondary
-                    )
+            // Если группа мышц не выбрана — показываем все категории
+            if (state.selectedRegion == null) {
+                Text(
+                    text = "Группы мышц:",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = GymTextSecondary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
 
-                // Понятные привычные категории
-                MuscleCategory.values().forEach { category ->
-                    val count = state.regionCounts[category] ?: 0
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    // Все упражнения
                     FilterChip(
-                        selected = state.selectedRegion == category,
-                        onClick = {
-                            viewModel.onRegionSelected(if (state.selectedRegion == category) null else category)
-                        },
-                        label = {
-                            Text("${category.emoji} ${category.displayNameRu} ($count)", fontSize = 12.sp)
-                        },
+                        selected = true,
+                        onClick = { viewModel.onRegionSelected(null) },
+                        label = { Text("Все (${state.exercises.size})", fontSize = 12.sp) },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor = GymAccentGreen,
                             selectedLabelColor = GymDarkBackground,
@@ -224,10 +208,135 @@ fun ExercisesScreen(
                             labelColor = GymTextSecondary
                         )
                     )
+
+                    // Привычные анатомические категории
+                    MuscleCategory.values().forEach { category ->
+                        val count = state.regionCounts[category] ?: 0
+                        FilterChip(
+                            selected = false,
+                            onClick = { viewModel.onRegionSelected(category) },
+                            label = {
+                                Text("${category.emoji} ${category.displayNameRu} ($count)", fontSize = 12.sp)
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = GymAccentGreen,
+                                selectedLabelColor = GymDarkBackground,
+                                containerColor = GymDarkSurface,
+                                labelColor = GymTextSecondary
+                            )
+                        )
+                    }
+                }
+            } else {
+                // Когда группа выбрана: прячем остальные группы, даем кнопку «Назад» и компактный бейдж
+                val currentCategory = state.selectedRegion
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(GymDarkSurfaceVariant)
+                            .clickable { viewModel.onRegionSelected(null) }
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Все группы мышц",
+                            tint = GymAccentGreen,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Все группы",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = GymTextPrimary
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(GymAccentGreen.copy(alpha = 0.15f))
+                            .border(1.dp, GymAccentGreen.copy(alpha = 0.4f), RoundedCornerShape(10.dp))
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${currentCategory?.emoji} ${currentCategory?.displayNameRu}",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GymAccentGreen
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "(${state.exercises.size})",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = GymTextSecondary
+                        )
+                    }
+                }
+
+                // Горизонтальный фильтр по типу снаряда ("свободный вес", гантели, штанга и т.д.)
+                val equipmentList = listOf(
+                    null to "Все снаряды",
+                    Equipment.BARBELL to "🏋️ Штанга",
+                    Equipment.DUMBBELL to "💪 Гантели",
+                    Equipment.BODYWEIGHT to "🤸 Свободный вес",
+                    Equipment.CABLE to "⚡ Блок / Кроссовер",
+                    Equipment.MACHINE to "⚙️ Тренажер",
+                    Equipment.WEIGHTED_BODYWEIGHT to "🎒 С весом",
+                    Equipment.KETTLEBELL to "🔔 Гиря",
+                    Equipment.RESISTANCE_BAND to "🎗️ Эспандер",
+                    Equipment.OTHER to "📦 Другое"
+                ).filter { (eq, _) ->
+                    eq == null || (state.equipmentCounts[eq] ?: 0) > 0
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    equipmentList.forEach { (eq, title) ->
+                        val isSelected = state.selectedEquipment == eq
+                        val count = if (eq == null) {
+                            state.equipmentCounts.values.sum()
+                        } else {
+                            state.equipmentCounts[eq] ?: 0
+                        }
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { viewModel.onEquipmentSelected(if (isSelected) null else eq) },
+                            label = {
+                                Text(
+                                    text = if (count > 0 && eq != null) "$title ($count)" else title,
+                                    fontSize = 12.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = GymAccentGreen,
+                                selectedLabelColor = GymDarkBackground,
+                                containerColor = GymDarkSurface,
+                                labelColor = GymTextSecondary
+                            )
+                        )
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             // Список упражнений
             if (state.isLoading) {

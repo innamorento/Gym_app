@@ -38,8 +38,8 @@ fun SetTypeBadge(
 
     Box(
         modifier = modifier
-            .size(36.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .size(44.dp)
+            .clip(RoundedCornerShape(10.dp))
             .background(bgColor)
             .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         contentAlignment = Alignment.Center

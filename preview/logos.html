@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Workout Tracker — Презентация концепций логотипа (Cyber Lime)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #07080a; color: #f3f4f6; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .header { text-align: center; max-width: 800px; margin-bottom: 40px; }
+        .badge { display: inline-block; background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; color: #22c55e; font-size: 12px; font-weight: 700; padding: 4px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        h1 { font-size: 32px; font-weight: 800; color: #f9fafb; margin-bottom: 10px; }
+        p { color: #9ca3af; font-size: 15px; line-height: 1.5; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 28px; width: 100%; max-width: 1140px; }
+        
+        .card { background: #0e1015; border: 1px solid #1c212c; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; align-items: center; position: relative; transition: all 0.3s ease; }
+        .card:hover { border-color: rgba(34, 197, 94, 0.6); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.8), 0 0 30px rgba(34, 197, 94, 0.15); }
+        .card.recommended { border-color: #22c55e; box-shadow: 0 0 25px rgba(34, 197, 94, 0.12); }
+        .card.recommended::before { content: "РЕКОМЕНДОВАНО"; position: absolute; top: -11px; background: #22c55e; color: #07080a; font-size: 10px; font-weight: 800; padding: 3px 12px; border-radius: 10px; letter-spacing: 1px; }
+
+        .logo-display { width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; margin: 20px 0; }
+        
+        .title-block { text-align: center; margin-bottom: 16px; }
+        .title-block h2 { font-size: 20px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; }
+        .title-block .subtitle { font-size: 13px; color: #22c55e; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .desc { font-size: 14px; color: #94a3b8; line-height: 1.5; text-align: center; margin-bottom: 24px; }
+
+        .mockup-row { width: 100%; display: flex; justify-content: space-around; background: #08090d; border-radius: 16px; padding: 14px; border: 1px solid #161b24; margin-top: auto; }
+        .mockup-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .mockup-item span { font-size: 11px; color: #64748b; font-weight: 600; }
+        
+        .app-icon-squircle { width: 48px; height: 48px; border-radius: 12px; background: #0c0e12; display: flex; align-items: center; justify-content: center; border: 1px solid #272d3b; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .app-icon-squircle.themed { background: #272d3b; }
+
+        svg { filter: drop-shadow(0 0 12px rgba(34, 197, 94, 0.3)); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="badge">Спринт 12 • Фирменный стиль Cyber Lime</div>
+        <h1>Концепции логотипа Gym Workout Tracker</h1>
+        <p>Специально для стиля «Cyber Lime»: глубокий оникс, неоновый лайм, табличная спортивная типографика и безупречная читаемость на смартфонах и Android Adaptive Icons.</p>
+    </div>
+
+    <div class="grid">
+
+        <!-- ВАРИАНТ А -->
+        <div class="card recommended">
+            <div class="title-block">
+                <h2>Вариант А: «The Iron Apex»</h2>
+                <div class="subtitle">Шестигранник снаряда + Пик прогрессии</div>
+            </div>
+            
+            <div class="logo-display">
+                <!-- SVG Вариант А -->
+                <svg width="150" height="150" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gradA" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#22c55e" />
+                            <stop offset="100%" stop-color="#10b981" />
+                        </linearGradient>
+                        <linearGradient id="metalA" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#2a3241" />
+                            <stop offset="100%" stop-color="#141822" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Внешний шестигранник (Гантель / Снаряд) -->
+                    <polygon points="60,8 106,34 106,86 60,112 14,86 14,34" fill="url(#metalA)" stroke="#3b465a" stroke-width="3" stroke-linejoin="round" />
+                    <!-- Внутренняя фаска -->
+                    <polygon points="60,18 97,39 97,81 60,102 23,81 23,39" fill="#0c0e14" stroke="#1f2635" stroke-width="2" />
+                    <!-- Восходящий силовой пик / молния перегрузки -->
+                    <path d="M60 26L85 64H65L68 94L35 56H55L60 26Z" fill="url(#gradA)" />
+                    <!-- Неоновые точки замка грифа -->
+                    <circle cx="60" cy="18" r="2.5" fill="#22c55e" />
+                    <circle cx="60" cy="102" r="2.5" fill="#22c55e" />
+                </svg>
+            </div>
+
+            <div class="desc">
+                Симбиоз тяжелого шестигранного железа (снаряд зала) и восходящего неонового пика. Олицетворяет силовую дисциплину и постоянное преодоление собственного максимума (1RM).
+            </div>
+
+            <div class="mockup-row">
+                <div class="mockup-item">
+                    <div class="app-icon-squircle">
+                        <svg width="28" height="28" viewBox="0 0 120 120">
+                            <polygon points="60,10 104,35 104,85 60,110 16,85 16,35" fill="#141822" stroke="#3b465a" stroke-width="4"/>
+                            <path d="M60 26L85 64H65L68 94L35 56H55L60 26Z" fill="#22c55e"/>
+                        </svg>
+                    </div>
+                    <span>Android Icon</span>
+                </div>
+                <div class="mockup-item">
+                    <div class="app-icon-squircle themed">
+                        <svg width="28" height="28" viewBox="0 0 120 120">
+                            <polygon points="60,10 104,35 104,85 60,110 16,85 16,35" fill="#1e222a" stroke="#8892b0" stroke-width="4"/>
+                            <path d="M60 26L85 64H65L68 94L35 56H55L60 26Z" fill="#ffffff"/>
+                        </svg>
+                    </div>
+                    <span>Material You</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ВАРИАНТ Б -->
+        <div class="card">
+            <div class="title-block">
+                <h2>Вариант Б: «Kinetic G»</h2>
+                <div class="subtitle">Силовая монограмма олимпийского грифа</div>
+            </div>
+            
+            <div class="logo-display">
+                <!-- SVG Вариант Б -->
+                <svg width="150" height="150" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gradB" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#22c55e" />
+                            <stop offset="100%" stop-color="#4ade80" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Внешний олимпийский круг/диск -->
+                    <circle cx="60" cy="60" r="48" stroke="#232938" stroke-width="6" />
+                    <!-- Атлетическая техно-буква G -->
+                    <path d="M85 35C78 27 69 22 58 22C37 22 20 39 20 60C20 81 37 98 58 98C76 98 90 86 94 70H58V54H102V66C98 89 79 106 58 106C32 106 12 85 12 60C12 34 32 14 58 14C72 14 84 20 92 30L85 35Z" fill="#f9fafb" />
+                    <!-- Неоновая силовая плашка ядра (замок грифа) -->
+                    <rect x="58" y="54" width="38" height="12" rx="4" fill="url(#gradB)" />
+                    <circle cx="77" cy="60" r="3" fill="#07080a" />
+                </svg>
+            </div>
+
+            <div class="desc">
+                Мощная монолитная монограмма буквы «G», стилизованная под боковой профиль олимпийского диска и замок грифа со светящимся неоновым ядром. Лаконично и мгновенно узнаваемо.
+            </div>
+
+            <div class="mockup-row">
+                <div class="mockup-item">
+                    <div class="app-icon-squircle">
+                        <svg width="28" height="28" viewBox="0 0 120 120">
+                            <path d="M85 35C78 27 69 22 58 22C37 22 20 39 20 60C20 81 37 98 58 98C76 98 90 86 94 70H58V54H102V66C98 89 79 106 58 106C32 106 12 85 12 60C12 34 32 14 58 14C72 14 84 20 92 30L85 35Z" fill="#f9fafb"/>
+                            <rect x="58" y="54" width="38" height="12" rx="4" fill="#22c55e"/>
+                        </svg>
+                    </div>
+                    <span>Android Icon</span>
+                </div>
+                <div class="mockup-item">
+                    <div class="app-icon-squircle themed">
+                        <svg width="28" height="28" viewBox="0 0 120 120">
+                            <path d="M85 35C78 27 69 22 58 22C37 22 20 39 20 60C20 81 37 98 58 98C76 98 90 86 94 70H58V54H102V66C98 89 79 106 58 106C32 106 12 85 12 60C12 34 32 14 58 14C72 14 84 20 92 30L85 35Z" fill="#ffffff"/>
+                            <rect x="58" y="54" width="38" height="12" rx="4" fill="#94a3b8"/>
+                        </svg>
+                    </div>
+                    <span>Material You</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ВАРИАНТ В -->
+        <div class="card">
+            <div class="title-block">
+                <h2>Вариант В: «Overload Delta»</h2>
+                <div class="subtitle">Двойной клин прогрессивной нагрузки</div>
+            </div>
+            
+            <div class="logo-display">
+                <!-- SVG Вариант В -->
+                <svg width="150" height="150" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gradC" x1="50" y1="20" x2="105" y2="100" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#22c55e" />
+                            <stop offset="100%" stop-color="#15803d" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Малый титановый клин (Текущий вес) -->
+                    <path d="M22 88L46 32L62 88H22Z" fill="#202634" stroke="#3b465a" stroke-width="3" stroke-linejoin="round" />
+                    <!-- Большой доминирующий неоновый клин (Новый рекорд / Overload) -->
+                    <path d="M52 98L82 18L106 98H52Z" fill="url(#gradC)" stroke="#4ade80" stroke-width="2" stroke-linejoin="round" />
+                    <!-- Технологичная насечка калибровки -->
+                    <line x1="82" y1="36" x2="82" y2="82" stroke="#07080a" stroke-width="3" stroke-linecap="round" />
+                </svg>
+            </div>
+
+            <div class="desc">
+                Математическая дельта (&Delta;) и два сопряженных силовых клина. Наглядная метафора прогрессивной перегрузки: навешивание следующего блина и постоянный переход на новый уровень силы.
+            </div>
+
+            <div class="mockup-row">
+                <div class="mockup-item">
+                    <div class="app-icon-squircle">
+                        <svg width="28" height="28" viewBox="0 0 120 120">
+                            <path d="M22 88L46 32L62 88H22Z" fill="#202634"/>
+                            <path d="M52 98L82 18L106 98H52Z" fill="#22c55e"/>
+                        </svg>
+                    </div>
+                    <span>Android Icon</span>
+                </div>
+                <div class="mockup-item">
+                    <div class="app-icon-squircle themed">
+                        <svg width="28" height="28" viewBox="0 0 120 120">
+                            <path d="M22 88L46 32L62 88H22Z" fill="#3b465a"/>
+                            <path d="M52 98L82 18L106 98H52Z" fill="#ffffff"/>
+                        </svg>
+                    </div>
+                    <span>Material You</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

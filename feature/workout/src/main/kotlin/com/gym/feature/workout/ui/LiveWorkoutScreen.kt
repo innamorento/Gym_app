@@ -29,10 +29,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.Videocam
@@ -47,6 +49,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -71,13 +74,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.model.Exercise
 import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.ProgressionDecision
 import com.gym.core.model.ProgressionRecommendation
 import com.gym.core.model.Workout
 import com.gym.core.model.WorkoutExercise
 import com.gym.core.model.WorkoutSet
+import com.gym.core.ui.component.ExerciseDetailSheet
+import com.gym.core.ui.component.ExerciseThumbnail
 import com.gym.core.ui.component.PerceivedEffortSelector
+import com.gym.core.ui.component.PlateCalculatorDialog
 import com.gym.core.ui.component.SetTypeBadge
 import com.gym.core.ui.component.SupersetBadge
 import com.gym.core.ui.theme.GymAccentBlue
@@ -98,7 +105,8 @@ import com.gym.feature.workout.video.VideoRecordingHelper
 @Composable
 fun LiveWorkoutScreen(
     viewModel: WorkoutViewModel,
-    onFinishClick: () -> Unit,
+    onFinishClick: (Long) -> Unit,
+    onDiscardClick: () -> Unit = {},
     onAddExerciseClick: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -107,6 +115,10 @@ fun LiveWorkoutScreen(
     val recommendations by viewModel.progressionRecommendations.collectAsState()
 
     var editingSet by remember { mutableStateOf<WorkoutSet?>(null) }
+    var selectedExerciseForDetail by remember { mutableStateOf<Exercise?>(null) }
+    var showDiscardDialog by remember { mutableStateOf(false) }
+    var showPlateCalculator by remember { mutableStateOf(false) }
+    var plateCalcInitialWeight by remember { mutableDoubleStateOf(60.0) }
 
     when (val current = state) {
         is WorkoutUiState.Idle -> {
@@ -127,8 +139,15 @@ fun LiveWorkoutScreen(
                 recommendations = recommendations,
                 onApplyRecommendation = { exId, rec -> viewModel.applyProgressionRecommendation(exId, rec) },
                 onFinishClick = {
-                    viewModel.finishWorkout(current.workout.id)
-                    onFinishClick()
+                    viewModel.finishWorkout(current.workout.id) { finishedId ->
+                        onFinishClick(finishedId)
+                    }
+                },
+                onDiscardClick = { showDiscardDialog = true },
+                onOpenPlateCalculator = {
+                    val firstSetWeight = current.workout.exercises.firstOrNull()?.sets?.firstOrNull()?.weight ?: 60.0
+                    plateCalcInitialWeight = if (firstSetWeight > 0.0) firstSetWeight else 60.0
+                    showPlateCalculator = true
                 },
                 onAddSet = { exerciseId, count ->
                     viewModel.addSetToExercise(exerciseId, count)
@@ -146,8 +165,63 @@ fun LiveWorkoutScreen(
                 },
                 onAdjustRestTimer = { delta -> viewModel.adjustRestTimer(delta) },
                 onSetRestTimer = { sec -> viewModel.setRestTimer(sec) },
-                onSkipRestTimer = { viewModel.stopRestTimer() }
+                onSkipRestTimer = { viewModel.stopRestTimer() },
+                onExerciseClick = { exercise -> selectedExerciseForDetail = exercise }
             )
+
+            // Диалог отмены / сброса активной тренировки
+            if (showDiscardDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDiscardDialog = false },
+                    containerColor = GymDarkSurface,
+                    title = {
+                        Text("Отменить тренировку?", fontWeight = FontWeight.Bold, color = GymTextPrimary)
+                    },
+                    text = {
+                        Text(
+                            text = "Все подходы и данные текущей сессии будут удалены без сохранения.",
+                            color = GymTextSecondary,
+                            fontSize = 13.sp
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                showDiscardDialog = false
+                                viewModel.discardWorkout(current.workout.id)
+                                onDiscardClick()
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = GymAccentRed)
+                        ) {
+                            Text("Отменить сессию", color = GymTextPrimary, fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDiscardDialog = false }) {
+                            Text("Продолжить", color = GymTextSecondary)
+                        }
+                    }
+                )
+            }
+
+            // Калькулятор блинов на гриф
+            if (showPlateCalculator) {
+                PlateCalculatorDialog(
+                    initialTargetWeight = plateCalcInitialWeight,
+                    onDismiss = { showPlateCalculator = false },
+                    onApplyWeight = { showPlateCalculator = false }
+                )
+            }
+
+            // Детальная карточка упражнения с GIF-анимацией и техникой выполнения
+            val detailExercise = selectedExerciseForDetail
+            if (detailExercise != null) {
+                ExerciseDetailSheet(
+                    exercise = detailExercise,
+                    onDismiss = { selectedExerciseForDetail = null },
+                    onSelectExercise = { selectedExerciseForDetail = null }
+                )
+            }
 
             // Диалог редактирования веса и повторений
             if (editingSet != null) {
@@ -177,6 +251,8 @@ fun ActiveWorkoutContent(
     recommendations: Map<Long, ProgressionRecommendation> = emptyMap(),
     onApplyRecommendation: (Long, ProgressionRecommendation) -> Unit = { _, _ -> },
     onFinishClick: () -> Unit,
+    onDiscardClick: () -> Unit = {},
+    onOpenPlateCalculator: () -> Unit = {},
     onAddSet: (Long, Int) -> Unit,
     onAddExerciseClick: () -> Unit = {},
     onEditSet: (WorkoutSet) -> Unit = {},
@@ -185,7 +261,8 @@ fun ActiveWorkoutContent(
     onSelectEffort: (Long, PerceivedEffort) -> Unit = { _, _ -> },
     onAdjustRestTimer: (Int) -> Unit = {},
     onSetRestTimer: (Int) -> Unit = {},
-    onSkipRestTimer: () -> Unit = {}
+    onSkipRestTimer: () -> Unit = {},
+    onExerciseClick: (Exercise) -> Unit = {}
 ) {
     // Форматирование секундомера тренировки (ЧЧ:ММ:СС или ММ:СС)
     val hours = elapsedSeconds / 3600
@@ -213,7 +290,8 @@ fun ActiveWorkoutContent(
                                 text = "⏱ $durationFormatted",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = GymAccentBlue
+                                color = GymAccentBlue,
+                                style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum")
                             )
                             Text(
                                 text = " • ${workout.totalVolume.toInt()} кг • Сеты: ${workout.totalCompletedSets}",
@@ -224,6 +302,28 @@ fun ActiveWorkoutContent(
                     }
                 },
                 actions = {
+                    IconButton(
+                        onClick = onOpenPlateCalculator,
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Calculate,
+                            contentDescription = "Калькулятор блинов",
+                            tint = GymAccentBlue,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = onDiscardClick,
+                        modifier = Modifier.size(44.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Отменить тренировку",
+                            tint = GymTextSecondary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
                     Button(
                         onClick = onFinishClick,
                         colors = ButtonDefaults.buttonColors(containerColor = GymAccentGreen)
@@ -265,6 +365,7 @@ fun ActiveWorkoutContent(
                     recommendation = rec,
                     onApplyRecommendation = { onApplyRecommendation(exercise.id, it) },
                     exercise = exercise,
+                    onExerciseClick = onExerciseClick,
                     onAddSetClick = { onAddSet(exercise.id, exercise.sets.size) },
                     onEditSet = onEditSet,
                     onAttachVideo = onAttachVideo,
@@ -338,11 +439,17 @@ fun RestTimerBanner(
                         text = timeFormatted,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = GymAccentBlue
+                        color = GymAccentBlue,
+                        style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum")
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(onClick = onSkip, modifier = Modifier.size(24.dp)) {
-                        Icon(Icons.Default.Close, contentDescription = "Пропустить", tint = GymTextSecondary)
+                    IconButton(onClick = onSkip, modifier = Modifier.size(48.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Пропустить",
+                            tint = GymTextSecondary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }
@@ -401,6 +508,7 @@ fun WorkoutExerciseCard(
     exercise: WorkoutExercise,
     recommendation: ProgressionRecommendation? = null,
     onApplyRecommendation: (ProgressionRecommendation) -> Unit = {},
+    onExerciseClick: (Exercise) -> Unit = {},
     onAddSetClick: () -> Unit,
     onEditSet: (WorkoutSet) -> Unit,
     onAttachVideo: (Long, String) -> Unit,
@@ -420,22 +528,50 @@ fun WorkoutExerciseCard(
     ) {
         Column(modifier = Modifier.padding(14.dp)) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .clickable { onExerciseClick(exercise.exercise) }
+                    .padding(vertical = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column {
-                    Text(
-                        text = exercise.exercise.name,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = GymTextPrimary
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ExerciseThumbnail(
+                        thumbnailUrl = exercise.exercise.thumbnailUrl,
+                        gifUrl = exercise.exercise.gifUrl,
+                        primaryMuscleGroup = exercise.exercise.primaryMuscleGroup,
+                        equipment = exercise.exercise.equipment,
+                        modifier = Modifier.size(48.dp),
+                        shape = RoundedCornerShape(10.dp),
+                        contentDescription = exercise.exercise.name
                     )
-                    Text(
-                        text = "${exercise.exercise.primaryMuscleGroup.displayNameRu} • ${exercise.exercise.equipment.displayNameRu} (отдых ${exercise.exercise.defaultRestSeconds}с)",
-                        fontSize = 12.sp,
-                        color = GymTextSecondary
-                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = exercise.exercise.name,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GymTextPrimary
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = "Инструкция и техника",
+                                tint = GymAccentGreen.copy(alpha = 0.8f),
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                        Text(
+                            text = "${exercise.exercise.primaryMuscleGroup.displayNameRu} • ${exercise.exercise.equipment.displayNameRu} (отдых ${exercise.exercise.defaultRestSeconds}с)",
+                            fontSize = 12.sp,
+                            color = GymTextSecondary
+                        )
+                    }
                 }
 
                 if (exercise.isPartOfSuperset) {
@@ -529,41 +665,45 @@ fun WorkoutSetRow(
         ) {
             SetTypeBadge(setNumber = set.setNumber, setType = set.setType)
 
-            // Интерактивная плашка ввода веса
+            // Интерактивная плашка ввода веса (Touch Target >= 48dp)
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .height(48.dp)
                     .padding(horizontal = 4.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .background(GymDarkSurfaceVariant)
                     .clickable { onEditClick() }
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(horizontal = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = if (set.weight > 0) "${set.weight} кг" else "0.0 кг",
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (set.weight > 0) GymTextPrimary else GymTextSecondary
+                    color = if (set.weight > 0) GymTextPrimary else GymTextSecondary,
+                    style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum")
                 )
             }
 
-            // Интерактивная плашка ввода повторений
+            // Интерактивная плашка ввода повторений (Touch Target >= 48dp)
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .height(48.dp)
                     .padding(horizontal = 4.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(10.dp))
                     .background(GymDarkSurfaceVariant)
                     .clickable { onEditClick() }
-                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                    .padding(horizontal = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = if (set.reps > 0) "${set.reps} повт." else "0 повт.",
-                    fontSize = 14.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (set.reps > 0) GymTextPrimary else GymTextSecondary
+                    color = if (set.reps > 0) GymTextPrimary else GymTextSecondary,
+                    style = LocalTextStyle.current.copy(fontFeatureSettings = "tnum")
                 )
             }
 
@@ -573,22 +713,23 @@ fun WorkoutSetRow(
                     tempCaptureUri = uri
                     videoLauncher.launch(uri)
                 },
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Videocam,
                     contentDescription = "Записать видео подхода для тренера",
-                    tint = if (currentVideoUri != null) GymAccentGreen else GymTextSecondary
+                    tint = if (currentVideoUri != null) GymAccentGreen else GymTextSecondary,
+                    modifier = Modifier.size(24.dp)
                 )
             }
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            // Чекбокс завершения сета (Ergonomics First)
+            // Чекбокс завершения сета (Ergonomics First: Touch Target >= 48dp)
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(10.dp))
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(if (set.isCompleted) GymAccentGreen else GymDarkSurfaceVariant)
                     .clickable { onToggleCompleted() },
                 contentAlignment = Alignment.Center
@@ -596,6 +737,7 @@ fun WorkoutSetRow(
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Завершить подход",
+                    modifier = Modifier.size(26.dp),
                     tint = if (set.isCompleted) GymDarkBackground else GymTextSecondary
                 )
             }
@@ -639,7 +781,7 @@ fun SetEditDialog(
         },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
-                // Редактор веса
+                // Редактор веса (Touch Targets >= 48dp)
                 Text("Вес снаряда (кг):", fontSize = 13.sp, color = GymTextSecondary)
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(
@@ -649,16 +791,19 @@ fun SetEditDialog(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
-                        IconButton(onClick = {
-                            weight = (weight - 2.5).coerceAtLeast(0.0)
-                            weightText = weight.toString()
-                        }) {
-                            Text("-2.5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = GymTextPrimary)
+                        IconButton(
+                            onClick = {
+                                weight = (weight - 2.5).coerceAtLeast(0.0)
+                                weightText = if (weight % 1.0 == 0.0) weight.toInt().toString() else weight.toString()
+                            },
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Text("-2.5", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = GymTextPrimary)
                         }
                     }
 
@@ -681,23 +826,26 @@ fun SetEditDialog(
 
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
-                        IconButton(onClick = {
-                            weight = (weight + 2.5).coerceAtLeast(0.0)
-                            weightText = weight.toString()
-                        }) {
-                            Text("+2.5", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = GymAccentGreen)
+                        IconButton(
+                            onClick = {
+                                weight = (weight + 2.5).coerceAtLeast(0.0)
+                                weightText = if (weight % 1.0 == 0.0) weight.toInt().toString() else weight.toString()
+                            },
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Text("+2.5", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = GymAccentGreen)
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Редактор повторений
+                // Редактор повторений (Touch Targets >= 48dp)
                 Text("Количество повторений:", fontSize = 13.sp, color = GymTextSecondary)
                 Spacer(modifier = Modifier.height(6.dp))
                 Row(
@@ -707,16 +855,19 @@ fun SetEditDialog(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
-                        IconButton(onClick = {
-                            reps = (reps - 1).coerceAtLeast(0)
-                            repsText = reps.toString()
-                        }) {
-                            Icon(Icons.Default.Remove, contentDescription = null, tint = GymTextPrimary)
+                        IconButton(
+                            onClick = {
+                                reps = (reps - 1).coerceAtLeast(0)
+                                repsText = reps.toString()
+                            },
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = null, tint = GymTextPrimary, modifier = Modifier.size(24.dp))
                         }
                     }
 
@@ -739,16 +890,19 @@ fun SetEditDialog(
 
                     Box(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(GymDarkSurfaceVariant),
                         contentAlignment = Alignment.Center
                     ) {
-                        IconButton(onClick = {
-                            reps += 1
-                            repsText = reps.toString()
-                        }) {
-                            Icon(Icons.Default.Add, contentDescription = null, tint = GymAccentGreen)
+                        IconButton(
+                            onClick = {
+                                reps += 1
+                                repsText = reps.toString()
+                            },
+                            modifier = Modifier.size(48.dp)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null, tint = GymAccentGreen, modifier = Modifier.size(24.dp))
                         }
                     }
                 }

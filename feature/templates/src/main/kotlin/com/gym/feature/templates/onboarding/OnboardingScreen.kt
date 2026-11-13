@@ -59,6 +59,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,6 +80,7 @@ import com.gym.core.ui.theme.GymDarkBackground
 import com.gym.core.ui.theme.GymDarkSurface
 import com.gym.core.ui.theme.GymDarkSurfaceVariant
 import com.gym.core.ui.theme.GymTextPrimary
+import com.gym.core.ui.component.GymBrandHeroBanner
 import com.gym.core.ui.theme.GymTextSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -211,9 +214,15 @@ private fun PersonalInfoStep(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        GymBrandHeroBanner(
+            modifier = Modifier.fillMaxWidth(),
+            title = "THE IRON APEX",
+            subtitle = "Персональный профиль атлета и калибровка прогрессии"
+        )
+
         Text(
             text = "👋 Добро пожаловать!",
-            fontSize = 28.sp,
+            fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = GymTextPrimary
         )
@@ -336,38 +345,109 @@ private fun PersonalInfoStep(
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    IconButton(
-                        onClick = { if (age > 14) onAgeChange(age - 1) },
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(GymDarkSurfaceVariant)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Remove, contentDescription = "Меньше", tint = GymTextPrimary)
+                        IconButton(
+                            onClick = { if (age > 14) onAgeChange(age - 1) },
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(GymDarkSurfaceVariant)
+                        ) {
+                            Icon(Icons.Default.Remove, contentDescription = "Меньше", tint = GymTextPrimary)
+                        }
+
+                        // Прямой ввод возраста с клавиатуры для удобства (например, 60 лет вводится моментально)
+                        var ageInput by remember(age) { mutableStateOf(age.toString()) }
+                        OutlinedTextField(
+                            value = ageInput,
+                            onValueChange = { newText ->
+                                val digitsOnly = newText.filter { it.isDigit() }.take(3)
+                                ageInput = digitsOnly
+                                digitsOnly.toIntOrNull()?.let { num ->
+                                    if (num in 10..100) {
+                                        onAgeChange(num)
+                                    }
+                                }
+                            },
+                            singleLine = true,
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                color = GymAccentGreen
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    val num = ageInput.toIntOrNull() ?: age
+                                    val clamped = num.coerceIn(14, 95)
+                                    onAgeChange(clamped)
+                                    ageInput = clamped.toString()
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+                                }
+                            ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = GymAccentGreen,
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedContainerColor = GymDarkSurfaceVariant,
+                                unfocusedContainerColor = GymDarkSurfaceVariant,
+                                cursorColor = GymAccentGreen
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.width(96.dp)
+                        )
+
+                        IconButton(
+                            onClick = { if (age < 95) onAgeChange(age + 1) },
+                            modifier = Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(GymDarkSurfaceVariant)
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = "Больше", tint = GymTextPrimary)
+                        }
                     }
 
-                    Text(
-                        text = "$age",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = GymAccentGreen
-                    )
+                    Spacer(modifier = Modifier.height(10.dp))
 
-                    IconButton(
-                        onClick = { if (age < 90) onAgeChange(age + 1) },
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(GymDarkSurfaceVariant)
+                    // Быстрые пресеты возраста (18, 25, 35, 45, 55, 60, 70 лет)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Больше", tint = GymTextPrimary)
+                        listOf(18, 25, 35, 45, 55, 60, 70).forEach { presetAge ->
+                            val isSelected = age == presetAge
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(if (isSelected) GymAccentGreen else GymDarkSurfaceVariant)
+                                    .clickable { onAgeChange(presetAge) }
+                                    .padding(vertical = 6.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "$presetAge",
+                                    fontSize = 12.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (isSelected) GymDarkBackground else GymTextPrimary
+                                )
+                            }
+                        }
                     }
                 }
             }

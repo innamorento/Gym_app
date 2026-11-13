@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Основная системная тема окна после Splash Screen -->
+    <style name="Theme.GymTracker" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/gym_black_onyx</item>
+        <item name="android:navigationBarColor">@color/gym_black_onyx</item>
+        <item name="android:windowBackground">@color/gym_black_onyx</item>
+    </style>
+
+    <!-- Тема Splash Screen (Android 12+ API) -->
+    <style name="Theme.GymTracker.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/gym_black_onyx</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.GymTracker</item>
+        <item name="android:statusBarColor">@color/gym_black_onyx</item>
+        <item name="android:navigationBarColor">@color/gym_black_onyx</item>
+    </style>
+</resources>

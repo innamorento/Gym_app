@@ -57,11 +57,17 @@ interface TemplateDao {
     @Query("DELETE FROM workout_templates WHERE id = :id")
     suspend fun deleteTemplate(id: Long): Int
 
+    @Query("DELETE FROM workout_templates")
+    suspend fun deleteAllTemplates(): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTemplateExercises(exercises: List<TemplateExerciseEntity>)
 
     @Query("DELETE FROM template_exercises WHERE templateId = :templateId")
     suspend fun deleteTemplateExercises(templateId: Long): Int
+
+    @Query("DELETE FROM template_exercises")
+    suspend fun deleteAllTemplateExercises(): Int
 
     @Transaction
     suspend fun saveTemplateWithExercises(

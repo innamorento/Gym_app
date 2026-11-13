@@ -16,6 +16,7 @@ data class WorkoutTemplate(
     val id: Long = 0,
     val title: String,
     val description: String? = null,
+    val experienceLevel: TrainingExperience = TrainingExperience.INTERMEDIATE,
     val exercises: List<TemplateExercise> = emptyList(),
     val createdAt: Long = System.currentTimeMillis(),
     val lastUsedAt: Long? = null

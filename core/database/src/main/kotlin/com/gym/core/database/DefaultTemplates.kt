@@ -8,6 +8,7 @@ import com.gym.core.database.entity.TemplateExerciseEntity
 import com.gym.core.database.entity.WorkoutTemplateEntity
 import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
+import com.gym.core.model.TrainingExperience
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.json.JSONArray
@@ -68,7 +69,7 @@ object DefaultTemplates {
 
     suspend fun seedDefaultDataIfEmpty(context: Context? = null, exerciseDao: ExerciseDao, templateDao: TemplateDao) {
         seedMutex.withLock {
-            // 1. Проверяем и наполняем/обновляем каталог упражнений
+            // 1. Проверяем и наполняем/обновляем каталог упражнений (1324 упражнения)
             val catalogExercises = if (context != null) {
                 loadCatalogFromAssets(context)
             } else {
@@ -80,8 +81,6 @@ object DefaultTemplates {
                 if (existingCount == 0) {
                     exerciseDao.insertExercises(catalogExercises)
                 } else {
-                    // Обновляем существующие записи каталога (переводы на русский, миниатюры),
-                    // не удаляя строки и не нарушая FOREIGN KEY RESTRICT в template_exercises
                     exerciseDao.updateExercises(catalogExercises)
                     exerciseDao.insertExercises(catalogExercises)
                 }
@@ -89,117 +88,259 @@ object DefaultTemplates {
                 exerciseDao.insertExercises(DefaultExercises.list)
             }
 
-            // 2. Проверяем и наполняем стартовые шаблоны
-            if (templateDao.getTemplateCount() == 0) {
-            val exercisesMap = exerciseDao.getAllExercisesList().associateBy { it.name }
+            // 2. Проверяем и наполняем 12 мировых шаблонов тренировок
+            val currentTemplateCount = templateDao.getTemplateCount()
+            if (currentTemplateCount < 12) {
+                // Если база пуста или содержит устаревшие шаблоны (< 12) — обновляем базу до полного набора
+                templateDao.deleteAllTemplateExercises()
+                templateDao.deleteAllTemplates()
 
-            // Шаблон 1: Грудь + Трицепс (Push)
-            val pushTemplateId = templateDao.insertTemplate(
-                WorkoutTemplateEntity(
-                    title = "Грудь + Трицепс (Push)",
-                    description = "Акцент на грудные мышцы и трицепс, базовые жимы и изоляция"
-                )
-            )
-            val pushExercises = listOfNotNull(
-                exercisesMap["Жим штанги лежа"]?.let {
-                    TemplateExerciseEntity(templateId = pushTemplateId, exerciseId = it.id, orderIndex = 0, targetSetsCount = 4, defaultRestSeconds = 120)
-                },
-                exercisesMap["Жим гантелей на наклонной скамье"]?.let {
-                    TemplateExerciseEntity(templateId = pushTemplateId, exerciseId = it.id, orderIndex = 1, targetSetsCount = 3, defaultRestSeconds = 90)
-                },
-                exercisesMap["Сведение рук в кроссовере"]?.let {
-                    TemplateExerciseEntity(templateId = pushTemplateId, exerciseId = it.id, orderIndex = 2, targetSetsCount = 3, defaultRestSeconds = 60)
-                },
-                exercisesMap["Французский жим лежа"]?.let {
-                    TemplateExerciseEntity(templateId = pushTemplateId, exerciseId = it.id, orderIndex = 3, targetSetsCount = 3, defaultRestSeconds = 90)
-                },
-                exercisesMap["Разгибание на трицепс на верхнем блоке"]?.let {
-                    TemplateExerciseEntity(templateId = pushTemplateId, exerciseId = it.id, orderIndex = 4, targetSetsCount = 3, defaultRestSeconds = 60)
-                }
-            )
-            templateDao.insertTemplateExercises(pushExercises)
+                val allExercises = exerciseDao.getAllExercisesList()
+                val exercisesById = allExercises.associateBy { it.id }
+                val exercisesByName = allExercises.associateBy { it.name.lowercase().trim() }
+                val exercisesByNameEn = allExercises.mapNotNull { ex ->
+                    ex.nameEn?.lowercase()?.trim()?.let { it to ex }
+                }.toMap()
 
-            // Шаблон 2: Спина + Бицепс (Pull)
-            val pullTemplateId = templateDao.insertTemplate(
-                WorkoutTemplateEntity(
-                    title = "Спина + Бицепс (Pull)",
-                    description = "Тяговая тренировка: широчайшие, трапеции и бицепс"
-                )
-            )
-            val pullExercises = listOfNotNull(
-                exercisesMap["Подтягивания широким хватом"]?.let {
-                    TemplateExerciseEntity(templateId = pullTemplateId, exerciseId = it.id, orderIndex = 0, targetSetsCount = 4, defaultRestSeconds = 120)
-                },
-                exercisesMap["Тяга штанги в наклоне"]?.let {
-                    TemplateExerciseEntity(templateId = pullTemplateId, exerciseId = it.id, orderIndex = 1, targetSetsCount = 3, defaultRestSeconds = 120)
-                },
-                exercisesMap["Тяга верхнего блока к груди"]?.let {
-                    TemplateExerciseEntity(templateId = pullTemplateId, exerciseId = it.id, orderIndex = 2, targetSetsCount = 3, defaultRestSeconds = 90)
-                },
-                exercisesMap["Подъем штанги на бицепс"]?.let {
-                    TemplateExerciseEntity(templateId = pullTemplateId, exerciseId = it.id, orderIndex = 3, targetSetsCount = 3, defaultRestSeconds = 75)
-                },
-                exercisesMap["Сгибания на бицепс с гантелями 'Молот'"]?.let {
-                    TemplateExerciseEntity(templateId = pullTemplateId, exerciseId = it.id, orderIndex = 4, targetSetsCount = 3, defaultRestSeconds = 60)
-                }
-            )
-            templateDao.insertTemplateExercises(pullExercises)
+                fun findExercise(nameRu: String, nameEn: String? = null, fallbackId: Long? = null): ExerciseEntity? {
+                    if (fallbackId != null && exercisesById.containsKey(fallbackId)) {
+                        return exercisesById[fallbackId]
+                    }
+                    if (nameEn != null && exercisesByNameEn.containsKey(nameEn.lowercase().trim())) {
+                        return exercisesByNameEn[nameEn.lowercase().trim()]
+                    }
+                    val exactRu = exercisesByName[nameRu.lowercase().trim()]
+                    if (exactRu != null) return exactRu
 
-            // Шаблон 3: Ноги + Плечи (Legs & Shoulders)
-            val legsTemplateId = templateDao.insertTemplate(
-                WorkoutTemplateEntity(
-                    title = "Ноги + Плечи (Legs & Shoulders)",
-                    description = "Базовый день ног и проработка всех пучков дельт"
-                )
-            )
-            val legsExercises = listOfNotNull(
-                exercisesMap["Приседания со штангой на плечах"]?.let {
-                    TemplateExerciseEntity(templateId = legsTemplateId, exerciseId = it.id, orderIndex = 0, targetSetsCount = 4, defaultRestSeconds = 180)
-                },
-                exercisesMap["Жим ногами в тренажере"]?.let {
-                    TemplateExerciseEntity(templateId = legsTemplateId, exerciseId = it.id, orderIndex = 1, targetSetsCount = 3, defaultRestSeconds = 120)
-                },
-                exercisesMap["Армейский жим стоя (Overhead Press)"]?.let {
-                    TemplateExerciseEntity(templateId = legsTemplateId, exerciseId = it.id, orderIndex = 2, targetSetsCount = 3, defaultRestSeconds = 120)
-                },
-                exercisesMap["Махи гантелями в стороны"]?.let {
-                    TemplateExerciseEntity(templateId = legsTemplateId, exerciseId = it.id, orderIndex = 3, targetSetsCount = 3, defaultRestSeconds = 60)
-                },
-                exercisesMap["Подъемы на носки стоя (икры)"]?.let {
-                    TemplateExerciseEntity(templateId = legsTemplateId, exerciseId = it.id, orderIndex = 4, targetSetsCount = 3, defaultRestSeconds = 60)
+                    return allExercises.find { ex ->
+                        (nameEn != null && ex.nameEn?.contains(nameEn, ignoreCase = true) == true) ||
+                        ex.name.contains(nameRu, ignoreCase = true)
+                    }
                 }
-            )
-            templateDao.insertTemplateExercises(legsExercises)
 
-            // Шаблон 4: Фулбоди (Full Body)
-            val fullBodyTemplateId = templateDao.insertTemplate(
-                WorkoutTemplateEntity(
-                    title = "Фулбоди (Full Body)",
-                    description = "Комплексная проработка всех основных мышечных групп за одну сессию"
+                data class ExConfig(
+                    val nameRu: String,
+                    val nameEn: String,
+                    val fallbackId: Long,
+                    val sets: Int = 3,
+                    val rest: Int = 90,
+                    val supersetId: String? = null
                 )
-            )
-            val fullBodyExercises = listOfNotNull(
-                exercisesMap["Приседания со штангой на плечах"]?.let {
-                    TemplateExerciseEntity(templateId = fullBodyTemplateId, exerciseId = it.id, orderIndex = 0, targetSetsCount = 3, defaultRestSeconds = 180)
-                },
-                exercisesMap["Жим штанги лежа"]?.let {
-                    TemplateExerciseEntity(templateId = fullBodyTemplateId, exerciseId = it.id, orderIndex = 1, targetSetsCount = 3, defaultRestSeconds = 120)
-                },
-                exercisesMap["Подтягивания широким хватом"]?.let {
-                    TemplateExerciseEntity(templateId = fullBodyTemplateId, exerciseId = it.id, orderIndex = 2, targetSetsCount = 3, defaultRestSeconds = 120)
-                },
-                exercisesMap["Армейский жим стоя (Overhead Press)"]?.let {
-                    TemplateExerciseEntity(templateId = fullBodyTemplateId, exerciseId = it.id, orderIndex = 3, targetSetsCount = 3, defaultRestSeconds = 90)
-                },
-                exercisesMap["Подъем штанги на бицепс"]?.let {
-                    TemplateExerciseEntity(templateId = fullBodyTemplateId, exerciseId = it.id, orderIndex = 4, targetSetsCount = 3, defaultRestSeconds = 75)
-                },
-                exercisesMap["Планка"]?.let {
-                    TemplateExerciseEntity(templateId = fullBodyTemplateId, exerciseId = it.id, orderIndex = 5, targetSetsCount = 3, defaultRestSeconds = 60)
+
+                suspend fun createTemplate(
+                    title: String,
+                    description: String,
+                    level: TrainingExperience,
+                    exercises: List<ExConfig>
+                ) {
+                    val templateId = templateDao.insertTemplate(
+                        WorkoutTemplateEntity(
+                            title = title,
+                            description = description,
+                            experienceLevel = level
+                        )
+                    )
+                    val entities = exercises.mapIndexedNotNull { index, cfg ->
+                        val ex = findExercise(cfg.nameRu, cfg.nameEn, cfg.fallbackId)
+                        ex?.let {
+                            TemplateExerciseEntity(
+                                templateId = templateId,
+                                exerciseId = it.id,
+                                orderIndex = index,
+                                supersetId = cfg.supersetId,
+                                targetSetsCount = cfg.sets,
+                                defaultRestSeconds = cfg.rest
+                            )
+                        }
+                    }
+                    if (entities.isNotEmpty()) {
+                        templateDao.insertTemplateExercises(entities)
+                    }
                 }
-            )
-            templateDao.insertTemplateExercises(fullBodyExercises)
+
+                // ── НАЧАЛЬНЫЙ УРОВЕНЬ (BEGINNER) ─────────────────────────
+                // 1. Фулбоди А: Базовый (Full Body A)
+                createTemplate(
+                    title = "Фулбоди А: Базовый (Full Body A)",
+                    description = "Классический фулбоди по канонам Starting Strength: приседания, жим лежа и тяги для базового силового фундамента",
+                    level = TrainingExperience.BEGINNER,
+                    exercises = listOf(
+                        ExConfig("Приседания со штангой", "Barbell Bench Squat", 100L, sets = 3, rest = 150),
+                        ExConfig("Жим штанги лежа", "Barbell Bench Press", 99L, sets = 3, rest = 120),
+                        ExConfig("Тяга верхнего блока к груди", "Cable Bar Lateral Pulldown", 273L, sets = 3, rest = 90),
+                        ExConfig("Армейский жим стоя", "Barbell Seated Overhead Press", 191L, sets = 3, rest = 90),
+                        ExConfig("Подъем штанги на бицепс", "Barbell Curl", 107L, sets = 3, rest = 60),
+                        ExConfig("Боковая планка", "Bodyweight Incline Side Plank", 252L, sets = 3, rest = 60)
+                    )
+                )
+
+                // 2. Фулбоди B: Тяга и Наклон (Full Body B)
+                createTemplate(
+                    title = "Фулбоди B: Тяга и Наклон (Full Body B)",
+                    description = "Вторая фулбоди сессия: становая тяга, наклонный жим гантелей и мощная задняя мышечная цепь",
+                    level = TrainingExperience.BEGINNER,
+                    exercises = listOf(
+                        ExConfig("Становая тяга со штангой", "Barbell Deadlift", 108L, sets = 3, rest = 180),
+                        ExConfig("Жим гантелей на наклонной скамье", "Dumbbell Incline Alternate Press", 519L, sets = 3, rest = 90),
+                        ExConfig("Тяга штанги в наклоне", "Barbell Bent Over Row", 102L, sets = 3, rest = 120),
+                        ExConfig("Жим ногами в тренажере", "Lever Alternate Leg Press", 929L, sets = 3, rest = 90),
+                        ExConfig("Разгибания на трицепс на блоке", "Cable Alternate Triceps Extension", 271L, sets = 3, rest = 60),
+                        ExConfig("Подъемы на носки со штангой стоя", "Barbell Standing Calf Raise", 210L, sets = 3, rest = 60)
+                    )
+                )
+
+                // 3. Верх / Низ: Старт (Upper/Lower Intro)
+                createTemplate(
+                    title = "Верх / Низ: Старт (Upper/Lower Intro)",
+                    description = "Двухдневный сплит начального уровня для мягкого перехода от фулбоди к сплит-тренировкам",
+                    level = TrainingExperience.BEGINNER,
+                    exercises = listOf(
+                        ExConfig("Жим штанги лежа", "Barbell Bench Press", 99L, sets = 3, rest = 120),
+                        ExConfig("Тяга верхнего блока к груди", "Cable Bar Lateral Pulldown", 273L, sets = 3, rest = 90),
+                        ExConfig("Махи гантелями в стороны", "Dumbbell Full Can Lateral Raise", 512L, sets = 3, rest = 60),
+                        ExConfig("Сгибания на бицепс 'Молот'", "Dumbbell Alternate Seated Hammer Curl", 467L, sets = 3, rest = 60),
+                        ExConfig("Разгибания ног в тренажере", "Lever Leg Extension", 955L, sets = 3, rest = 60),
+                        ExConfig("Сгибания ног лежа", "Lever Leg Curl", 952L, sets = 3, rest = 60)
+                    )
+                )
+
+                // ── СРЕДНИЙ УРОВЕНЬ (INTERMEDIATE) ──────────────────────
+                // 4. Push: Грудь, Плечи, Трицепс (PPL)
+                createTemplate(
+                    title = "Push: Грудь, Плечи, Трицепс (PPL)",
+                    description = "Толкающий день классического сплита Push/Pull/Legs: базовые жимы, разводка в кроссовере и трицепс",
+                    level = TrainingExperience.INTERMEDIATE,
+                    exercises = listOf(
+                        ExConfig("Жим штанги лежа", "Barbell Bench Press", 99L, sets = 4, rest = 120),
+                        ExConfig("Жим гантелей на наклонной скамье", "Dumbbell Incline Alternate Press", 519L, sets = 3, rest = 90),
+                        ExConfig("Сведение рук в кроссовере", "Cable Decline Fly", 283L, sets = 3, rest = 60),
+                        ExConfig("Армейский жим стоя", "Barbell Seated Overhead Press", 191L, sets = 3, rest = 90),
+                        ExConfig("Махи гантелями в стороны", "Dumbbell Full Can Lateral Raise", 512L, sets = 4, rest = 60),
+                        ExConfig("Французский жим лежа", "Barbell Close-Grip Bench Press", 106L, sets = 3, rest = 90),
+                        ExConfig("Разгибания на трицепс на блоке", "Cable Alternate Triceps Extension", 271L, sets = 3, rest = 60)
+                    )
+                )
+
+                // 5. Pull: Спина, Задняя дельта, Бицепс (PPL)
+                createTemplate(
+                    title = "Pull: Спина, Задняя дельта, Бицепс (PPL)",
+                    description = "Тяговый день Push/Pull/Legs: акцент на ширину и толщину широчайших, ромбовидные и двуглавую мышцу",
+                    level = TrainingExperience.INTERMEDIATE,
+                    exercises = listOf(
+                        ExConfig("Подтягивания", "Chin-Up", 437L, sets = 4, rest = 120),
+                        ExConfig("Тяга штанги в наклоне", "Barbell Bent Over Row", 102L, sets = 4, rest = 120),
+                        ExConfig("Тяга верхнего блока к груди", "Cable Bar Lateral Pulldown", 273L, sets = 3, rest = 90),
+                        ExConfig("Пуловер с гантелью", "Dumbbell Straight Arm Pullover", 473L, sets = 3, rest = 60),
+                        ExConfig("Подъем штанги на бицепс", "Barbell Curl", 107L, sets = 3, rest = 75),
+                        ExConfig("Сгибания на бицепс 'Молот'", "Dumbbell Alternate Seated Hammer Curl", 467L, sets = 3, rest = 60)
+                    )
+                )
+
+                // 6. Legs: Квадрицепс, Бицепс бедра, Икры (PPL)
+                createTemplate(
+                    title = "Legs: Квадрицепс, Бицепс бедра, Икры (PPL)",
+                    description = "День ног в цикле PPL: тяжелые базовые приседания, румынская тяга и точечная гипертрофия бедер",
+                    level = TrainingExperience.INTERMEDIATE,
+                    exercises = listOf(
+                        ExConfig("Приседания со штангой", "Barbell Bench Squat", 100L, sets = 4, rest = 180),
+                        ExConfig("Румынская тяга", "Barbell Romanian Deadlift", 183L, sets = 4, rest = 120),
+                        ExConfig("Жим ногами в тренажере", "Lever Alternate Leg Press", 929L, sets = 3, rest = 90),
+                        ExConfig("Разгибания ног в тренажере", "Lever Leg Extension", 955L, sets = 3, rest = 60),
+                        ExConfig("Сгибания ног лежа", "Lever Leg Curl", 952L, sets = 3, rest = 60),
+                        ExConfig("Подъемы на носки со штангой стоя", "Barbell Standing Calf Raise", 210L, sets = 4, rest = 60)
+                    )
+                )
+
+                // 7. Upper Body: Сила и Объем (PHUL Power)
+                createTemplate(
+                    title = "Upper Body: Сила и Объем (PHUL Power)",
+                    description = "Силовой день верха по протоколу PHUL: тяжелые компаундные движения в силовом диапазоне 4-6 повторов",
+                    level = TrainingExperience.INTERMEDIATE,
+                    exercises = listOf(
+                        ExConfig("Жим штанги лежа", "Barbell Bench Press", 99L, sets = 4, rest = 150),
+                        ExConfig("Тяга штанги в наклоне", "Barbell Bent Over Row", 102L, sets = 4, rest = 150),
+                        ExConfig("Армейский жим стоя", "Barbell Seated Overhead Press", 191L, sets = 3, rest = 120),
+                        ExConfig("Подтягивания", "Chin-Up", 437L, sets = 3, rest = 120),
+                        ExConfig("Подъем штанги на бицепс", "Barbell Curl", 107L, sets = 3, rest = 75),
+                        ExConfig("Французский жим лежа", "Barbell Close-Grip Bench Press", 106L, sets = 3, rest = 90)
+                    )
+                )
+
+                // 8. Lower Body: Сила и Мощь (PHUL Power)
+                createTemplate(
+                    title = "Lower Body: Сила и Мощь (PHUL Power)",
+                    description = "Тяжелый день низа по протоколу PHUL: максимальное рекрутирование двигательных единиц в приседе и становой тяге",
+                    level = TrainingExperience.INTERMEDIATE,
+                    exercises = listOf(
+                        ExConfig("Приседания со штангой", "Barbell Bench Squat", 100L, sets = 4, rest = 180),
+                        ExConfig("Становая тяга со штангой", "Barbell Deadlift", 108L, sets = 3, rest = 180),
+                        ExConfig("Жим ногами в тренажере", "Lever Alternate Leg Press", 929L, sets = 3, rest = 120),
+                        ExConfig("Сгибания ног лежа", "Lever Leg Curl", 952L, sets = 3, rest = 75),
+                        ExConfig("Подъемы на носки со штангой стоя", "Barbell Standing Calf Raise", 210L, sets = 4, rest = 60)
+                    )
+                )
+
+                // ── ОПЫТНЫЙ УРОВЕНЬ (ADVANCED) ──────────────────────────
+                // 9. Arnold Split: Грудь + Спина (Суперсеты)
+                createTemplate(
+                    title = "Arnold Split: Грудь + Спина (Суперсеты)",
+                    description = "Золотой сплит Арнольда Шварценеггера: объединение антагонистов (грудь и спина) в суперсеты для мощного пампинга",
+                    level = TrainingExperience.ADVANCED,
+                    exercises = listOf(
+                        ExConfig("Жим штанги лежа", "Barbell Bench Press", 99L, sets = 4, rest = 90, supersetId = "arnold_ss1"),
+                        ExConfig("Подтягивания", "Chin-Up", 437L, sets = 4, rest = 90, supersetId = "arnold_ss1"),
+                        ExConfig("Жим гантелей на наклонной скамье", "Dumbbell Incline Alternate Press", 519L, sets = 3, rest = 90, supersetId = "arnold_ss2"),
+                        ExConfig("Тяга штанги в наклоне", "Barbell Bent Over Row", 102L, sets = 3, rest = 90, supersetId = "arnold_ss2"),
+                        ExConfig("Пуловер с гантелью", "Dumbbell Straight Arm Pullover", 473L, sets = 3, rest = 60),
+                        ExConfig("Сведение рук в кроссовере", "Cable Decline Fly", 283L, sets = 3, rest = 60)
+                    )
+                )
+
+                // 10. Arnold Split: Плечи + Руки (Суперсеты)
+                createTemplate(
+                    title = "Arnold Split: Плечи + Руки (Суперсеты)",
+                    description = "Второй день Arnold Split: мощная проработка дельт и суперсеты бицепс + трицепс",
+                    level = TrainingExperience.ADVANCED,
+                    exercises = listOf(
+                        ExConfig("Армейский жим стоя", "Barbell Seated Overhead Press", 191L, sets = 4, rest = 120),
+                        ExConfig("Махи гантелями в стороны", "Dumbbell Full Can Lateral Raise", 512L, sets = 4, rest = 60),
+                        ExConfig("Подъем штанги на бицепс", "Barbell Curl", 107L, sets = 4, rest = 75, supersetId = "arms_ss1"),
+                        ExConfig("Французский жим лежа", "Barbell Close-Grip Bench Press", 106L, sets = 4, rest = 75, supersetId = "arms_ss1"),
+                        ExConfig("Сгибания на бицепс 'Молот'", "Dumbbell Alternate Seated Hammer Curl", 467L, sets = 3, rest = 60, supersetId = "arms_ss2"),
+                        ExConfig("Разгибания на трицепс на блоке", "Cable Alternate Triceps Extension", 271L, sets = 3, rest = 60, supersetId = "arms_ss2")
+                    )
+                )
+
+                // 11. Renaissance Hypertrophy (RP Dr. Israetel)
+                createTemplate(
+                    title = "Renaissance Hypertrophy (RP Dr. Israetel)",
+                    description = "Научный протокол Renaissance Periodization: максимальный адаптивный объем (MAV), работа в растянутой позиции и RIR 1-2",
+                    level = TrainingExperience.ADVANCED,
+                    exercises = listOf(
+                        ExConfig("Румынская тяга", "Barbell Romanian Deadlift", 183L, sets = 4, rest = 150),
+                        ExConfig("Тяга штанги в наклоне", "Barbell Bent Over Row", 102L, sets = 4, rest = 120),
+                        ExConfig("Тяга верхнего блока к груди", "Cable Bar Lateral Pulldown", 273L, sets = 4, rest = 90),
+                        ExConfig("Сгибания ног лежа", "Lever Leg Curl", 952L, sets = 4, rest = 75),
+                        ExConfig("Пуловер с гантелью", "Dumbbell Straight Arm Pullover", 473L, sets = 3, rest = 60),
+                        ExConfig("Боковая планка", "Bodyweight Incline Side Plank", 252L, sets = 3, rest = 60)
+                    )
+                )
+
+                // 12. Powerbuilding 5/3/1: Пиковая Сила
+                createTemplate(
+                    title = "Powerbuilding 5/3/1: Пиковая Сила",
+                    description = "Синтез пауэрлифтинга и бодибилдинга (Jim Wendler 5/3/1): тяжелая тройка и многоповторная гипертрофийная подсобка",
+                    level = TrainingExperience.ADVANCED,
+                    exercises = listOf(
+                        ExConfig("Приседания со штангой", "Barbell Bench Squat", 100L, sets = 5, rest = 180),
+                        ExConfig("Жим штанги лежа", "Barbell Bench Press", 99L, sets = 5, rest = 150),
+                        ExConfig("Становая тяга со штангой", "Barbell Deadlift", 108L, sets = 4, rest = 180),
+                        ExConfig("Отжимания на брусьях", "Chest Dip", 242L, sets = 3, rest = 90),
+                        ExConfig("Подтягивания", "Chin-Up", 437L, sets = 3, rest = 90),
+                        ExConfig("Подъемы на носки со штангой стоя", "Barbell Standing Calf Raise", 210L, sets = 4, rest = 60)
+                    )
+                )
+            }
         }
     }
-}
 }

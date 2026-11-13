@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Внешний шестигранник для Material You (только контур) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round"
+        android:pathData="M 54,22.8 L 81.6,38.4 L 81.6,69.6 L 54,85.2 L 26.4,69.6 L 26.4,38.4 Z" />
+
+    <!-- Внутренний акцентный пик силы -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 54,33.6 L 69,56.4 L 57,56.4 L 58.8,74.4 L 39,51.6 L 51,51.6 Z" />
+
+</vector>

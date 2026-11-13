@@ -20,9 +20,11 @@ data class ExercisesUiState(
     val searchQuery: String = "",
     val selectedRegion: MuscleCategory? = null,
     val selectedMuscleGroup: MuscleGroup? = null,
+    val selectedEquipment: Equipment? = null,
     val showExcluded: Boolean = false,
     val exercises: List<Exercise> = emptyList(),
     val regionCounts: Map<MuscleCategory, Int> = emptyMap(),
+    val equipmentCounts: Map<Equipment, Int> = emptyMap(),
     val isLoading: Boolean = false
 )
 
@@ -33,15 +35,16 @@ class ExercisesViewModel(
     private val _searchQuery = MutableStateFlow("")
     private val _selectedRegion = MutableStateFlow<MuscleCategory?>(null)
     private val _selectedMuscleGroup = MutableStateFlow<MuscleGroup?>(null)
+    private val _selectedEquipment = MutableStateFlow<Equipment?>(null)
     private val _showExcluded = MutableStateFlow(false)
 
     val uiState: StateFlow<ExercisesUiState> = combine(
         exerciseDao.getAllExercises(),
         _searchQuery,
         _selectedRegion,
-        _selectedMuscleGroup,
+        _selectedEquipment,
         _showExcluded
-    ) { allEntities, query, region, muscleGroup, showExcluded ->
+    ) { allEntities, query, region, equipment, showExcluded ->
         val allDomain = allEntities.map { it.toDomain() }
 
         // Подсчет упражнений по понятным анатомическим категориям
@@ -49,22 +52,36 @@ class ExercisesViewModel(
             allDomain.count { it.category == c && (!it.isExcluded || showExcluded) }
         }
 
+        // Подсчет упражнений по типу снаряда внутри выбранной группы
+        val domainForEquipment = if (region != null) {
+            allDomain.filter { it.category == region && (!it.isExcluded || showExcluded) }
+        } else {
+            allDomain.filter { !it.isExcluded || showExcluded }
+        }
+        val equipmentCounts = Equipment.values().associateWith { eq ->
+            domainForEquipment.count { it.equipment == eq }
+        }
+
         val filtered = allDomain.filter { exercise ->
             val matchesExcluded = showExcluded || !exercise.isExcluded
-            val matchesQuery = query.isBlank() || exercise.name.contains(query, ignoreCase = true)
+            val matchesQuery = query.isBlank() ||
+                exercise.name.contains(query, ignoreCase = true) ||
+                (exercise.nameEn?.contains(query, ignoreCase = true) == true)
             val matchesRegion = region == null || exercise.category == region
-            val matchesMuscle = muscleGroup == null || exercise.primaryMuscleGroup == muscleGroup
+            val matchesEquipment = equipment == null || exercise.equipment == equipment
 
-            matchesExcluded && matchesQuery && matchesRegion && matchesMuscle
+            matchesExcluded && matchesQuery && matchesRegion && matchesEquipment
         }
 
         ExercisesUiState(
             searchQuery = query,
             selectedRegion = region,
-            selectedMuscleGroup = muscleGroup,
+            selectedMuscleGroup = _selectedMuscleGroup.value,
+            selectedEquipment = equipment,
             showExcluded = showExcluded,
             exercises = filtered,
             regionCounts = counts,
+            equipmentCounts = equipmentCounts,
             isLoading = false
         )
     }.stateIn(
@@ -80,6 +97,11 @@ class ExercisesViewModel(
     fun onRegionSelected(region: MuscleCategory?) {
         _selectedRegion.value = region
         _selectedMuscleGroup.value = null
+        _selectedEquipment.value = null
+    }
+
+    fun onEquipmentSelected(equipment: Equipment?) {
+        _selectedEquipment.value = equipment
     }
 
     fun onMuscleGroupSelected(group: MuscleGroup?) {

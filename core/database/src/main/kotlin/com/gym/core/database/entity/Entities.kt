@@ -8,6 +8,7 @@ import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
 import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
+import com.gym.core.model.TrainingExperience
 import com.gym.core.model.WorkoutStatus
 
 @Entity(tableName = "exercises")
@@ -34,6 +35,7 @@ data class WorkoutTemplateEntity(
     val id: Long = 0,
     val title: String,
     val description: String? = null,
+    val experienceLevel: TrainingExperience = TrainingExperience.INTERMEDIATE,
     val createdAt: Long = System.currentTimeMillis(),
     val lastUsedAt: Long? = null
 )

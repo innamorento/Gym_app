@@ -34,7 +34,7 @@ import com.gym.core.database.entity.WorkoutTemplateEntity
         CoachAssignmentEntity::class,
         UserProfileEntity::class
     ],
-    version = 4,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(GymTypeConverters::class)

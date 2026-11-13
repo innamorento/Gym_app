@@ -81,6 +81,7 @@ fun WorkoutTemplateWithExercises.toDomain(): WorkoutTemplate {
         id = template.id,
         title = template.title,
         description = template.description,
+        experienceLevel = template.experienceLevel,
         exercises = exercises.map { it.toDomain() }.sortedBy { it.orderIndex },
         createdAt = template.createdAt,
         lastUsedAt = template.lastUsedAt

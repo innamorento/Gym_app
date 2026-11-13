@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class RestTimerState(
     val isRunning: Boolean = false,
@@ -65,6 +66,14 @@ class WorkoutViewModel(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = WorkoutUiState.Idle
+        )
+
+    val completedWorkouts: StateFlow<List<Workout>> = workoutDao.getCompletedWorkouts()
+        .map { list -> list.map { it.toDomain() } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
         )
 
     private val _workoutDurationSeconds = MutableStateFlow(0L)
@@ -236,14 +245,21 @@ class WorkoutViewModel(
         }
     }
 
+    private suspend fun getCurrentUserId(): String {
+        return kotlinx.coroutines.withContext(Dispatchers.IO) {
+            userProfileDao?.getUserProfileSync()?.id ?: "default_user"
+        }
+    }
+
     fun startWorkoutFromTemplate(templateId: Long) {
         viewModelScope.launch {
             val templateWithExercises = templateDao.getTemplateWithExercises(templateId) ?: return@launch
             val template = templateWithExercises.toDomain()
+            val currentUserId = getCurrentUserId()
 
             val workoutId = workoutDao.insertWorkout(
                 WorkoutEntity(
-                    userId = "default_user",
+                    userId = currentUserId,
                     templateId = template.id,
                     title = template.title,
                     startTime = System.currentTimeMillis(),
@@ -262,7 +278,7 @@ class WorkoutViewModel(
                 )
 
                 // Запрашиваем историю последних подходов этого упражнения для предзаполнения
-                val prevSets = workoutDao.getLatestCompletedSetsForExercise(templateExercise.exercise.id, "default_user")
+                val prevSets = workoutDao.getLatestCompletedSetsForExercise(templateExercise.exercise.id, currentUserId)
                 val sets = (1..templateExercise.targetSetsCount).map { setNumber ->
                     val prevForSet = prevSets.getOrNull(setNumber - 1) ?: prevSets.firstOrNull()
                     val defaultWeight = prevForSet?.weight ?: 0.0
@@ -386,7 +402,80 @@ class WorkoutViewModel(
         }
     }
 
-    fun finishWorkout(workoutId: Long) {
+    fun startEmptyWorkout(title: String = "Свободная тренировка") {
+        viewModelScope.launch {
+            val currentUserId = getCurrentUserId()
+            workoutDao.insertWorkout(
+                WorkoutEntity(
+                    userId = currentUserId,
+                    templateId = null,
+                    title = title,
+                    startTime = System.currentTimeMillis(),
+                    status = WorkoutStatus.IN_PROGRESS
+                )
+            )
+        }
+    }
+
+    fun discardWorkout(workoutId: Long) {
+        viewModelScope.launch {
+            stopRestTimer()
+            durationTimerJob?.cancel()
+            _workoutDurationSeconds.value = 0L
+            _progressionRecommendations.value = emptyMap()
+            workoutDao.deleteWorkout(workoutId)
+        }
+    }
+
+    fun deleteCompletedWorkout(workoutId: Long) {
+        viewModelScope.launch {
+            workoutDao.deleteWorkout(workoutId)
+        }
+    }
+
+    fun repeatWorkout(sourceWorkout: Workout) {
+        viewModelScope.launch {
+            val currentUserId = getCurrentUserId()
+            val newWorkoutId = workoutDao.insertWorkout(
+                WorkoutEntity(
+                    userId = currentUserId,
+                    templateId = sourceWorkout.templateId,
+                    title = sourceWorkout.title,
+                    startTime = System.currentTimeMillis(),
+                    status = WorkoutStatus.IN_PROGRESS
+                )
+            )
+            sourceWorkout.exercises.forEachIndexed { index, exercise ->
+                val workoutExerciseId = workoutDao.insertWorkoutExercise(
+                    WorkoutExerciseEntity(
+                        workoutId = newWorkoutId,
+                        exerciseId = exercise.exercise.id,
+                        orderIndex = index,
+                        supersetId = exercise.supersetId
+                    )
+                )
+                val sets = exercise.sets.mapIndexed { setIdx, prevSet ->
+                    WorkoutSetEntity(
+                        workoutExerciseId = workoutExerciseId,
+                        setNumber = setIdx + 1,
+                        setType = prevSet.setType,
+                        weight = prevSet.weight,
+                        reps = prevSet.reps,
+                        isCompleted = false
+                    )
+                }
+                workoutDao.insertWorkoutSets(sets)
+            }
+        }
+    }
+
+    suspend fun getWorkoutDetails(workoutId: Long): Workout? {
+        return withContext(Dispatchers.IO) {
+            workoutDao.getWorkoutById(workoutId)?.toDomain()
+        }
+    }
+
+    fun finishWorkout(workoutId: Long, onFinished: (Long) -> Unit = {}) {
         viewModelScope.launch {
             val currentWorkout = workoutDao.getWorkoutById(workoutId) ?: return@launch
             val now = System.currentTimeMillis()
@@ -400,7 +489,8 @@ class WorkoutViewModel(
                 )
             )
             stopRestTimer()
-                        _progressionRecommendations.value = emptyMap()
+            _progressionRecommendations.value = emptyMap()
+            onFinished(workoutId)
         }
     }
 }

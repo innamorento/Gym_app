@@ -233,11 +233,11 @@ fun CreateExerciseDialog(
                         IconButton(
                             onClick = { if (restSeconds > 15) restSeconds -= 15 },
                             modifier = Modifier
-                                .size(40.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(10.dp))
                                 .background(GymDarkSurfaceVariant)
                         ) {
-                            Icon(Icons.Default.Remove, contentDescription = "-15с", tint = GymTextPrimary)
+                            Icon(Icons.Default.Remove, contentDescription = "-15с", tint = GymTextPrimary, modifier = Modifier.size(24.dp))
                         }
 
                         Text(
@@ -251,11 +251,11 @@ fun CreateExerciseDialog(
                         IconButton(
                             onClick = { restSeconds += 15 },
                             modifier = Modifier
-                                .size(40.dp)
-                                .clip(RoundedCornerShape(8.dp))
+                                .size(48.dp)
+                                .clip(RoundedCornerShape(10.dp))
                                 .background(GymDarkSurfaceVariant)
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = "+15с", tint = GymTextPrimary)
+                            Icon(Icons.Default.Add, contentDescription = "+15с", tint = GymTextPrimary, modifier = Modifier.size(24.dp))
                         }
                     }
 
