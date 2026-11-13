@@ -1,8 +1,8 @@
 # Gym Workout Tracker — Project Index & AI Context
 
-> **Version:** 0.6.0  
+> **Version:** 1.0.0 (Release Ready)  
 > **Role:** Fullstack Android Developer & Systems/Product Analyst  
-> **Status:** Sprints 12 (Brand Identity & Theme), 13 (Core Logger & Market Parity), 13.1 (12 World-Class Templates) Completed  
+> **Status:** Sprints 12–17 Fully Completed (Design, Logger, Templates, Backup/CSV, Auth/RBAC, Coach CRM, WorkManager Reminders, Release 1.0)  
 > **Target Platform:** Android (Offline-First Mobile App) + Sync/Backend Service  
 > **Current Workspace:** `C:\Users\Thinkpad X1\Downloads\Gym` (synced with `C:\Dev\Gym`)  
 > **Remote Repository:** `https://github.com/innamorento/Gym_app` (branch `main`)
