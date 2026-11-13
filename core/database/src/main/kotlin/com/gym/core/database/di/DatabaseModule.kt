@@ -52,6 +52,7 @@ val databaseModule = module {
         // Гарантированный посев данных на IO-потоке сразу после создания инстанса
         CoroutineScope(Dispatchers.IO).launch {
             DefaultTemplates.seedDefaultDataIfEmpty(context, db.exerciseDao(), db.templateDao())
+            seedDemoCoachClientsIfEmpty(db.coachClientDao())
         }
 
         db
@@ -63,4 +64,52 @@ val databaseModule = module {
     single { get<GymDatabase>().equipmentSettingsDao() }
     single { get<GymDatabase>().coachAndReviewDao() }
     single { get<GymDatabase>().userProfileDao() }
+    single { get<GymDatabase>().coachClientDao() }
+    single { com.gym.core.database.backup.BackupManager(get(), get(), get(), get()) }
+}
+
+private suspend fun seedDemoCoachClientsIfEmpty(dao: com.gym.core.database.dao.CoachClientDao) {
+    if (dao.getClientCount() == 0) {
+        val now = System.currentTimeMillis()
+        dao.insertClients(
+            listOf(
+                com.gym.core.database.entity.CoachClientEntity(
+                    id = "client_1",
+                    name = "Алексей Смирнов",
+                    phone = "+7 (999) 111-22-33",
+                    goal = "Набор массы + Жим 100 кг",
+                    notes = "Без резких движений в плече, умеренный RPE",
+                    totalSessions = 10,
+                    completedSessions = 8,
+                    assignedProgramTitle = "Грудь + Трицепс (Push)",
+                    createdAt = now - 14 * 86400000L,
+                    updatedAt = now - 86400000L
+                ),
+                com.gym.core.database.entity.CoachClientEntity(
+                    id = "client_2",
+                    name = "Екатерина Васильева",
+                    phone = "+7 (916) 444-55-66",
+                    goal = "Снижение жировой массы и рельеф",
+                    notes = "Колени здоровы, акцент на ягодичные мосты и присед",
+                    totalSessions = 12,
+                    completedSessions = 5,
+                    assignedProgramTitle = "Сплит Верх / Низ (Upper / Lower)",
+                    createdAt = now - 20 * 86400000L,
+                    updatedAt = now - 2 * 86400000L
+                ),
+                com.gym.core.database.entity.CoachClientEntity(
+                    id = "client_3",
+                    name = "Дмитрий Орлов",
+                    phone = "+7 (903) 777-88-99",
+                    goal = "Пауэрлифтинг / Силовой прогресс",
+                    notes = "Подготовка к нормативам, тяжелая база",
+                    totalSessions = 8,
+                    completedSessions = 8,
+                    assignedProgramTitle = "Силовой фулбоди 3x5",
+                    createdAt = now - 30 * 86400000L,
+                    updatedAt = now - 3 * 86400000L
+                )
+            )
+        )
+    }
 }

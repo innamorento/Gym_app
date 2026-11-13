@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
@@ -64,7 +65,13 @@ import com.gym.core.ui.theme.GymDarkSurfaceVariant
 import com.gym.core.ui.theme.GymSurfaceBorder
 import com.gym.core.ui.theme.GymTextPrimary
 import com.gym.core.ui.theme.GymTextSecondary
+import com.gym.core.database.backup.BackupManager
 import com.gym.feature.workout.WorkoutViewModel
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.rememberCoroutineScope
+import org.koin.compose.koinInject
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -82,6 +89,11 @@ fun WorkoutHistoryScreen(
 ) {
     val completedWorkouts by viewModel.completedWorkouts.collectAsState()
     var workoutToDelete by remember { mutableStateOf<Workout?>(null) }
+    var showExportDialog by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val backupManager: BackupManager = koinInject()
 
     val dateFormat = remember { SimpleDateFormat("d MMMM yyyy, HH:mm", Locale("ru")) }
 
@@ -94,6 +106,17 @@ fun WorkoutHistoryScreen(
                         fontWeight = FontWeight.Bold,
                         color = GymTextPrimary
                     )
+                },
+                actions = {
+                    if (completedWorkouts.isNotEmpty()) {
+                        IconButton(onClick = { showExportDialog = true }) {
+                            Icon(
+                                imageVector = Icons.Default.FileDownload,
+                                contentDescription = "Экспорт тренировок",
+                                tint = GymAccentGreen
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = GymDarkBackground)
             )
@@ -367,6 +390,76 @@ fun WorkoutHistoryScreen(
             dismissButton = {
                 TextButton(onClick = { workoutToDelete = null }) {
                     Text("Отмена", color = GymTextSecondary)
+                }
+            }
+        )
+    }
+
+    if (showExportDialog) {
+        AlertDialog(
+            onDismissRequest = { showExportDialog = false },
+            containerColor = GymDarkSurface,
+            title = {
+                Text(
+                    text = "Экспорт дневника тренировок",
+                    fontWeight = FontWeight.Bold,
+                    color = GymTextPrimary,
+                    fontSize = 17.sp
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        text = "Выберите формат для выгрузки истории или отправки в Telegram/почту:",
+                        color = GymTextSecondary,
+                        fontSize = 13.sp
+                    )
+
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                val csv = backupManager.exportWorkoutsCsv()
+                                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, "The_Iron_Apex_Workouts.csv")
+                                    putExtra(Intent.EXTRA_TEXT, csv)
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, "Экспорт тренировок (CSV)"))
+                                showExportDialog = false
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = GymDarkSurfaceVariant),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("📊 Таблица CSV (Excel / Google Sheets)", color = GymAccentGreen, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    }
+
+                    Button(
+                        onClick = {
+                            coroutineScope.launch {
+                                val json = backupManager.exportBackupJson()
+                                val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_SUBJECT, "The_Iron_Apex_Backup.json")
+                                    putExtra(Intent.EXTRA_TEXT, json)
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, "Полный бэкап (JSON)"))
+                                showExportDialog = false
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = GymDarkSurfaceVariant),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("📦 Полный резервный бэкап (JSON)", color = GymAccentBlue, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showExportDialog = false }) {
+                    Text("Закрыть", color = GymTextSecondary)
                 }
             }
         )

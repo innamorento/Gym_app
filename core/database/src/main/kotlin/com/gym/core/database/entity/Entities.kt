@@ -221,5 +221,26 @@ data class UserProfileEntity(
     val primaryGoal: com.gym.core.model.FitnessGoal = com.gym.core.model.FitnessGoal.HYPERTROPHY,
     val workoutsPerWeek: Int = 3,
     val isCompleted: Boolean = false,
+    val role: com.gym.core.model.UserRole = com.gym.core.model.UserRole.ATHLETE,
+    val email: String? = null,
+    val isGuest: Boolean = true,
+    val coachInviteCode: String? = "APEX77",
+    val linkedCoachCode: String? = null,
     val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "coach_clients")
+data class CoachClientEntity(
+    @PrimaryKey
+    val id: String,
+    val coachId: String = "default_user",
+    val name: String,
+    val phone: String = "",
+    val goal: String = "",
+    val notes: String = "",
+    val totalSessions: Int = 10,
+    val completedSessions: Int = 0,
+    val assignedProgramTitle: String = "Фулбоди (Full Body)",
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )

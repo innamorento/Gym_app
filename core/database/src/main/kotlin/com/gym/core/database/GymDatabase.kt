@@ -5,12 +5,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.gym.core.database.converter.GymTypeConverters
 import com.gym.core.database.dao.CoachAndReviewDao
+import com.gym.core.database.dao.CoachClientDao
 import com.gym.core.database.dao.EquipmentSettingsDao
 import com.gym.core.database.dao.ExerciseDao
 import com.gym.core.database.dao.TemplateDao
 import com.gym.core.database.dao.UserProfileDao
 import com.gym.core.database.dao.WorkoutDao
 import com.gym.core.database.entity.CoachAssignmentEntity
+import com.gym.core.database.entity.CoachClientEntity
 import com.gym.core.database.entity.EquipmentSettingsEntity
 import com.gym.core.database.entity.ExerciseEntity
 import com.gym.core.database.entity.SetVideoReviewEntity
@@ -32,9 +34,10 @@ import com.gym.core.database.entity.WorkoutTemplateEntity
         EquipmentSettingsEntity::class,
         SetVideoReviewEntity::class,
         CoachAssignmentEntity::class,
-        UserProfileEntity::class
+        UserProfileEntity::class,
+        CoachClientEntity::class
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(GymTypeConverters::class)
@@ -45,4 +48,5 @@ abstract class GymDatabase : RoomDatabase() {
     abstract fun equipmentSettingsDao(): EquipmentSettingsDao
     abstract fun coachAndReviewDao(): CoachAndReviewDao
     abstract fun userProfileDao(): UserProfileDao
+    abstract fun coachClientDao(): CoachClientDao
 }

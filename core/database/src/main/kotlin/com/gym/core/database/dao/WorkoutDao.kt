@@ -114,4 +114,7 @@ interface WorkoutDao {
 
     @Query("DELETE FROM workouts WHERE id = :workoutId")
     suspend fun deleteWorkout(workoutId: Long): Int
+
+    @Query("SELECT * FROM workouts WHERE status = 'COMPLETED' ORDER BY endTime DESC LIMIT 1")
+    suspend fun getLatestCompletedWorkout(): WorkoutEntity?
 }

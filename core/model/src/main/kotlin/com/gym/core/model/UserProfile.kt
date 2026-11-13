@@ -18,6 +18,11 @@ enum class FitnessGoal(val displayNameRu: String, val emoji: String, val descrip
     HEALTH_FITNESS("Здоровье и тонус", "⚡", "Поддержание отличного самочувствия и энергии")
 }
 
+enum class UserRole(val displayNameRu: String, val descriptionRu: String) {
+    ATHLETE("Атлет", "Самостоятельные тренировки, логирование подходов и аналитика"),
+    COACH("Тренер", "Ведение подопечных, контроль абонементов и видеорецензии")
+}
+
 data class UserProfile(
     val id: String = "default_user",
     val name: String = "",
@@ -29,6 +34,11 @@ data class UserProfile(
     val primaryGoal: FitnessGoal = FitnessGoal.HYPERTROPHY,
     val workoutsPerWeek: Int = 3,
     val isCompleted: Boolean = false,
+    val role: UserRole = UserRole.ATHLETE,
+    val email: String? = null,
+    val isGuest: Boolean = true,
+    val coachInviteCode: String? = "APEX77",
+    val linkedCoachCode: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 ) {
     /**

@@ -8,9 +8,16 @@ import com.gym.core.model.MuscleGroup
 import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.TrainingExperience
+import com.gym.core.model.UserRole
 import com.gym.core.model.WorkoutStatus
 
 class GymTypeConverters {
+
+    @TypeConverter
+    fun fromUserRole(value: UserRole): String = value.name
+
+    @TypeConverter
+    fun toUserRole(value: String): UserRole = try { UserRole.valueOf(value) } catch (e: Exception) { UserRole.ATHLETE }
 
     @TypeConverter
     fun fromGender(value: Gender): String = value.name

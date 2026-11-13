@@ -158,6 +158,11 @@ fun com.gym.core.database.entity.UserProfileEntity.toDomain(): com.gym.core.mode
         primaryGoal = primaryGoal,
         workoutsPerWeek = workoutsPerWeek,
         isCompleted = isCompleted,
+        role = role,
+        email = email,
+        isGuest = isGuest,
+        coachInviteCode = coachInviteCode,
+        linkedCoachCode = linkedCoachCode,
         createdAt = createdAt
     )
 }
@@ -174,6 +179,11 @@ fun com.gym.core.model.UserProfile.toEntity(): com.gym.core.database.entity.User
         primaryGoal = primaryGoal,
         workoutsPerWeek = workoutsPerWeek,
         isCompleted = isCompleted,
+        role = role,
+        email = email,
+        isGuest = isGuest,
+        coachInviteCode = coachInviteCode,
+        linkedCoachCode = linkedCoachCode,
         createdAt = createdAt
     )
 }
