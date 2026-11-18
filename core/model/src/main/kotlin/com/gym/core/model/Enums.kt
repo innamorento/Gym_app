@@ -73,7 +73,6 @@ enum class MuscleCategory(
     SHOULDERS("Плечи", "🎯", listOf(MuscleGroup.SHOULDERS)),
     BICEPS("Бицепс", "💪", listOf(MuscleGroup.BICEPS)),
     TRICEPS("Трицепс", "⚡", listOf(MuscleGroup.TRICEPS)),
-    ARMS("Руки", "🦾", listOf(MuscleGroup.BICEPS, MuscleGroup.TRICEPS)),
     CORE("Пресс / Кор", "🛡️", listOf(MuscleGroup.CORE)),
     OTHER("Прочее", "🌐", listOf(MuscleGroup.FULL_BODY));
 

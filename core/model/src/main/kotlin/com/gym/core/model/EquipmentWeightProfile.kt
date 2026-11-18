@@ -58,6 +58,24 @@ data class EquipmentWeightProfile(
         }
     }
 
+    /**
+     * Возвращает физический шаг веса для заданного текущего веса с учетом типа снаряда.
+     */
+    fun getStepForWeight(currentWeight: Double = 0.0): Double {
+        return when (equipment) {
+            Equipment.DUMBBELL -> {
+                if (currentWeight < smallWeightThreshold) {
+                    if (smallWeightStep > 0) smallWeightStep else 1.0
+                } else {
+                    if (defaultStep > 0) defaultStep else 2.0
+                }
+            }
+            Equipment.BARBELL -> if (minPlatesPairWeight > 0) minPlatesPairWeight else 2.5
+            Equipment.CABLE, Equipment.MACHINE -> if (defaultStep > 0) defaultStep else 2.5
+            else -> if (defaultStep > 0) defaultStep else 1.0
+        }
+    }
+
     companion object {
         fun defaultFor(equipment: Equipment): EquipmentWeightProfile {
             return when (equipment) {

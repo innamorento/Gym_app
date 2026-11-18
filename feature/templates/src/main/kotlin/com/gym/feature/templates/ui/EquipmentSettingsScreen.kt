@@ -1,9 +1,11 @@
 package com.gym.feature.templates.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,6 +42,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.gym.core.database.backup.BackupManager
+import com.gym.core.ui.icon.GymIcons
+import androidx.compose.ui.res.painterResource
 import org.koin.compose.koinInject
 import kotlinx.coroutines.launch
 import android.content.Intent
@@ -81,6 +85,7 @@ import com.gym.core.ui.theme.GymTextSecondary
 @Composable
 fun EquipmentSettingsScreen(
     onBackClick: () -> Unit,
+    onNavigateToAuth: () -> Unit = {},
     onSaveClick: (EquipmentWeightProfile) -> Unit = {}
 ) {
     // Настройки гантелей
@@ -238,7 +243,13 @@ fun EquipmentSettingsScreen(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Backup, contentDescription = null, tint = GymAccentGreen)
+                                // [AI-TASK:TASK-021] Custom Iron Hex Database Backup Icon
+                                Icon(
+                                    painter = painterResource(GymIcons.DatabaseBackup),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                    tint = GymAccentGreen
+                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "Резервное копирование и экспорт",
@@ -345,15 +356,15 @@ fun EquipmentSettingsScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Column {
+                                Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = if (isGuest) "Гостевой режим (Офлайн)" else "Google Аккаунт",
+                                        text = if (isGuest) "Гостевой режим (Офлайн)" else "Личный аккаунт",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 14.sp,
                                         color = GymTextPrimary
                                     )
                                     Text(
-                                        text = if (isGuest) "Локальная база данных (SQLite Room)" else (profileEntity?.email ?: "apex.athlete@gmail.com"),
+                                        text = if (isGuest) "Локальная база данных (SQLite Room)" else (profileEntity?.email ?: "Авторизован"),
                                         fontSize = 12.sp,
                                         color = if (isGuest) GymTextSecondary else GymAccentGreen
                                     )
@@ -361,17 +372,12 @@ fun EquipmentSettingsScreen(
 
                                 Button(
                                     onClick = {
-                                        coroutineScope.launch {
-                                            val cur = userProfileDao.getUserProfileSync()
-                                            if (cur != null) {
-                                                if (isGuest) {
-                                                    userProfileDao.saveUserProfile(
-                                                        cur.copy(
-                                                            isGuest = false,
-                                                            email = "apex.athlete@gmail.com"
-                                                        )
-                                                    )
-                                                } else {
+                                        if (isGuest) {
+                                            onNavigateToAuth()
+                                        } else {
+                                            coroutineScope.launch {
+                                                val cur = userProfileDao.getUserProfileSync()
+                                                if (cur != null) {
                                                     userProfileDao.saveUserProfile(
                                                         cur.copy(
                                                             isGuest = true,
@@ -389,11 +395,28 @@ fun EquipmentSettingsScreen(
                                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                                 ) {
                                     Text(
-                                        text = if (isGuest) "Войти с Google" else "Выйти",
+                                        text = if (isGuest) "Войти" else "Выйти",
                                         color = if (isGuest) GymDarkBackground else GymTextPrimary,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold
                                     )
+                                }
+                            }
+
+                            if (currentRole == UserRole.COACH && !profileEntity?.coachInviteCode.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(GymDarkSurfaceVariant)
+                                        .border(1.dp, GymAccentGreen.copy(alpha = 0.4f), RoundedCornerShape(8.dp))
+                                        .padding(10.dp)
+                                ) {
+                                    Column {
+                                        Text("Инвайт-код для подопечных:", fontSize = 11.sp, color = GymTextSecondary)
+                                        Text(profileEntity?.coachInviteCode ?: "", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = GymAccentGreen)
+                                    }
                                 }
                             }
 

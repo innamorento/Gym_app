@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0A0B0E;
+    color: #F9FAFB;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 1024px;
+    height: 1024px;
+    padding: 40px;
+    border: 2px solid #2A3241;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .title {
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #F9FAFB;
+  }
+  .title span { color: #22C55E; }
+  .subtitle {
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: #94A3B8;
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    width: 100%;
+    max-width: 880px;
+  }
+  .card {
+    background: #14161D;
+    border: 1px solid #2A3241;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .card svg {
+    width: 120px;
+    height: 120px;
+  }
+  .card-label {
+    margin-top: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #94A3B8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .palette {
+    margin-top: 34px;
+    display: flex;
+    gap: 16px;
+  }
+  .swatch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #14161D;
+    border: 1px solid #2A3241;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="title">THE IRON APEX <span>// STYLE REFERENCE</span></div>
+    <div class="subtitle">Tactical Cyber Lime &bull; 1.8px Monoline &bull; Hexagonal Olympic Geometry</div>
+  </div>
+  <div class="grid">
+    <div class="card" style="grid-column: span 1;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512">
+    <rect width="108" height="108" fill="#0A0B0E" rx="16"/>
+    <!-- Внешний шестигранник -->
+    <path d="M 54,22.8 L 81.6,38.4 L 81.6,69.6 L 54,85.2 L 26.4,69.6 L 26.4,38.4 Z"
+          fill="#141822" stroke="#3B465A" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Внутренняя фаска диска -->
+    <path d="M 54,28.8 L 76.2,41.4 L 76.2,66.6 L 54,79.2 L 31.8,66.6 L 31.8,41.4 Z"
+          fill="#090B10" stroke="#1F2635" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Градиент для пика -->
+    <defs>
+        <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4ADE80"/>
+            <stop offset="100%" stop-color="#22C55E"/>
+        </linearGradient>
+    </defs>
+    <!-- Восходящий неоновый пик Apex -->
+    <path d="M 54,33.6 L 69,56.4 L 57,56.4 L 58.8,74.4 L 39,51.6 L 51,51.6 Z"
+          fill="url(#limeGrad)"/>
+    <!-- Штифты замка -->
+    <circle cx="54" cy="28.8" r="1.5" fill="#22C55E"/>
+    <circle cx="54" cy="79.2" r="1.5" fill="#22C55E"/>
+</svg>
+      <div class="card-label">Apex Brand Logo</div>
+    </div>
+    <div class="card">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
+    <rect width="24" height="24" fill="#0A0B0E" rx="4"/>
+    <g stroke="#F9FAFB" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Гриф -->
+        <path d="M 2,12 L 22,12" stroke-width="1.8"/>
+        <!-- Насечка хвата -->
+        <path d="M 10,10.5 L 10,13.5 M 14,10.5 L 14,13.5" stroke-width="1.5" stroke="#22C55E"/>
+        <!-- Левый шестигранный диск -->
+        <path d="M 6,6 L 4,8.5 L 4,15.5 L 6,18 L 8,15.5 L 8,8.5 Z" stroke-width="1.8" fill="#14161D"/>
+        <!-- Левая втулка -->
+        <path d="M 9,9 L 9,15" stroke-width="1.8"/>
+        <!-- Правый шестигранный диск -->
+        <path d="M 18,6 L 16,8.5 L 16,15.5 L 18,18 L 20,15.5 L 20,8.5 Z" stroke-width="1.8" fill="#14161D"/>
+        <!-- Правая втулка -->
+        <path d="M 15,9 L 15,15" stroke-width="1.8"/>
+    </g>
+</svg>
+      <div class="card-label">Hex Barbell</div>
+    </div>
+    <div class="card">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
+    <rect width="24" height="24" fill="#0A0B0E" rx="4"/>
+    <g stroke="#F9FAFB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <!-- Граненый корпус секундомера -->
+        <path d="M 12,5 L 18.5,8.8 L 18.5,16.2 L 12,20 L 5.5,16.2 L 5.5,8.8 Z" fill="#14161D"/>
+        <!-- Кнопки -->
+        <path d="M 10,2 L 14,2 M 12,2 L 12,5"/>
+        <path d="M 17,4 L 19,6" stroke="#38BDF8"/>
+        <!-- Стрелки -->
+        <path d="M 12,8.5 L 12,12.5 L 15,12.5" stroke="#22C55E"/>
+    </g>
+</svg>
+      <div class="card-label">Tactical Stopwatch</div>
+    </div>
+    <div class="card">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
+    <rect width="24" height="24" fill="#0A0B0E" rx="4"/>
+    <g stroke="#F9FAFB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 2,12 L 22,12"/>
+        <path d="M 6,9 L 6,15"/>
+        <path d="M 9,4 L 9,20 M 11.5,4 L 11.5,20" stroke="#22C55E"/>
+        <path d="M 14.5,6 L 14.5,18"/>
+        <path d="M 17.5,8 L 17.5,16" stroke="#38BDF8"/>
+    </g>
+</svg>
+      <div class="card-label">Plate Calculator</div>
+    </div>
+    <div class="card">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
+    <rect width="24" height="24" fill="#0A0B0E" rx="4"/>
+    <g stroke="#F9FAFB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <!-- Чаша кубка -->
+        <path d="M 6,4 L 18,4 L 17,11 C 17,14 14,16 12,16 C 10,16 7,14 7,11 Z" fill="#14161D"/>
+        <path d="M 6,6 L 3,6 L 3,10 L 6,11"/>
+        <path d="M 18,6 L 21,6 L 21,10 L 18,11"/>
+        <path d="M 12,16 L 12,19" stroke="#22C55E"/>
+        <path d="M 8,19 L 16,19 L 17,21 L 7,21 Z" fill="#1F2430"/>
+    </g>
+    <!-- Внутренний акцент 1RM -->
+    <polygon points="12,7 13.5,10 10.5,10" fill="#22C55E"/>
+</svg>
+      <div class="card-label">PR 1RM Trophy</div>
+    </div>
+    <div class="card" style="display:flex; justify-content:center; align-items:center; text-align:center;">
+      <div style="font-size: 40px; font-weight: 900; color: #22C55E;">45&deg;</div>
+      <div style="font-size: 12px; color: #94A3B8; margin-top: 6px; font-weight: 700;">CHAMFERED EDGES &bull; OLED ONYX</div>
+    </div>
+  </div>
+  <div class="palette">
+    <div class="swatch"><div class="dot" style="background: #0A0B0E; border: 1px solid #3B465A;"></div> #0A0B0E Onyx</div>
+    <div class="swatch"><div class="dot" style="background: #14161D; border: 1px solid #3B465A;"></div> #14161D Charcoal</div>
+    <div class="swatch"><div class="dot" style="background: #22C55E;"></div> #22C55E Cyber Lime</div>
+    <div class="swatch"><div class="dot" style="background: #38BDF8;"></div> #38BDF8 Ice Blue</div>
+    <div class="swatch"><div class="dot" style="background: #F9FAFB;"></div> #F9FAFB Slate White</div>
+  </div>
+</body>
+</html>

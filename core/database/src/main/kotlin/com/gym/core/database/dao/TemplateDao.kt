@@ -44,6 +44,9 @@ interface TemplateDao {
     @Query("SELECT COUNT(*) FROM workout_templates")
     suspend fun getTemplateCount(): Int
 
+    @Query("SELECT * FROM workout_templates")
+    suspend fun getAllTemplatesList(): List<WorkoutTemplateEntity>
+
     @Transaction
     @Query("SELECT * FROM workout_templates WHERE id = :templateId")
     suspend fun getTemplateWithExercises(templateId: Long): WorkoutTemplateWithExercises?
@@ -68,6 +71,10 @@ interface TemplateDao {
 
     @Query("DELETE FROM template_exercises")
     suspend fun deleteAllTemplateExercises(): Int
+
+    // [AI-TASK:TASK-019] Increment sets in templates for lagging muscle groups (cap at 6)
+    @Query("UPDATE template_exercises SET targetSetsCount = CASE WHEN targetSetsCount + :delta > 6 THEN 6 ELSE targetSetsCount + :delta END WHERE exerciseId IN (:exerciseIds)")
+    suspend fun incrementSetsForExercises(exerciseIds: List<Long>, delta: Int = 1): Int
 
     @Transaction
     suspend fun saveTemplateWithExercises(

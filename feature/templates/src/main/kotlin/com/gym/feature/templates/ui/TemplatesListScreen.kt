@@ -2,6 +2,7 @@ package com.gym.feature.templates.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.VideoCameraFront
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,6 +37,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,16 +50,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.model.WorkoutPlan
+import com.gym.core.model.WorkoutPlanDay
 import com.gym.core.model.WorkoutTemplate
 import com.gym.core.ui.component.SupersetBadge
+import com.gym.core.ui.icon.GymIcons
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymDarkBackground
 import com.gym.core.ui.theme.GymDarkSurface
 import com.gym.core.ui.theme.GymDarkSurfaceVariant
+import com.gym.core.ui.theme.GymSurfaceBorder
 import com.gym.core.ui.theme.GymTextPrimary
 import com.gym.core.ui.theme.GymTextSecondary
 import androidx.compose.foundation.horizontalScroll
@@ -88,6 +97,16 @@ fun TemplatesListScreen(
 ) {
     val state by viewModel.listUiState.collectAsState()
     var selectedLevelFilter by remember { mutableStateOf<TrainingExperience?>(null) }
+    var showPlanSelectorSheet by remember { mutableStateOf(false) }
+    val todayDayOfWeek = remember {
+        try {
+            java.time.LocalDate.now().dayOfWeek.value
+        } catch (e: Exception) {
+            1
+        }
+    }
+    var selectedDayOfWeek by remember { mutableStateOf(todayDayOfWeek) }
+
     val displayedTemplates = remember(state.templates, selectedLevelFilter) {
         if (selectedLevelFilter == null) {
             state.templates
@@ -107,32 +126,49 @@ fun TemplatesListScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = onProfileClick) {
+                    // [AI-TASK:TASK-023] Tactical Iron Hex unified top bar action badges (26dp in 44dp targets)
+                    IconButton(
+                        onClick = onProfileClick,
+                        modifier = Modifier.size(44.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.AccountCircle,
+                            painter = painterResource(GymIcons.Profile),
                             contentDescription = "Профиль атлета",
-                            tint = GymTextPrimary
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
-                    IconButton(onClick = onAnalyticsClick) {
+                    IconButton(
+                        onClick = onAnalyticsClick,
+                        modifier = Modifier.size(44.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                            painter = painterResource(GymIcons.NavAnalytics),
                             contentDescription = "Аналитика и прогресс",
-                            tint = GymAccentGreen
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
-                    IconButton(onClick = onCoachReviewsClick) {
+                    IconButton(
+                        onClick = onCoachReviewsClick,
+                        modifier = Modifier.size(44.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.VideoCameraFront,
+                            painter = painterResource(GymIcons.Videocam),
                             contentDescription = "Кабинет тренера: видеоотчеты",
-                            tint = GymAccentBlue
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
-                    IconButton(onClick = onSettingsClick) {
+                    IconButton(
+                        onClick = onSettingsClick,
+                        modifier = Modifier.size(44.dp)
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.Tune,
+                            painter = painterResource(GymIcons.EquipmentTune),
                             contentDescription = "Настройки оборудования",
-                            tint = GymTextPrimary
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(26.dp)
                         )
                     }
                 },
@@ -218,6 +254,19 @@ fun TemplatesListScreen(
                                 }
                             }
                         }
+                    }
+                }
+
+                if (state.activePlan != null) {
+                    item(key = "today_workout_focus_card") {
+                        TodayWorkoutFocusCard(
+                            plan = state.activePlan!!,
+                            todayDayOfWeek = todayDayOfWeek,
+                            selectedDayOfWeek = selectedDayOfWeek,
+                            onSelectDay = { selectedDayOfWeek = it },
+                            onChangePlanClick = { showPlanSelectorSheet = true },
+                            onStartWorkoutClick = onStartWorkoutClick
+                        )
                     }
                 }
 
@@ -312,6 +361,18 @@ fun TemplatesListScreen(
                 }
             }
         }
+    }
+
+    if (showPlanSelectorSheet) {
+        SelectPlanBottomSheet(
+            plans = state.allPlans,
+            activePlanId = state.activePlan?.id,
+            onSelectPlan = { planId ->
+                viewModel.selectActivePlan(planId)
+                showPlanSelectorSheet = false
+            },
+            onDismiss = { showPlanSelectorSheet = false }
+        )
     }
 }
 
@@ -507,6 +568,347 @@ fun EmptyTemplatesPlaceholder(
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(6.dp))
                 Text("Создать шаблон")
+            }
+        }
+    }
+}
+
+@Composable
+fun TodayWorkoutFocusCard(
+    plan: WorkoutPlan,
+    todayDayOfWeek: Int,
+    selectedDayOfWeek: Int,
+    onSelectDay: (Int) -> Unit,
+    onChangePlanClick: () -> Unit,
+    onStartWorkoutClick: (Long) -> Unit
+) {
+    val selectedDay = plan.days.find { it.dayOfWeek == selectedDayOfWeek } ?: plan.days.firstOrNull()
+    val isTodaySelected = selectedDayOfWeek == todayDayOfWeek
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = GymDarkSurface),
+        border = BorderStroke(1.dp, GymSurfaceBorder),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            // Заголовок программы + кнопка смены
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(GymIcons.Bolt),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "АКТИВНАЯ ПРОГРАММА НА НЕДЕЛЮ",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GymAccentGreen
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = plan.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GymTextPrimary
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(GymAccentGreen.copy(alpha = 0.12f))
+                        .border(1.dp, GymAccentGreen.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
+                        .clickable { onChangePlanClick() }
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = null,
+                            tint = GymAccentGreen,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "Сменить",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GymAccentGreen
+                        )
+                    }
+                }
+            }
+
+            // Интерактивная 7-дневная полоса недели (Пн, Вт, Ср, Чт, Пт, Сб, Вс)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                (1..7).forEach { dayIndex ->
+                    val dayData = plan.days.find { it.dayOfWeek == dayIndex }
+                    val isSelected = dayIndex == selectedDayOfWeek
+                    val isToday = dayIndex == todayDayOfWeek
+                    val isRest = dayData?.isRestDay ?: true
+
+                    val dayLabel = when (dayIndex) {
+                        1 -> "Пн"; 2 -> "Вт"; 3 -> "Ср"; 4 -> "Чт"; 5 -> "Пт"; 6 -> "Сб"; 7 -> "Вс"
+                        else -> "$dayIndex"
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 2.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                when {
+                                    isSelected -> GymAccentGreen.copy(alpha = 0.2f)
+                                    isToday -> GymDarkSurfaceVariant
+                                    else -> Color.Transparent
+                                }
+                            )
+                            .border(
+                                width = if (isSelected) 1.5.dp else if (isToday) 1.dp else 0.dp,
+                                color = if (isSelected) GymAccentGreen else if (isToday) GymAccentGreen.copy(alpha = 0.5f) else Color.Transparent,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                            .clickable { onSelectDay(dayIndex) }
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = dayLabel,
+                            fontSize = 12.sp,
+                            fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Medium,
+                            color = if (isSelected) GymAccentGreen else if (isToday) GymTextPrimary else GymTextSecondary
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(
+                                    if (isRest) GymTextSecondary.copy(alpha = 0.3f) else GymAccentGreen
+                                )
+                        )
+                        if (isToday) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "сегодня",
+                                fontSize = 8.sp,
+                                color = GymAccentGreen,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Карточка выбранного дня с фокусом и кнопкой старта
+            if (selectedDay != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(GymDarkSurfaceVariant)
+                        .padding(14.dp)
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    if (selectedDay.isRestDay) GymIcons.Timer else GymIcons.NavWorkout
+                                ),
+                                contentDescription = null,
+                                tint = if (selectedDay.isRestDay) GymTextSecondary else GymAccentGreen,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Text(
+                                text = "${selectedDay.dayTitleRu}${if (isTodaySelected) " (Сегодня)" else ""}",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isTodaySelected) GymAccentGreen else GymTextSecondary
+                            )
+                        }
+
+                        Text(
+                            text = selectedDay.dayNameRu,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = GymTextPrimary
+                        )
+
+                        selectedDay.focusDescription?.let { focus ->
+                            Text(
+                                text = focus,
+                                fontSize = 12.sp,
+                                color = GymTextSecondary
+                            )
+                        }
+
+                        val targetTemplateId = selectedDay.templateId
+                        if (!selectedDay.isRestDay && targetTemplateId != null) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Button(
+                                onClick = { onStartWorkoutClick(targetTemplateId) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = GymAccentGreen),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.PlayArrow,
+                                    contentDescription = null,
+                                    tint = GymDarkBackground,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = if (isTodaySelected) "Начать тренировку дня" else "Начать тренировку ${selectedDay.dayShortRu}",
+                                    color = GymDarkBackground,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectPlanBottomSheet(
+    plans: List<WorkoutPlan>,
+    activePlanId: Long?,
+    onSelectPlan: (Long) -> Unit,
+    onDismiss: () -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        containerColor = GymDarkSurface,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .padding(bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Выбор недельной программы",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = GymTextPrimary
+                )
+            }
+
+            Text(
+                text = "Выберите долгосрочный недельный сплит. Приложение будет автоматически планировать дни тренировок и отдыха на каждый день недели.",
+                fontSize = 13.sp,
+                color = GymTextSecondary
+            )
+
+            plans.forEach { plan ->
+                val isActive = plan.id == activePlanId
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onSelectPlan(plan.id) },
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (isActive) GymAccentGreen.copy(alpha = 0.12f) else GymDarkSurfaceVariant
+                    ),
+                    border = BorderStroke(
+                        1.dp,
+                        if (isActive) GymAccentGreen else GymSurfaceBorder
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(14.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = plan.title,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (isActive) GymAccentGreen else GymTextPrimary
+                            )
+                            if (isActive) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(GymAccentGreen)
+                                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "АКТИВНАЯ",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = GymDarkBackground
+                                    )
+                                }
+                            }
+                        }
+
+                        Text(
+                            text = "${plan.daysPerWeek} тренировок в неделю • ${plan.level.displayNameRu}",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = GymAccentBlue
+                        )
+
+                        Text(
+                            text = plan.description,
+                            fontSize = 12.sp,
+                            color = GymTextSecondary
+                        )
+
+                        val trainingDays = plan.days.filter { !it.isRestDay }
+                        if (trainingDays.isNotEmpty()) {
+                            Text(
+                                text = trainingDays.joinToString(" • ") { "${it.dayShortRu}: ${it.dayNameRu.substringBefore(':')}" },
+                                fontSize = 11.sp,
+                                color = GymTextPrimary.copy(alpha = 0.8f),
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                }
             }
         }
     }

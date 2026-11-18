@@ -59,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +72,7 @@ import com.gym.core.model.Exercise
 import com.gym.core.model.MuscleCategory
 import com.gym.core.ui.component.ExerciseDetailSheet
 import com.gym.core.ui.component.ExerciseThumbnail
+import com.gym.core.ui.icon.GymIcons
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymAccentPurple
@@ -209,14 +211,22 @@ fun ExercisesScreen(
                         )
                     )
 
-                    // Привычные анатомические категории
-                    MuscleCategory.values().forEach { category ->
+                    // Привычные анатомические категории (только наполненные упражнениями)
+                    MuscleCategory.entries.filter { (state.regionCounts[it] ?: 0) > 0 }.forEach { category ->
                         val count = state.regionCounts[category] ?: 0
                         FilterChip(
                             selected = false,
                             onClick = { viewModel.onRegionSelected(category) },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(GymIcons.iconForCategory(category)),
+                                    contentDescription = null,
+                                    tint = Color.Unspecified,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            },
                             label = {
-                                Text("${category.emoji} ${category.displayNameRu} ($count)", fontSize = 12.sp)
+                                Text("${category.displayNameRu} ($count)", fontSize = 12.sp)
                             },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = GymAccentGreen,
@@ -268,12 +278,21 @@ fun ExercisesScreen(
                             .padding(horizontal = 12.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "${currentCategory?.emoji} ${currentCategory?.displayNameRu}",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = GymAccentGreen
-                        )
+                        if (currentCategory != null) {
+                            Icon(
+                                painter = painterResource(GymIcons.iconForCategory(currentCategory)),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(24.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = currentCategory.displayNameRu,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GymAccentGreen
+                            )
+                        }
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "(${state.exercises.size})",
@@ -284,18 +303,18 @@ fun ExercisesScreen(
                     }
                 }
 
-                // Горизонтальный фильтр по типу снаряда ("свободный вес", гантели, штанга и т.д.)
+                // [AI-TASK:TASK-022] Tactical Iron Hex equipment filter chips with custom vector badges
                 val equipmentList = listOf(
                     null to "Все снаряды",
-                    Equipment.BARBELL to "🏋️ Штанга",
-                    Equipment.DUMBBELL to "💪 Гантели",
-                    Equipment.BODYWEIGHT to "🤸 Свободный вес",
-                    Equipment.CABLE to "⚡ Блок / Кроссовер",
-                    Equipment.MACHINE to "⚙️ Тренажер",
-                    Equipment.WEIGHTED_BODYWEIGHT to "🎒 С весом",
-                    Equipment.KETTLEBELL to "🔔 Гиря",
-                    Equipment.RESISTANCE_BAND to "🎗️ Эспандер",
-                    Equipment.OTHER to "📦 Другое"
+                    Equipment.BARBELL to Equipment.BARBELL.displayNameRu,
+                    Equipment.DUMBBELL to Equipment.DUMBBELL.displayNameRu,
+                    Equipment.BODYWEIGHT to Equipment.BODYWEIGHT.displayNameRu,
+                    Equipment.CABLE to Equipment.CABLE.displayNameRu,
+                    Equipment.MACHINE to Equipment.MACHINE.displayNameRu,
+                    Equipment.WEIGHTED_BODYWEIGHT to Equipment.WEIGHTED_BODYWEIGHT.displayNameRu,
+                    Equipment.KETTLEBELL to Equipment.KETTLEBELL.displayNameRu,
+                    Equipment.RESISTANCE_BAND to Equipment.RESISTANCE_BAND.displayNameRu,
+                    Equipment.OTHER to Equipment.OTHER.displayNameRu
                 ).filter { (eq, _) ->
                     eq == null || (state.equipmentCounts[eq] ?: 0) > 0
                 }
@@ -318,6 +337,16 @@ fun ExercisesScreen(
                         FilterChip(
                             selected = isSelected,
                             onClick = { viewModel.onEquipmentSelected(if (isSelected) null else eq) },
+                            leadingIcon = if (eq != null) {
+                                {
+                                    Icon(
+                                        painter = painterResource(GymIcons.iconForEquipment(eq)),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = Color.Unspecified
+                                    )
+                                }
+                            } else null,
                             label = {
                                 Text(
                                     text = if (count > 0 && eq != null) "$title ($count)" else title,

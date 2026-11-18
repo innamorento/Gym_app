@@ -3,22 +3,27 @@ package com.gym.feature.workout.analytics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gym.core.database.dao.ExerciseDao
+import com.gym.core.database.dao.TemplateDao
 import com.gym.core.database.dao.WorkoutDao
 import com.gym.core.database.mapper.toDomain
 import com.gym.core.model.AnalyticsCalculator
+import com.gym.core.model.BalanceStatus
 import com.gym.core.model.CompoundPrTrophy
 import com.gym.core.model.Exercise
 import com.gym.core.model.MuscleCategory
+import com.gym.core.model.MuscleGroup
 import com.gym.core.model.MuscleGroupBalance
 import com.gym.core.model.OneRmTrendPoint
 import com.gym.core.model.SetType
 import com.gym.core.model.WeeklyVolumePoint
 import com.gym.core.model.Workout
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 enum class AnalyticsTimeRange(val titleRu: String) {
@@ -70,23 +75,27 @@ data class AnalyticsUiState(
     val availableExercises: List<Exercise> = emptyList(),
     val selectedExerciseId: Long? = null,
     val selectedExercisePr: ExercisePrSummary? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val balanceActionMessage: String? = null
 )
 
 class AnalyticsViewModel(
     private val workoutDao: WorkoutDao,
-    private val exerciseDao: ExerciseDao
+    private val exerciseDao: ExerciseDao,
+    private val templateDao: TemplateDao
 ) : ViewModel() {
 
     private val _selectedTimeRange = MutableStateFlow(AnalyticsTimeRange.MONTH)
     private val _selectedExerciseId = MutableStateFlow<Long?>(null)
+    private val _balanceActionMessage = MutableStateFlow<String?>(null)
 
     val uiState: StateFlow<AnalyticsUiState> = combine(
         workoutDao.getCompletedWorkoutsForUser("default_user"),
         exerciseDao.getAllExercises(),
         _selectedTimeRange,
-        _selectedExerciseId
-    ) { completedWorkoutsDetails, exerciseEntities, timeRange, selectedExId ->
+        _selectedExerciseId,
+        _balanceActionMessage
+    ) { completedWorkoutsDetails, exerciseEntities, timeRange, selectedExId, balanceMsg ->
         val completedWorkouts = completedWorkoutsDetails.map { it.toDomain() }
         val allExercises = exerciseEntities.map { it.toDomain() }
 
@@ -189,13 +198,67 @@ class AnalyticsViewModel(
             availableExercises = availableExercises,
             selectedExerciseId = effectiveExerciseId,
             selectedExercisePr = selectedPrSummary,
-            isLoading = false
+            isLoading = false,
+            balanceActionMessage = balanceMsg
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = AnalyticsUiState(isLoading = true)
     )
+
+    // [AI-TASK:TASK-019] Rebalance templates (+1 set) for lagging muscle groups
+    fun autoBalanceTemplatesForLaggingMuscles(status: BalanceStatus) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val targetMuscleGroups = when (status) {
+                BalanceStatus.LEGS_DEFICIT -> listOf(
+                    MuscleGroup.LEGS_QUADS,
+                    MuscleGroup.LEGS_HAMSTRINGS,
+                    MuscleGroup.CALVES
+                )
+                BalanceStatus.PULL_DEFICIT -> listOf(
+                    MuscleGroup.BACK,
+                    MuscleGroup.BICEPS
+                )
+                BalanceStatus.PUSH_DOMINANT -> listOf(
+                    MuscleGroup.BACK,
+                    MuscleGroup.BICEPS,
+                    MuscleGroup.LEGS_QUADS,
+                    MuscleGroup.LEGS_HAMSTRINGS,
+                    MuscleGroup.CALVES
+                )
+                else -> emptyList()
+            }
+
+            if (targetMuscleGroups.isEmpty()) return@launch
+
+            val allExercises = exerciseDao.getAllExercisesList()
+            val targetExerciseIds = allExercises
+                .filter { it.primaryMuscleGroup in targetMuscleGroups }
+                .map { it.id }
+
+            if (targetExerciseIds.isNotEmpty()) {
+                val updatedCount = templateDao.incrementSetsForExercises(targetExerciseIds, delta = 1)
+                val groupName = when (status) {
+                    BalanceStatus.LEGS_DEFICIT -> "на ноги"
+                    BalanceStatus.PULL_DEFICIT -> "на спину и тягу"
+                    BalanceStatus.PUSH_DOMINANT -> "на спину и ноги"
+                    else -> "на отстающие группы"
+                }
+                _balanceActionMessage.value = if (updatedCount > 0) {
+                    "План тренировок скорректирован: добавлен +1 подход к $updatedCount упражнениям $groupName для устранения дисбаланса!"
+                } else {
+                    "В шаблонах уже установлен максимальный целевой объем подходов (6)."
+                }
+            } else {
+                _balanceActionMessage.value = "Упражнения для компенсации дисбаланса не найдены в базе."
+            }
+        }
+    }
+
+    fun dismissBalanceActionMessage() {
+        _balanceActionMessage.value = null
+    }
 
     private fun calculateExercisePrSummary(
         exerciseId: Long,

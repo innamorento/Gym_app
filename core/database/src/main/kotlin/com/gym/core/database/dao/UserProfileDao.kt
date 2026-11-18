@@ -24,4 +24,7 @@ interface UserProfileDao {
 
     @Query("SELECT COUNT(*) FROM user_profiles WHERE isCompleted = 1")
     suspend fun hasCompletedProfile(): Int
+
+    @Query("DELETE FROM user_profiles WHERE id = :id")
+    suspend fun deleteUserProfile(id: String = "default_user")
 }

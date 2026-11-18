@@ -38,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,6 +53,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gym.core.model.Workout
+import com.gym.core.ui.icon.GymIcons
+import androidx.compose.ui.res.painterResource
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymDarkBackground
@@ -386,7 +389,8 @@ fun WorkoutSummaryScreen(
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = GymTextPrimary),
                         border = androidx.compose.foundation.BorderStroke(1.dp, GymSurfaceBorder)
                     ) {
-                        Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
+                        // [AI-TASK:TASK-023] Custom Iron Hex Share Record Icon (26dp un-tinted)
+                        Icon(painterResource(GymIcons.ShareRecord), contentDescription = null, modifier = Modifier.size(26.dp), tint = Color.Unspecified)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text("Поделиться", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                     }

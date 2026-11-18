@@ -11,6 +11,7 @@ import com.gym.core.database.dao.ExerciseDao
 import com.gym.core.database.dao.TemplateDao
 import com.gym.core.database.dao.UserProfileDao
 import com.gym.core.database.dao.WorkoutDao
+import com.gym.core.database.dao.WorkoutPlanDao
 import com.gym.core.database.entity.CoachAssignmentEntity
 import com.gym.core.database.entity.CoachClientEntity
 import com.gym.core.database.entity.EquipmentSettingsEntity
@@ -20,6 +21,8 @@ import com.gym.core.database.entity.TemplateExerciseEntity
 import com.gym.core.database.entity.UserProfileEntity
 import com.gym.core.database.entity.WorkoutEntity
 import com.gym.core.database.entity.WorkoutExerciseEntity
+import com.gym.core.database.entity.WorkoutPlanDayEntity
+import com.gym.core.database.entity.WorkoutPlanEntity
 import com.gym.core.database.entity.WorkoutSetEntity
 import com.gym.core.database.entity.WorkoutTemplateEntity
 
@@ -35,9 +38,11 @@ import com.gym.core.database.entity.WorkoutTemplateEntity
         SetVideoReviewEntity::class,
         CoachAssignmentEntity::class,
         UserProfileEntity::class,
-        CoachClientEntity::class
+        CoachClientEntity::class,
+        WorkoutPlanEntity::class,
+        WorkoutPlanDayEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(GymTypeConverters::class)
@@ -49,4 +54,5 @@ abstract class GymDatabase : RoomDatabase() {
     abstract fun coachAndReviewDao(): CoachAndReviewDao
     abstract fun userProfileDao(): UserProfileDao
     abstract fun coachClientDao(): CoachClientDao
+    abstract fun workoutPlanDao(): WorkoutPlanDao
 }

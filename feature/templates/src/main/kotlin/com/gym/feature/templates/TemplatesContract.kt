@@ -1,6 +1,7 @@
 package com.gym.feature.templates
 
 import com.gym.core.model.Exercise
+import com.gym.core.model.WorkoutPlan
 import com.gym.core.model.WorkoutTemplate
 
 data class TemplateExerciseDraft(
@@ -13,7 +14,9 @@ data class TemplateExerciseDraft(
 
 data class TemplatesListUiState(
     val isLoading: Boolean = false,
-    val templates: List<WorkoutTemplate> = emptyList()
+    val templates: List<WorkoutTemplate> = emptyList(),
+    val activePlan: WorkoutPlan? = null,
+    val allPlans: List<WorkoutPlan> = emptyList()
 )
 
 data class TemplateEditorUiState(

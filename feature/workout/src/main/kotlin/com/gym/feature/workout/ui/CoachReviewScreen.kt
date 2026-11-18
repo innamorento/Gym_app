@@ -77,12 +77,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.ui.icon.GymIcons
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -330,11 +333,12 @@ fun CoachReviewScreen(
                                                     .size(40.dp)
                                                     .background(GymAccentGreen.copy(alpha = 0.2f), CircleShape)
                                             ) {
+                                                // [AI-TASK:TASK-023] Custom Iron Hex Share Record Icon
                                                 Icon(
-                                                    imageVector = Icons.Default.Share,
+                                                    painter = painterResource(GymIcons.ShareRecord),
                                                     contentDescription = "Поделиться",
-                                                    tint = GymAccentGreen,
-                                                    modifier = Modifier.size(18.dp)
+                                                    tint = Color.Unspecified,
+                                                    modifier = Modifier.size(24.dp)
                                                 )
                                             }
                                         }

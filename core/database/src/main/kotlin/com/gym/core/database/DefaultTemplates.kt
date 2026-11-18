@@ -3,8 +3,11 @@ package com.gym.core.database
 import android.content.Context
 import com.gym.core.database.dao.ExerciseDao
 import com.gym.core.database.dao.TemplateDao
+import com.gym.core.database.dao.WorkoutPlanDao
 import com.gym.core.database.entity.ExerciseEntity
 import com.gym.core.database.entity.TemplateExerciseEntity
+import com.gym.core.database.entity.WorkoutPlanDayEntity
+import com.gym.core.database.entity.WorkoutPlanEntity
 import com.gym.core.database.entity.WorkoutTemplateEntity
 import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
@@ -67,7 +70,12 @@ object DefaultTemplates {
         return list
     }
 
-    suspend fun seedDefaultDataIfEmpty(context: Context? = null, exerciseDao: ExerciseDao, templateDao: TemplateDao) {
+    suspend fun seedDefaultDataIfEmpty(
+        context: Context? = null,
+        exerciseDao: ExerciseDao,
+        templateDao: TemplateDao,
+        workoutPlanDao: WorkoutPlanDao? = null
+    ) {
         seedMutex.withLock {
             // 1. Проверяем и наполняем/обновляем каталог упражнений (1324 упражнения)
             val catalogExercises = if (context != null) {
@@ -341,6 +349,113 @@ object DefaultTemplates {
                     )
                 )
             }
+
+            // 3. Проверяем и наполняем недельные тренировочные программы (Workout Plans / Splits)
+            if (workoutPlanDao != null && workoutPlanDao.getPlansCount() == 0) {
+                seedDefaultWorkoutPlans(templateDao, workoutPlanDao)
+            }
         }
+    }
+
+    private suspend fun seedDefaultWorkoutPlans(
+        templateDao: TemplateDao,
+        workoutPlanDao: WorkoutPlanDao
+    ) {
+        val allTemplates = templateDao.getAllTemplatesList()
+        val templateMap = allTemplates.associateBy { it.title.trim() }
+
+        fun findTemplateId(titlePrefix: String): Long? {
+            return templateMap.entries.find { it.key.startsWith(titlePrefix, ignoreCase = true) }?.value?.id
+        }
+
+        val pplPushId = findTemplateId("Push: Грудь")
+        val pplPullId = findTemplateId("Pull: Спина")
+        val pplLegsId = findTemplateId("Legs: Квадрицепс")
+        val phulUpperId = findTemplateId("Upper Body: Сила")
+        val phulLowerId = findTemplateId("Lower Body: Сила")
+        val arnoldChestBackId = findTemplateId("Arnold Split: Грудь + Спина")
+        val arnoldArmsId = findTemplateId("Arnold Split: Плечи + Руки")
+        val fullBodyAId = findTemplateId("Фулбоди А: Базовый")
+        val fullBodyBId = findTemplateId("Фулбоди B: Тяга")
+
+        // 1. Push / Pull / Legs (3 дня) - По умолчанию АКТИВНЫЙ
+        workoutPlanDao.insertPlanWithDays(
+            plan = WorkoutPlanEntity(
+                title = "Push / Pull / Legs (PPL)",
+                description = "Классический сбалансированный сплит: толчковый день, тяговый день и день ног. Золотой стандарт мышечной гипертрофии.",
+                level = TrainingExperience.INTERMEDIATE,
+                daysPerWeek = 3,
+                isActive = true
+            ),
+            days = listOf(
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 1, dayNameRu = "Push: Грудь, Плечи, Трицепс", templateId = pplPushId, isRestDay = false, focusDescription = "Базовые жимы, кроссовер и трицепс"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 2, dayNameRu = "День отдыха и восстановления", isRestDay = true, focusDescription = "Суперкомпенсация, сон, полноценное питание"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 3, dayNameRu = "Pull: Спина, Дельты, Бицепс", templateId = pplPullId, isRestDay = false, focusDescription = "Тяги штанги, подтягивания, бицепс"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 4, dayNameRu = "День отдыха и восстановления", isRestDay = true, focusDescription = "Легкая прогулка, восполнение сил"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 5, dayNameRu = "Legs: Квадрицепс, Бедра, Икры", templateId = pplLegsId, isRestDay = false, focusDescription = "Приседания, румынская тяга, жим ногами"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 6, dayNameRu = "День отдыха и восстановления", isRestDay = true, focusDescription = "Релаксация, баня/массаж по желанию"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 7, dayNameRu = "День отдыха и восстановления", isRestDay = true, focusDescription = "План на неделю, настройка экипировки")
+            )
+        )
+
+        // 2. Верх / Низ (Upper / Lower - PHUL Power 4 дня)
+        workoutPlanDao.insertPlanWithDays(
+            plan = WorkoutPlanEntity(
+                title = "Верх / Низ (PHUL Power 4 дня)",
+                description = "Четырехдневный протокол высокой плотности: по 2 тренировки на верх и низ тела в неделю.",
+                level = TrainingExperience.INTERMEDIATE,
+                daysPerWeek = 4,
+                isActive = false
+            ),
+            days = listOf(
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 1, dayNameRu = "Верх тела: Сила и Объем", templateId = phulUpperId, isRestDay = false, focusDescription = "Тяжелые жимы и тяги"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 2, dayNameRu = "Низ тела: Сила и Мощь", templateId = phulLowerId, isRestDay = false, focusDescription = "Присед и становая тяга"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 3, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Разгрузка ЦНС"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 4, dayNameRu = "Верх тела: Гипертрофия", templateId = phulUpperId, isRestDay = false, focusDescription = "Многоповторная накачка"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 5, dayNameRu = "Низ тела: Рельеф", templateId = phulLowerId, isRestDay = false, focusDescription = "Изоляция бедер и икр"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 6, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Восстановление"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 7, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Подготовка к новому микроциклу")
+            )
+        )
+
+        // 3. Золотой сплит Арнольда (Arnold Golden Split) 3 дня
+        workoutPlanDao.insertPlanWithDays(
+            plan = WorkoutPlanEntity(
+                title = "Золотой сплит Арнольда (Golden Era)",
+                description = "Легендарный сплит Арнольда Шварценеггера: работа антагонистов в суперсетах для экстремального пампинга.",
+                level = TrainingExperience.ADVANCED,
+                daysPerWeek = 3,
+                isActive = false
+            ),
+            days = listOf(
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 1, dayNameRu = "Грудь + Спина (Суперсеты)", templateId = arnoldChestBackId, isRestDay = false, focusDescription = "Антагонистические суперсеты"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 2, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Восстановление грудных и широчайших"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 3, dayNameRu = "Ноги и икры", templateId = pplLegsId, isRestDay = false, focusDescription = "Тяжелая тренировка квадрицепсов"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 4, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Восстановление"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 5, dayNameRu = "Плечи + Руки (Суперсеты)", templateId = arnoldArmsId, isRestDay = false, focusDescription = "Суперсеты бицепс + трицепс, дельты"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 6, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Глубокий сон и отдых"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 7, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Подготовка к понедельнику")
+            )
+        )
+
+        // 4. Базовый Фулбоди (Starting Strength) 3 дня
+        workoutPlanDao.insertPlanWithDays(
+            plan = WorkoutPlanEntity(
+                title = "Базовый Фулбоди (Full Body 3 дня)",
+                description = "Классический трехдневный фулбоди для новичков: проработка всего тела каждую тренировку через чередование А и B.",
+                level = TrainingExperience.BEGINNER,
+                daysPerWeek = 3,
+                isActive = false
+            ),
+            days = listOf(
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 1, dayNameRu = "Фулбоди Сессия А", templateId = fullBodyAId, isRestDay = false, focusDescription = "Присед, жим лежа, тяга блока"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 2, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Восстановление мышц всего тела"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 3, dayNameRu = "Фулбоди Сессия B", templateId = fullBodyBId, isRestDay = false, focusDescription = "Становая тяга, наклонный жим, ноги"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 4, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Восстановление"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 5, dayNameRu = "Фулбоди Сессия А", templateId = fullBodyAId, isRestDay = false, focusDescription = "Присед, жим лежа, армейский жим"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 6, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Отдых"),
+                WorkoutPlanDayEntity(planId = 0, dayOfWeek = 7, dayNameRu = "День отдыха", isRestDay = true, focusDescription = "Отдых")
+            )
+        )
     }
 }

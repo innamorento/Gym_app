@@ -3,6 +3,7 @@ package com.gym.feature.templates
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gym.core.database.dao.TemplateDao
+import com.gym.core.database.dao.WorkoutPlanDao
 import com.gym.core.database.entity.TemplateExerciseEntity
 import com.gym.core.database.entity.WorkoutTemplateEntity
 import com.gym.core.database.mapper.toDomain
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -17,21 +19,33 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class TemplatesViewModel(
-    private val templateDao: TemplateDao
+    private val templateDao: TemplateDao,
+    private val workoutPlanDao: WorkoutPlanDao
 ) : ViewModel() {
 
-    val listUiState: StateFlow<TemplatesListUiState> = templateDao.getAllTemplatesWithExercises()
-        .map { list ->
-            TemplatesListUiState(
-                isLoading = false,
-                templates = list.map { it.toDomain() }
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = TemplatesListUiState(isLoading = true)
+    val listUiState: StateFlow<TemplatesListUiState> = combine(
+        templateDao.getAllTemplatesWithExercises(),
+        workoutPlanDao.getActivePlanWithDaysFlow(),
+        workoutPlanDao.getAllPlansWithDaysFlow()
+    ) { templatesList, activePlanWithDays, allPlansWithDays ->
+        val templateTitlesById = templatesList.associate { it.template.id to it.template.title }
+        TemplatesListUiState(
+            isLoading = false,
+            templates = templatesList.map { it.toDomain() },
+            activePlan = activePlanWithDays?.toDomain(templateTitlesById),
+            allPlans = allPlansWithDays.map { it.toDomain(templateTitlesById) }
         )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = TemplatesListUiState(isLoading = true)
+    )
+
+    fun selectActivePlan(planId: Long) {
+        viewModelScope.launch {
+            workoutPlanDao.setActivePlan(planId)
+        }
+    }
 
     private val _editorUiState = MutableStateFlow(TemplateEditorUiState())
     val editorUiState: StateFlow<TemplateEditorUiState> = _editorUiState.asStateFlow()

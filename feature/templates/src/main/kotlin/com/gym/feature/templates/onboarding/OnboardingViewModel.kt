@@ -8,6 +8,7 @@ import com.gym.core.model.FitnessGoal
 import com.gym.core.model.Gender
 import com.gym.core.model.TrainingExperience
 import com.gym.core.model.UserProfile
+import com.gym.core.model.UserRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,11 @@ data class OnboardingUiState(
     val experience: TrainingExperience = TrainingExperience.BEGINNER,
     val primaryGoal: FitnessGoal = FitnessGoal.HYPERTROPHY,
     val workoutsPerWeek: Int = 3,
+    val role: UserRole = UserRole.ATHLETE,
+    val email: String? = null,
+    val isGuest: Boolean = true,
+    val coachInviteCode: String? = null,
+    val linkedCoachCode: String? = null,
     val bmi: Float = 0f,
     val recommendedProgram: String = "",
     val isSaving: Boolean = false,
@@ -49,6 +55,8 @@ sealed interface OnboardingIntent {
     data class SetExperience(val experience: TrainingExperience) : OnboardingIntent
     data class SetGoal(val goal: FitnessGoal) : OnboardingIntent
     data class SetWorkoutsPerWeek(val count: Int) : OnboardingIntent
+    data class SetRole(val role: UserRole) : OnboardingIntent
+    data class SetLinkedCoachCode(val code: String) : OnboardingIntent
     data object NextStep : OnboardingIntent
     data object PreviousStep : OnboardingIntent
     data object CompleteOnboarding : OnboardingIntent
@@ -91,6 +99,11 @@ class OnboardingViewModel(
                         experience = existing.experience,
                         primaryGoal = existing.primaryGoal,
                         workoutsPerWeek = existing.workoutsPerWeek,
+                        role = existing.role,
+                        email = existing.email,
+                        isGuest = existing.isGuest,
+                        coachInviteCode = existing.coachInviteCode,
+                        linkedCoachCode = existing.linkedCoachCode,
                         bmi = calculateBmi(existing.heightCm, existing.weightKg),
                         recommendedProgram = recommendProgram(existing.experience, existing.primaryGoal)
                     )
@@ -124,6 +137,14 @@ class OnboardingViewModel(
                 copy(workoutsPerWeek = intent.count)
             }
 
+            is OnboardingIntent.SetRole -> updateState {
+                copy(role = intent.role)
+            }
+
+            is OnboardingIntent.SetLinkedCoachCode -> updateState {
+                copy(linkedCoachCode = intent.code)
+            }
+
             OnboardingIntent.NextStep -> handleNextStep()
             OnboardingIntent.PreviousStep -> handlePreviousStep()
             OnboardingIntent.CompleteOnboarding -> completeOnboarding()
@@ -155,6 +176,7 @@ class OnboardingViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             val state = _uiState.value
+            val existing = userProfileDao.getUserProfileSync()
             val profile = UserProfile(
                 id = "default_user",
                 name = state.name,
@@ -165,6 +187,11 @@ class OnboardingViewModel(
                 experience = state.experience,
                 primaryGoal = state.primaryGoal,
                 workoutsPerWeek = state.workoutsPerWeek,
+                role = state.role,
+                email = state.email ?: existing?.email,
+                isGuest = state.isGuest,
+                coachInviteCode = state.coachInviteCode ?: existing?.coachInviteCode,
+                linkedCoachCode = state.linkedCoachCode ?: existing?.linkedCoachCode,
                 isCompleted = true,
             )
             userProfileDao.saveUserProfile(profile.toEntity())

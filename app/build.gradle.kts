@@ -68,3 +68,36 @@ dependencies {
     // WorkManager (Sprint 17 Reminders)
     implementation(libs.androidx.work.runtime.ktx)
 }
+
+// [START:TASK-020] Unified root APK deploy automation (untracked for configuration cache)
+abstract class CopyApkToRootTask : DefaultTask() {
+    init {
+        doNotTrackState("Copies APK directly to root without tracking")
+    }
+
+    @get:Internal
+    abstract val apkFile: RegularFileProperty
+
+    @get:Internal
+    abstract val targetApk: RegularFileProperty
+
+    @TaskAction
+    fun copyApk() {
+        val src = apkFile.get().asFile
+        val dest = targetApk.get().asFile
+        if (src.exists()) {
+            src.copyTo(dest, overwrite = true)
+            println("APK successfully copied to root: ${dest.name} (${dest.length()} bytes)")
+        }
+    }
+}
+
+val copyApkTask = tasks.register<CopyApkToRootTask>("copyDebugApkToRoot") {
+    apkFile.set(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
+    targetApk.set(layout.projectDirectory.file("../TheIronApex-v1.0.0-debug.apk"))
+}
+
+afterEvaluate {
+    tasks.findByName("assembleDebug")?.finalizedBy(copyApkTask)
+}
+// [END:TASK-020]

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
+    <rect width="24" height="24" fill="#0A0B0E" rx="4"/>
+    <g stroke="#F9FAFB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <!-- Граненый корпус секундомера -->
+        <path d="M 12,5 L 18.5,8.8 L 18.5,16.2 L 12,20 L 5.5,16.2 L 5.5,8.8 Z" fill="#14161D"/>
+        <!-- Кнопки -->
+        <path d="M 10,2 L 14,2 M 12,2 L 12,5"/>
+        <path d="M 17,4 L 19,6" stroke="#38BDF8"/>
+        <!-- Стрелки -->
+        <path d="M 12,8.5 L 12,12.5 L 15,12.5" stroke="#22C55E"/>
+    </g>
+</svg>

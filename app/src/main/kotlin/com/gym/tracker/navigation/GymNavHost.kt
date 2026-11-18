@@ -9,9 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.EventNote
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.VideoCameraFront
+import androidx.compose.ui.res.painterResource
+import com.gym.core.ui.icon.GymIcons
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -28,7 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -50,6 +52,8 @@ import com.gym.feature.exercises.ExercisesViewModel
 import com.gym.feature.exercises.ui.ExercisesScreen
 import com.gym.feature.templates.TemplateEditorIntent
 import com.gym.feature.templates.TemplatesViewModel
+import com.gym.feature.templates.auth.AuthScreen
+import com.gym.feature.templates.auth.AuthViewModel
 import com.gym.feature.templates.onboarding.OnboardingScreen
 import com.gym.feature.templates.onboarding.OnboardingViewModel
 import com.gym.feature.templates.ui.EquipmentSettingsScreen
@@ -68,6 +72,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 object Destinations {
+    const val AUTH = "auth"
     const val ONBOARDING = "onboarding"
     const val TEMPLATES_LIST = "templates_list"
     const val WORKOUT_HISTORY = "workout_history"
@@ -149,9 +154,21 @@ fun GymNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = if (hasCompletedProfile == true) Destinations.TEMPLATES_LIST else Destinations.ONBOARDING,
+            startDestination = if (hasCompletedProfile == true) Destinations.TEMPLATES_LIST else Destinations.AUTH,
             modifier = modifier.padding(innerPadding)
         ) {
+            composable(Destinations.AUTH) {
+                val authViewModel: AuthViewModel = koinViewModel()
+                AuthScreen(
+                    viewModel = authViewModel,
+                    onAuthSuccess = {
+                        navController.navigate(Destinations.ONBOARDING) {
+                            popUpTo(Destinations.AUTH) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable(Destinations.ONBOARDING) {
                 val onboardingViewModel: OnboardingViewModel = koinViewModel()
                 OnboardingScreen(
@@ -251,7 +268,10 @@ fun GymNavHost(
 
             composable(Destinations.EQUIPMENT_SETTINGS) {
                 EquipmentSettingsScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    onNavigateToAuth = {
+                        navController.navigate(Destinations.AUTH)
+                    }
                 )
             }
 
@@ -340,6 +360,10 @@ fun GymBottomNavigationBar(
     targetArg: String?,
     onNavigate: (String) -> Unit
 ) {
+    val userProfileDao: UserProfileDao = koinInject()
+    val profileEntity by userProfileDao.getUserProfile().collectAsState(initial = null)
+    val isCoach = profileEntity?.role == com.gym.core.model.UserRole.COACH
+
     NavigationBar(
         containerColor = GymDarkSurface,
         contentColor = GymTextPrimary,
@@ -352,32 +376,32 @@ fun GymBottomNavigationBar(
         val navItems = listOf(
             NavigationItemData(
                 route = Destinations.TEMPLATES_LIST,
-                label = "Тренировка",
-                icon = Icons.Default.FitnessCenter,
+                label = "Тренинг",
+                iconRes = GymIcons.NavWorkout,
                 isSelected = currentRoute == Destinations.TEMPLATES_LIST
             ),
             NavigationItemData(
                 route = Destinations.WORKOUT_HISTORY,
                 label = "История",
-                icon = Icons.AutoMirrored.Filled.EventNote,
+                iconRes = GymIcons.NavHistory,
                 isSelected = currentRoute == Destinations.WORKOUT_HISTORY
             ),
             NavigationItemData(
                 route = Destinations.exercisePickerRoute("catalog"),
                 label = "Каталог",
-                icon = Icons.Default.Search,
+                iconRes = GymIcons.NavCatalog,
                 isSelected = currentRoute?.startsWith("exercise_picker") == true && targetArg == "catalog"
             ),
             NavigationItemData(
                 route = Destinations.ANALYTICS,
                 label = "Аналитика",
-                icon = Icons.AutoMirrored.Filled.TrendingUp,
+                iconRes = GymIcons.NavAnalytics,
                 isSelected = currentRoute == Destinations.ANALYTICS
             ),
             NavigationItemData(
                 route = Destinations.COACH_REVIEWS,
-                label = "Тренер",
-                icon = Icons.Default.VideoCameraFront,
+                label = if (isCoach) "Подопечные" else "Тренер",
+                iconRes = GymIcons.NavCoach,
                 isSelected = currentRoute == Destinations.COACH_REVIEWS
             )
         )
@@ -388,22 +412,28 @@ fun GymBottomNavigationBar(
                 onClick = { onNavigate(item.route) },
                 icon = {
                     Icon(
-                        imageVector = item.icon,
+                        painter = painterResource(item.iconRes),
                         contentDescription = item.label,
-                        modifier = Modifier.size(22.dp)
+                        modifier = Modifier
+                            .size(if (item.isSelected) 28.dp else 26.dp)
+                            .then(
+                                if (!item.isSelected) Modifier.graphicsLayer(alpha = 0.55f) else Modifier
+                            ),
+                        tint = Color.Unspecified
                     )
                 },
                 label = {
                     Text(
                         text = item.label,
                         fontSize = 11.sp,
-                        fontWeight = if (item.isSelected) FontWeight.Bold else FontWeight.Normal
+                        fontWeight = if (item.isSelected) FontWeight.Bold else FontWeight.Normal,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = GymAccentGreen,
                     selectedTextColor = GymAccentGreen,
-                    unselectedIconColor = GymTextSecondary,
                     unselectedTextColor = GymTextSecondary,
                     indicatorColor = GymAccentGreenDim
                 )
@@ -415,6 +445,6 @@ fun GymBottomNavigationBar(
 private data class NavigationItemData(
     val route: String,
     val label: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+    val iconRes: Int,
     val isSelected: Boolean
 )

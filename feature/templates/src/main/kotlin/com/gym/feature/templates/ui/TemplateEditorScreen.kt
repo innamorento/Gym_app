@@ -64,6 +64,8 @@ import com.gym.core.model.Exercise
 import com.gym.core.ui.component.ExerciseDetailSheet
 import com.gym.core.ui.component.ExerciseThumbnail
 import com.gym.core.ui.component.SupersetBadge
+import com.gym.core.ui.icon.GymIcons
+import androidx.compose.ui.res.painterResource
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymAccentPurple
@@ -180,12 +182,21 @@ fun TemplateEditorScreen(
                         singleLine = true
                     )
 
-                    // Быстрый выбор популярных названий тренировок в 1 тап
-                    Text(
-                        text = "💡 Готовые названия:",
-                        fontSize = 12.sp,
-                        color = GymTextSecondary
-                    )
+                    // [AI-TASK:TASK-022] Tactical AI Lightbulb and high-visibility split group icons (22dp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(GymIcons.AiBulb),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Готовые названия:",
+                            fontSize = 12.sp,
+                            color = GymTextSecondary
+                        )
+                    }
 
                     @OptIn(ExperimentalLayoutApi::class)
                     FlowRow(
@@ -194,26 +205,49 @@ fun TemplateEditorScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         listOf(
-                            "🥋 Грудь + Трицепс",
-                            "🦅 Спина + Бицепс",
-                            "🦵 Ноги + Плечи",
-                            "⚡ Фулбоди",
-                            "🔥 Верх тела",
-                            "🛡️ Пресс и Кор"
+                            "Грудь + Трицепс",
+                            "Спина + Бицепс",
+                            "Ноги + Плечи",
+                            "Грудь + Спина",
+                            "Плечи + Руки",
+                            "Верх тела",
+                            "Низ тела",
+                            "Фулбоди",
+                            "Пресс и Кор"
                         ).forEach { presetTitle ->
                             Box(
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
+                                    .clip(RoundedCornerShape(10.dp))
                                     .background(GymDarkSurfaceVariant)
                                     .clickable { viewModel.handleIntent(TemplateEditorIntent.ChangeTitle(presetTitle)) }
-                                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                                    .padding(horizontal = 12.dp, vertical = 7.dp)
                             ) {
-                                Text(
-                                    text = presetTitle,
-                                    fontSize = 11.sp,
-                                    color = GymTextPrimary,
-                                    fontWeight = FontWeight.Medium
-                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    // [AI-TASK:TASK-023] High-contrast dedicated badge container for split icons
+                                    Box(
+                                        modifier = Modifier
+                                            .size(36.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(Color(0xFF141720)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = GymIcons.iconForSplitTitle(presetTitle)),
+                                            contentDescription = null,
+                                            tint = Color.Unspecified,
+                                            modifier = Modifier.size(30.dp)
+                                        )
+                                    }
+                                    Text(
+                                        text = presetTitle,
+                                        fontSize = 13.sp,
+                                        color = GymTextPrimary,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
                             }
                         }
                     }
@@ -408,10 +442,12 @@ fun TemplateExerciseItemView(
                         }
                     } else {
                         IconButton(onClick = onSelectForSuperset) {
+                            // [AI-TASK:TASK-022] Custom Iron Hex Superset Link Icon with clear sizing and no flattening
                             Icon(
-                                imageVector = Icons.Default.Link,
+                                painter = painterResource(GymIcons.SupersetLink),
                                 contentDescription = "Объединить в суперсет",
-                                tint = if (isSelectedForSuperset) GymAccentPurple else GymTextSecondary
+                                modifier = Modifier.size(26.dp),
+                                tint = if (isSelectedForSuperset) GymAccentPurple else Color.Unspecified
                             )
                         }
                     }

@@ -172,4 +172,117 @@ class SmartProgressionEngineTest {
         assertEquals(ProgressionDecision.MAINTAIN_WEIGHT, result.decision)
         assertEquals(16.0, result.suggestedWeight, 0.01)
     }
+
+    @Test
+    fun testInitialStartingWeightsDifferentiateByEquipment() {
+        val dumbbellProfile = EquipmentWeightProfile.defaultFor(Equipment.DUMBBELL)
+        val barbellProfile = EquipmentWeightProfile.defaultFor(Equipment.BARBELL)
+        val cableProfile = EquipmentWeightProfile.defaultFor(Equipment.CABLE)
+
+        val dumbbellRec = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = emptyList(),
+            equipmentProfile = dumbbellProfile,
+            goal = FitnessGoal.HYPERTROPHY
+        )
+        // Гантели для гипертрофии должны стартовать с 8.0 кг, а не с 30 кг!
+        assertEquals(8.0, dumbbellRec.suggestedWeight, 0.01)
+
+        val barbellRec = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = emptyList(),
+            equipmentProfile = barbellProfile,
+            goal = FitnessGoal.HYPERTROPHY
+        )
+        assertEquals(20.0, barbellRec.suggestedWeight, 0.01)
+
+        val cableRec = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = emptyList(),
+            equipmentProfile = cableProfile,
+            goal = FitnessGoal.HYPERTROPHY
+        )
+        assertEquals(12.5, cableRec.suggestedWeight, 0.01)
+    }
+
+    @Test
+    fun testStrengthGoalHandlesOvershotReps() {
+        val dumbbellProfile = EquipmentWeightProfile.defaultFor(Equipment.DUMBBELL)
+
+        // Спортсмен сделал 12 повторений при силовой цели (цель 4-6)
+        val sets = listOf(
+            WorkoutSet(setNumber = 1, weight = 10.0, reps = 12, effort = PerceivedEffort.OPTIMAL, isCompleted = true)
+        )
+
+        val result = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = sets,
+            equipmentProfile = dumbbellProfile,
+            goal = FitnessGoal.STRENGTH
+        )
+
+        assertEquals(ProgressionDecision.INCREASE_WEIGHT, result.decision)
+        assertTrue(result.suggestedWeight > 10.0)
+        assertTrue(result.rationaleRu.contains("12 повт."))
+    }
+
+    @Test
+    fun testOneRepMaxCalculationAndTargetRecalibration() {
+        // 40 кг на 12 повторений: 1ПМ = 40 * (1 + 12 / 30) = 56.0 кг
+        val estimated1Rm = SmartProgressionEngine.estimate1Rm(40.0, 12)
+        assertEquals(56.0, estimated1Rm, 0.01)
+
+        // Целевой вес для 5 повторений: 56 / (1 + 5 / 30) = 48.0 кг
+        val targetWeightFor5Reps = SmartProgressionEngine.estimateTargetWeightForReps(estimated1Rm, 5)
+        assertEquals(48.0, targetWeightFor5Reps, 0.01)
+
+        // Штанга с шагом 2.5 кг (гриф 20 кг + блины): 48.0 округляется до 47.5 кг
+        val barbellProfile = EquipmentWeightProfile(equipment = Equipment.BARBELL, barWeight = 20.0, minPlatesPairWeight = 2.5)
+        val sets = listOf(
+            WorkoutSet(setNumber = 1, weight = 40.0, reps = 12, effort = PerceivedEffort.OPTIMAL, isCompleted = true)
+        )
+
+        val result = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = sets,
+            equipmentProfile = barbellProfile,
+            goal = FitnessGoal.STRENGTH
+        )
+
+        assertEquals(ProgressionDecision.INCREASE_WEIGHT, result.decision)
+        assertEquals(47.5, result.suggestedWeight, 0.01)
+        assertEquals("4-6", result.suggestedReps)
+        assertTrue(result.rationaleRu.contains("калибровка 1RM"))
+    }
+
+    // [AI-TASK:TASK-022] Test RPE live autoregulation on single set
+    @Test
+    fun testSingleSetHardEffortAutoregulationMaintainsWeight() {
+        val barbellProfile = EquipmentWeightProfile(equipment = Equipment.BARBELL, barWeight = 20.0, minPlatesPairWeight = 2.5)
+        val sets = listOf(
+            WorkoutSet(setNumber = 1, weight = 0.0, reps = 4, effort = PerceivedEffort.HARD, isCompleted = true)
+        )
+
+        val result = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = sets,
+            equipmentProfile = barbellProfile,
+            goal = FitnessGoal.STRENGTH
+        )
+
+        assertEquals(ProgressionDecision.MAINTAIN_WEIGHT, result.decision)
+        assertTrue(result.rationaleRu.contains("Тяжело"))
+    }
+
+    @Test
+    fun testSingleSetEasyEffortAutoregulationIncreasesWeight() {
+        val barbellProfile = EquipmentWeightProfile(equipment = Equipment.BARBELL, barWeight = 20.0, minPlatesPairWeight = 2.5)
+        val sets = listOf(
+            WorkoutSet(setNumber = 1, weight = 50.0, reps = 6, effort = PerceivedEffort.EASY, isCompleted = true)
+        )
+
+        val result = SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = sets,
+            equipmentProfile = barbellProfile,
+            goal = FitnessGoal.STRENGTH
+        )
+
+        assertEquals(ProgressionDecision.INCREASE_WEIGHT, result.decision)
+        assertEquals(52.5, result.suggestedWeight, 0.01)
+        assertTrue(result.rationaleRu.contains("Легко"))
+    }
 }

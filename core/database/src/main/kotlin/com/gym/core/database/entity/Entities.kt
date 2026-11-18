@@ -1,9 +1,11 @@
 package com.gym.core.database.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
 import com.gym.core.model.PerceivedEffort
@@ -243,4 +245,58 @@ data class CoachClientEntity(
     val assignedProgramTitle: String = "Фулбоди (Full Body)",
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "workout_plans")
+data class WorkoutPlanEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val title: String,
+    val description: String,
+    val level: TrainingExperience = TrainingExperience.INTERMEDIATE,
+    val daysPerWeek: Int = 3,
+    val isActive: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(
+    tableName = "workout_plan_days",
+    foreignKeys = [
+        ForeignKey(
+            entity = WorkoutPlanEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["planId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = WorkoutTemplateEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["templateId"],
+            onDelete = ForeignKey.SET_NULL
+        )
+    ],
+    indices = [
+        Index("planId"),
+        Index("templateId")
+    ]
+)
+data class WorkoutPlanDayEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val planId: Long = 0,
+    val dayOfWeek: Int, // 1..7 (1=Пн, 7=Вс)
+    val dayNameRu: String,
+    val templateId: Long? = null,
+    val isRestDay: Boolean = false,
+    val focusDescription: String? = null
+)
+
+data class WorkoutPlanWithDays(
+    @Embedded
+    val plan: WorkoutPlanEntity,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "planId"
+    )
+    val days: List<WorkoutPlanDayEntity>
 )

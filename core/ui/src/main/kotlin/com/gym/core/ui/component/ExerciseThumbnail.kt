@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +25,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.gym.core.model.Equipment
 import com.gym.core.model.MuscleGroup
+import com.gym.core.ui.icon.GymIcons
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymAccentPurple
@@ -46,17 +48,6 @@ fun ExerciseThumbnail(
     shape: Shape = RoundedCornerShape(12.dp),
     contentDescription: String? = null
 ) {
-    val muscleEmoji = when (primaryMuscleGroup) {
-        MuscleGroup.CHEST -> "🥋"
-        MuscleGroup.BACK -> "🦅"
-        MuscleGroup.LEGS_QUADS, MuscleGroup.LEGS_HAMSTRINGS, MuscleGroup.CALVES -> "🦵"
-        MuscleGroup.SHOULDERS -> "🎯"
-        MuscleGroup.BICEPS -> "💪"
-        MuscleGroup.TRICEPS -> "⚡"
-        MuscleGroup.CORE -> "🛡️"
-        MuscleGroup.FULL_BODY -> "🌐"
-    }
-
     val iconBgGradient = when (equipment) {
         Equipment.BARBELL -> Brush.linearGradient(listOf(GymAccentGreen.copy(alpha = 0.25f), GymAccentBlue.copy(alpha = 0.15f)))
         Equipment.DUMBBELL -> Brush.linearGradient(listOf(GymAccentBlue.copy(alpha = 0.25f), GymAccentPurple.copy(alpha = 0.15f)))
@@ -107,7 +98,12 @@ fun ExerciseThumbnail(
                             .background(iconBgGradient),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = muscleEmoji, fontSize = 22.sp)
+                        Icon(
+                            painter = painterResource(GymIcons.iconForMuscleGroup(primaryMuscleGroup)),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(28.dp)
+                        )
                     }
                 }
             )
@@ -118,7 +114,12 @@ fun ExerciseThumbnail(
                     .background(iconBgGradient),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = muscleEmoji, fontSize = 22.sp)
+                Icon(
+                    painter = painterResource(GymIcons.iconForMuscleGroup(primaryMuscleGroup)),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(28.dp)
+                )
             }
         }
     }

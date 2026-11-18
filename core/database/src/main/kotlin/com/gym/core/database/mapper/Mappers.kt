@@ -187,3 +187,29 @@ fun com.gym.core.model.UserProfile.toEntity(): com.gym.core.database.entity.User
         createdAt = createdAt
     )
 }
+
+fun com.gym.core.database.entity.WorkoutPlanWithDays.toDomain(
+    templateTitlesById: Map<Long, String> = emptyMap()
+): com.gym.core.model.WorkoutPlan {
+    return com.gym.core.model.WorkoutPlan(
+        id = plan.id,
+        title = plan.title,
+        description = plan.description,
+        level = plan.level,
+        daysPerWeek = plan.daysPerWeek,
+        isActive = plan.isActive,
+        createdAt = plan.createdAt,
+        days = days.map { dayEntity ->
+            com.gym.core.model.WorkoutPlanDay(
+                id = dayEntity.id,
+                planId = dayEntity.planId,
+                dayOfWeek = dayEntity.dayOfWeek,
+                dayNameRu = dayEntity.dayNameRu,
+                templateId = dayEntity.templateId,
+                templateTitle = dayEntity.templateId?.let { templateTitlesById[it] },
+                isRestDay = dayEntity.isRestDay,
+                focusDescription = dayEntity.focusDescription
+            )
+        }.sortedBy { it.dayOfWeek }
+    )
+}

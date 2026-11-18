@@ -2,7 +2,7 @@
 
 > **Version:** 1.0.0 (Release Ready)  
 > **Role:** Fullstack Android Developer & Systems/Product Analyst  
-> **Status:** Sprints 12–17 Fully Completed (Design, Logger, Templates, Backup/CSV, Auth/RBAC, Coach CRM, WorkManager Reminders, Release 1.0)  
+> **Status:** Sprints 12–18 Completed (Tactical Iron Hex Full Vector Refresh, Weekly Workout Plans, Sticky Bottom Timer, Full-Input Auto-Collapse, 1RM Dynamic Overload Engine, Adaptive Plan Balancing, Automated Root APK Deploy)  
 > **Target Platform:** Android (Offline-First Mobile App) + Sync/Backend Service  
 > **Current Workspace:** `C:\Users\Thinkpad X1\Downloads\Gym` (synced with `C:\Dev\Gym`)  
 > **Remote Repository:** `https://github.com/innamorento/Gym_app` (branch `main`)
@@ -39,6 +39,7 @@
 |---|---|
 | [`PROJECT_INDEX.md`](./PROJECT_INDEX.md) | Главная точка входа, статус проекта, общие соглашения |
 | [`AGENTS.md`](./AGENTS.md) | Системные правила и регламент для AI-агентов (всегда в контексте) |
+| [`docs/tasks/BACKLOG.md`](./docs/tasks/BACKLOG.md) | Центральный реестр задач (Backlog) и сквозная трассируемость AI-меток (`TASK-xxx`) |
 | [`C:\Users\ThinkpadX1\.gemini\memory.jsonl`](file:///C:/Users/ThinkpadX1/.gemini/memory.jsonl) | Персистентный граф долговременной памяти AI-агентов (Knowledge Graph Memory) |
 | [`C:\Users\ThinkpadX1\.gemini\config\mcp_config.json`](file:///C:/Users/ThinkpadX1/.gemini/config/mcp_config.json) | Конфигурация MCP-серверов (включая локальный `memory`) |
 | [`.agents/skills/gym-architecture-and-standards/SKILL.md`](./.agents/skills/gym-architecture-and-standards/SKILL.md) | Навык и стандарты разработки фичей, MVI и Room |
@@ -141,19 +142,31 @@
   - Отмена / сброс ошибочно начатой тренировки (Discard Workout) с подтверждением;
   - Интерактивный калькулятор блинов на гриф (Plate Calculator) по стандартам IWF/IPF;
   - Фирменная нижняя панель навигации в стиле Cyber Lime (Bottom Navigation Bar: 5 вкладок с автоскрытием в live logging).
-- [ ] Масштабирование и научная пересборка базы готовых программ (Спринт 13.1 / Backlog):
+- [x] Масштабирование и научная пересборка базы готовых программ (Спринт 13.1):
   - Категоризация по уровням подготовки: Новичок (Beginner), Средний (Intermediate), Продвинутый (Advanced) с возможностью переключения на «Все»;
   - Полное задействование расширенного каталога из 1324 упражнений (базовые, изоляция, блочные тренажеры);
-  - Формирование научно обоснованных программ по мировым стандартам (NSCA, ACSM, Renaissance Periodization, Starting Strength, PPL, Upper/Lower, 5/3/1, PHUL);
+  - Формирование научно обоснованных 12 программ по мировым стандартам (NSCA, ACSM, Renaissance Periodization, Starting Strength, PPL, Upper/Lower, 5/3/1, PHUL);
   - Настройка оптимального объема (MEV/MAV), прогрессии весов и рекомендаций по отдыху между днями.
-- [ ] Экспорт, импорт данных и автотесты (Спринт 14 — Замечания из аудита, Блок 4):
+- [x] Графика, Recraft.ai & Нормализация дизайн-системы Tactical Iron Hex (Спринт 14):
+  - Анатомический векторный атлас мышц (8 групп, 2-Tone Anatomy Grid);
+  - Векторные иконки навигации (штанга, журнал, видоискатель, координатная сетка, тренер);
+  - Утилиты тренировки (хронограф, шестигранная галочка сета, быстрая ротация, калькулятор блинов, импульс RPE 10, видеокамера, кубок);
+  - Интерактивная витрина `GymIconsShowcase.kt`.
+- [x] Полноценная авторизация, роли (Атлет / Тренер) и автопрогрессия ИИ (Спринт 15):
+  - Экран авторизации и регистрации `AuthScreen` + `AuthViewModel` (Email/Пароль, гостевой режим);
+  - Разделение ролей `UserRole.ATHLETE` и `UserRole.COACH` на онбординге и в профиле;
+  - Генерация инвайт-кода для тренера (`COACH-XXXXXX`) и привязка подопечного;
+  - Мгновенное авто-применение рекомендаций Smart Progression Engine при включении чекбокса «Следовать подсказкам ИИ»;
+  - Исправление верстки кнопки «Применить» и замена на бейдж `✓ Применено ИИ`.
+- [x] Интеграция графики нового пакета (Спринт 16):
+  - Векторные иконки 4-х целей (`FitnessGoal`: масса, сила-разрыв цепей, рельеф-пламя, здоровье-щит);
+  - Векторные иконки сплит-групп (спина+бицепс, грудь+трицепс, ноги+плечи, грудь+спина, плечи+руки, низ тела, фулбоди);
+  - Заглавный Hero-баннер `banner_iron_apex_hero.png` и компонент `GymBrandGraphicBanner`;
+  - Интеграция в онбординг, экран входа, конструктор шаблонов и баннер прогрессии ИИ.
+- [ ] Экспорт, импорт данных и автотесты (Спринт 17 — Замечания из аудита, Блок 4):
   - JSON/CSV бэкап и восстановление базы тренировок;
   - Unit-тесты для Room DAO (`WorkoutDaoTest`, `TemplateDaoTest`) и `WorkoutViewModelTest`.
-- [ ] Авторизация и ролевая модель (Фаза 5 / Спринт 15):
-  - Аутентификация пользователей (Google Sign-In, Email/Password, гостевой режим);
-  - Разделение ролей: «Тренер» (Coach) и «Атлет» (Athlete);
-  - Связка тренера и подопечного по уникальному инвайт-коду / QR-коду / Deep Link.
-- [ ] Полноценный кабинет тренера и учет пакетов (Фаза 5 / Спринт 16):
+- [ ] Полноценный кабинет тренера и учет пакетов (Фаза 5 / Спринт 18):
   - CRM подопечных: список атлетов, карточки клиентов (антропометрия, цели, травмы, замеры);
   - Учет абонементов/пакетов тренировок: проведено, осталось, автоматическое списание сессий, алерт окончания;
   - Назначение тренировочных программ и аудит соблюдения плана;

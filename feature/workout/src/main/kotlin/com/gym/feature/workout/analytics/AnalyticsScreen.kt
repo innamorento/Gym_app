@@ -1,6 +1,10 @@
 package com.gym.feature.workout.analytics
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,14 +31,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MilitaryTech
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -70,9 +78,12 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.gym.core.ui.icon.GymIcons
 import com.gym.core.model.BalanceStatus
 import com.gym.core.model.CompoundPrTrophy
 import com.gym.core.model.MuscleCategory
@@ -179,7 +190,12 @@ fun AnalyticsScreen(
             // Анализ баланса мышечных групп (Push / Pull / Legs)
             item {
                 state.muscleBalance?.let { balance ->
-                    MuscleGroupBalanceCard(balance = balance)
+                    MuscleGroupBalanceCard(
+                        balance = balance,
+                        balanceActionMessage = state.balanceActionMessage,
+                        onAutoBalanceClick = { viewModel.autoBalanceTemplatesForLaggingMuscles(it) },
+                        onDismissMessage = { viewModel.dismissBalanceActionMessage() }
+                    )
                 }
             }
 
@@ -807,7 +823,12 @@ private fun WeeklyVolumeCanvasCard(weeklyVolumeHistory: List<WeeklyVolumePoint>)
 }
 
 @Composable
-private fun MuscleGroupBalanceCard(balance: MuscleGroupBalance) {
+private fun MuscleGroupBalanceCard(
+    balance: MuscleGroupBalance,
+    balanceActionMessage: String? = null,
+    onAutoBalanceClick: (BalanceStatus) -> Unit = {},
+    onDismissMessage: () -> Unit = {}
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = GymDarkSurface),
@@ -824,9 +845,15 @@ private fun MuscleGroupBalanceCard(balance: MuscleGroupBalance) {
             ) {
                 Text(
                     text = "Баланс нагрузок (Push / Pull / Legs)",
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = GymTextPrimary
+                    color = GymTextPrimary,
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .padding(end = 8.dp),
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 // Бейдж статуса баланса
@@ -847,7 +874,9 @@ private fun MuscleGroupBalanceCard(balance: MuscleGroupBalance) {
                         text = balance.balanceStatus.titleRu,
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = badgeText
+                        color = badgeText,
+                        maxLines = 1,
+                        softWrap = false
                     )
                 }
             }
@@ -931,6 +960,112 @@ private fun MuscleGroupBalanceCard(balance: MuscleGroupBalance) {
                     )
                 }
             }
+
+            // [START:TASK-019] Adaptive muscle group plan balancing UI banner and action
+            AnimatedVisibility(
+                visible = balanceActionMessage != null,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                if (balanceActionMessage != null) {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = GymAccentGreen.copy(alpha = 0.15f)),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                modifier = Modifier.weight(1f),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = GymAccentGreen,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Text(
+                                    text = balanceActionMessage,
+                                    fontSize = 11.sp,
+                                    color = GymTextPrimary,
+                                    fontWeight = FontWeight.Medium
+                                )
+                            }
+                            IconButton(
+                                onClick = onDismissMessage,
+                                modifier = Modifier.size(24.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Закрыть",
+                                    tint = GymTextSecondary,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Кнопка адаптивной корректировки плана при наличии дисбаланса
+            if (balanceActionMessage == null && (
+                balance.balanceStatus == BalanceStatus.LEGS_DEFICIT ||
+                balance.balanceStatus == BalanceStatus.PULL_DEFICIT ||
+                balance.balanceStatus == BalanceStatus.PUSH_DOMINANT
+            )) {
+                Button(
+                    onClick = { onAutoBalanceClick(balance.balanceStatus) },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GymAccentGreen.copy(alpha = 0.2f),
+                        contentColor = GymAccentGreen
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(GymAccentGreen.copy(alpha = 0.25f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                                tint = GymAccentGreen,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Сбалансировать план на след. цикл",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = GymAccentGreen
+                            )
+                            Text(
+                                text = "Добавит +1 подход на отстающие группы мышц в шаблонах",
+                                fontSize = 10.sp,
+                                color = GymTextSecondary
+                            )
+                        }
+                    }
+                }
+            }
+            // [END:TASK-019]
         }
     }
 }
@@ -994,7 +1129,7 @@ private fun MuscleProgressRow(item: MuscleCategoryVolume) {
         MuscleCategory.BACK -> Color(0xFFB388FF)
         MuscleCategory.LEGS -> Color(0xFFFF5252)
         MuscleCategory.SHOULDERS -> Color(0xFFFFD700)
-        MuscleCategory.BICEPS, MuscleCategory.TRICEPS, MuscleCategory.ARMS -> GymAccentGreen
+        MuscleCategory.BICEPS, MuscleCategory.TRICEPS -> GymAccentGreen
         MuscleCategory.CORE -> Color(0xFFFF9100)
         MuscleCategory.OTHER -> Color(0xFF90A4AE)
     }
@@ -1009,7 +1144,12 @@ private fun MuscleProgressRow(item: MuscleCategoryVolume) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Text(text = item.category.emoji, fontSize = 14.sp)
+                Icon(
+                    painter = painterResource(GymIcons.iconForCategory(item.category)),
+                    contentDescription = item.category.displayNameRu,
+                    tint = barColor,
+                    modifier = Modifier.size(16.dp)
+                )
                 Text(
                     text = item.category.displayNameRu,
                     fontSize = 13.sp,
@@ -1059,12 +1199,23 @@ private fun CompoundHallOfFameSection(trophies: List<CompoundPrTrophy>) {
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
-                    Text(
-                        text = "🏆 Зал Славы (PR Trophies)",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFFD700)
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(GymIcons.TrophyHex),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(28.dp)
+                        )
+                        Text(
+                            text = "Зал Славы (PR Trophies)",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFFD700)
+                        )
+                    }
                     Text(
                         text = "Максимальные достижения в базовых движениях",
                         fontSize = 11.sp,

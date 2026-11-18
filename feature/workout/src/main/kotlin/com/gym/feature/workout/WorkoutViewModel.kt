@@ -3,9 +3,12 @@ package com.gym.feature.workout
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gym.core.database.dao.CoachAndReviewDao
+import com.gym.core.database.dao.EquipmentSettingsDao
+import com.gym.core.database.dao.ExerciseDao
 import com.gym.core.database.dao.TemplateDao
 import com.gym.core.database.dao.UserProfileDao
 import com.gym.core.database.dao.WorkoutDao
+import com.gym.core.model.Equipment
 import com.gym.core.model.EquipmentWeightProfile
 import com.gym.core.model.ProgressionRecommendation
 import com.gym.core.model.SmartProgressionEngine
@@ -20,6 +23,8 @@ import com.gym.core.model.Exercise
 import com.gym.core.model.PerceivedEffort
 import com.gym.core.model.SetType
 import com.gym.core.model.Workout
+import com.gym.core.model.WorkoutExercise
+import com.gym.core.model.WorkoutSet
 import com.gym.core.model.WorkoutStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,6 +33,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -51,7 +57,9 @@ class WorkoutViewModel(
     private val templateDao: TemplateDao,
     private val coachAndReviewDao: CoachAndReviewDao,
     private val userProfileDao: UserProfileDao? = null,
-    private val context: android.content.Context? = null
+    private val context: android.content.Context? = null,
+    private val equipmentSettingsDao: EquipmentSettingsDao? = null,
+    private val exerciseDao: ExerciseDao? = null
 ) : ViewModel() {
 
     val uiState: StateFlow<WorkoutUiState> = workoutDao.getActiveWorkout()
@@ -84,6 +92,52 @@ class WorkoutViewModel(
 
     private val _progressionRecommendations = MutableStateFlow<Map<Long, ProgressionRecommendation>>(emptyMap())
     val progressionRecommendations: StateFlow<Map<Long, ProgressionRecommendation>> = _progressionRecommendations.asStateFlow()
+
+    private val _isAutoProgressionEnabled = MutableStateFlow(false)
+    val isAutoProgressionEnabled: StateFlow<Boolean> = _isAutoProgressionEnabled.asStateFlow()
+
+    fun toggleAutoProgression() {
+        _isAutoProgressionEnabled.update { enabled ->
+            val next = !enabled
+            if (next) {
+                // Мгновенно применяем все рассчитанные рекомендации ИИ ко всем упражнениям текущей тренировки
+                val recs = _progressionRecommendations.value
+                recs.forEach { (exerciseId, rec) ->
+                    applyProgressionRecommendation(exerciseId, rec)
+                }
+            }
+            next
+        }
+    }
+
+    val equipmentProfiles: StateFlow<Map<Equipment, EquipmentWeightProfile>> = (equipmentSettingsDao?.getAllSettings() ?: flowOf(emptyList()))
+        .map { list ->
+            val map = Equipment.entries.associateWith { EquipmentWeightProfile.defaultFor(it) }.toMutableMap()
+            list.forEach { entity ->
+                map[entity.equipment] = EquipmentWeightProfile(
+                    equipment = entity.equipment,
+                    smallWeightThreshold = 10.0,
+                    smallWeightStep = entity.smallWeightStep,
+                    defaultStep = entity.defaultStep,
+                    barWeight = entity.barWeight,
+                    minPlatesPairWeight = entity.minPlatesPairWeight
+                )
+            }
+            map
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = Equipment.entries.associateWith { EquipmentWeightProfile.defaultFor(it) }
+        )
+
+    val allActiveExercises: StateFlow<List<Exercise>> = (exerciseDao?.getActiveExercises() ?: flowOf(emptyList()))
+        .map { list -> list.map { it.toDomain() } }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     private var durationTimerJob: Job? = null
     private var restTimerJob: Job? = null
@@ -190,21 +244,52 @@ class WorkoutViewModel(
         }
     }
 
+    fun getEquipmentProfile(equipment: Equipment): EquipmentWeightProfile {
+        return equipmentProfiles.value[equipment] ?: EquipmentWeightProfile.defaultFor(equipment)
+    }
+
+    // [AI-TASK:TASK-018] Instant override weights/reps support for 1RM live recalculation
+    private suspend fun computeRecommendationForExercise(
+        exercise: WorkoutExercise,
+        overrideSetId: Long? = null,
+        overrideIsCompleted: Boolean? = null,
+        effort: PerceivedEffort? = null,
+        overrideWeight: Double? = null,
+        overrideReps: Int? = null
+    ): ProgressionRecommendation {
+        val userProfile = userProfileDao?.getUserProfileSync()?.toDomain() ?: UserProfile()
+        val currentSets = exercise.sets.map { set ->
+            var s = set
+            if (set.id == overrideSetId) {
+                if (overrideIsCompleted != null) s = s.copy(isCompleted = overrideIsCompleted)
+                if (effort != null) s = s.copy(effort = effort)
+                if (overrideWeight != null) s = s.copy(weight = overrideWeight)
+                if (overrideReps != null) s = s.copy(reps = overrideReps)
+            }
+            s
+        }
+        val currentCompleted = currentSets.filter { it.isCompleted && it.setType != SetType.WARMUP }
+        val setsToAnalyze = if (currentCompleted.isNotEmpty()) {
+            currentCompleted
+        } else {
+            workoutDao.getLatestCompletedSetsForExercise(exercise.exercise.id, userProfile.id)
+                .map { it.toDomain() }
+        }
+
+        val profile = getEquipmentProfile(exercise.exercise.equipment)
+        return SmartProgressionEngine.calculateGoalAwareLoad(
+            previousSets = setsToAnalyze,
+            equipmentProfile = profile,
+            goal = userProfile.primaryGoal,
+            experience = userProfile.experience
+        )
+    }
+
     fun loadProgressionRecommendations(workout: Workout) {
         viewModelScope.launch(Dispatchers.IO) {
-            val userProfile = userProfileDao?.getUserProfileSync()?.toDomain() ?: UserProfile()
             val recs = mutableMapOf<Long, ProgressionRecommendation>()
             for (exercise in workout.exercises) {
-                val prevSets = workoutDao.getLatestCompletedSetsForExercise(exercise.exercise.id, userProfile.id)
-                    .map { it.toDomain() }
-                val profile = EquipmentWeightProfile.defaultFor(exercise.exercise.equipment)
-                val rec = SmartProgressionEngine.calculateGoalAwareLoad(
-                    previousSets = prevSets,
-                    equipmentProfile = profile,
-                    goal = userProfile.primaryGoal,
-                    experience = userProfile.experience
-                )
-                recs[exercise.id] = rec
+                recs[exercise.id] = computeRecommendationForExercise(exercise)
             }
             _progressionRecommendations.value = recs
         }
@@ -305,6 +390,25 @@ class WorkoutViewModel(
             if (newCompleted) {
                 startRestTimer(defaultRestSeconds)
             }
+
+            // Пересчитываем рекомендацию для упражнения с учетом фактически выполненного сета
+            val active = (uiState.value as? WorkoutUiState.Active)?.workout
+            if (active != null) {
+                val exercise = active.exercises.find { ex -> ex.sets.any { it.id == setId } }
+                if (exercise != null) {
+                    val updatedRec = computeRecommendationForExercise(
+                        exercise = exercise,
+                        overrideSetId = setId,
+                        overrideIsCompleted = newCompleted
+                    )
+                    _progressionRecommendations.update { current ->
+                        current + (exercise.id to updatedRec)
+                    }
+                    if (newCompleted && _isAutoProgressionEnabled.value) {
+                        applyProgressionRecommendation(exercise.id, updatedRec)
+                    }
+                }
+            }
         }
     }
 
@@ -333,6 +437,16 @@ class WorkoutViewModel(
                             )
                         }
                     }
+                    val updatedRec = computeRecommendationForExercise(
+                        exercise = exercise,
+                        overrideSetId = setId,
+                        overrideWeight = safeWeight,
+                        overrideReps = safeReps
+                    )
+                    _progressionRecommendations.update { current ->
+                        current + (exercise.id to updatedRec)
+                    }
+                    // [AI-TASK:TASK-022] Do NOT auto-overwrite user manual weight edits with AI recommendations
                     break
                 }
             }
@@ -342,6 +456,63 @@ class WorkoutViewModel(
     fun updateSetEffort(setId: Long, effort: PerceivedEffort) {
         viewModelScope.launch {
             workoutDao.updateSetEffort(setId, effort)
+            val active = (uiState.value as? WorkoutUiState.Active)?.workout
+            if (active != null) {
+                val exercise = active.exercises.find { ex -> ex.sets.any { it.id == setId } }
+                if (exercise != null) {
+                    val updatedRec = computeRecommendationForExercise(
+                        exercise = exercise,
+                        overrideSetId = setId,
+                        effort = effort
+                    )
+                    _progressionRecommendations.update { current ->
+                        current + (exercise.id to updatedRec)
+                    }
+                    if (_isAutoProgressionEnabled.value) {
+                        applyProgressionRecommendation(exercise.id, updatedRec)
+                    }
+                }
+            }
+        }
+    }
+
+    fun replaceExerciseInActiveWorkout(workoutExerciseId: Long, newExercise: Exercise) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val activeWorkout = (uiState.value as? WorkoutUiState.Active)?.workout ?: return@launch
+            val workoutExercise = activeWorkout.exercises.find { it.id == workoutExerciseId } ?: return@launch
+
+            workoutDao.updateWorkoutExerciseExerciseId(workoutExerciseId, newExercise.id)
+
+            val currentUserId = getCurrentUserId()
+            val prevSets = workoutDao.getLatestCompletedSetsForExercise(newExercise.id, currentUserId)
+            val profile = getEquipmentProfile(newExercise.equipment)
+            val rec = SmartProgressionEngine.calculateGoalAwareLoad(
+                previousSets = prevSets.map { it.toDomain() },
+                equipmentProfile = profile
+            )
+
+            val defaultWeight = if (prevSets.isNotEmpty()) prevSets.first().weight else rec.suggestedWeight
+            for (set in workoutExercise.sets) {
+                if (!set.isCompleted) {
+                    workoutDao.updateSetWeightAndReps(set.id, defaultWeight, set.reps)
+                }
+            }
+
+            _progressionRecommendations.update { current ->
+                current + (workoutExerciseId to rec)
+            }
+            if (_isAutoProgressionEnabled.value) {
+                applyProgressionRecommendation(workoutExerciseId, rec)
+            }
+        }
+    }
+
+    fun removeExerciseFromActiveWorkout(workoutExerciseId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            workoutDao.removeWorkoutExercise(workoutExerciseId)
+            _progressionRecommendations.update { current ->
+                current - workoutExerciseId
+            }
         }
     }
 

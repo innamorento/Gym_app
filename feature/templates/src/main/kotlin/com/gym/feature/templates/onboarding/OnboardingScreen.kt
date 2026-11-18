@@ -65,6 +65,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -74,13 +75,18 @@ import androidx.compose.ui.unit.sp
 import com.gym.core.model.FitnessGoal
 import com.gym.core.model.Gender
 import com.gym.core.model.TrainingExperience
+import com.gym.core.model.UserRole
+import com.gym.core.ui.icon.GymIcons
 import com.gym.core.ui.theme.GymAccentBlue
 import com.gym.core.ui.theme.GymAccentGreen
 import com.gym.core.ui.theme.GymDarkBackground
 import com.gym.core.ui.theme.GymDarkSurface
 import com.gym.core.ui.theme.GymDarkSurfaceVariant
+import com.gym.core.ui.theme.GymSurfaceBorder
 import com.gym.core.ui.theme.GymTextPrimary
 import com.gym.core.ui.component.GymBrandHeroBanner
+import com.gym.core.ui.component.GymBrandGraphicBanner
+import androidx.compose.material3.Icon
 import com.gym.core.ui.theme.GymTextSecondary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,9 +145,11 @@ fun OnboardingScreen(
                         name = state.name,
                         gender = state.gender,
                         age = state.age,
+                        role = state.role,
                         onNameChange = { viewModel.handleIntent(OnboardingIntent.SetName(it)) },
                         onGenderChange = { viewModel.handleIntent(OnboardingIntent.SetGender(it)) },
-                        onAgeChange = { viewModel.handleIntent(OnboardingIntent.SetAge(it)) }
+                        onAgeChange = { viewModel.handleIntent(OnboardingIntent.SetAge(it)) },
+                        onRoleChange = { viewModel.handleIntent(OnboardingIntent.SetRole(it)) }
                     )
                     1 -> AnthropometryStep(
                         heightCm = state.heightCm,
@@ -155,9 +163,13 @@ fun OnboardingScreen(
                         goal = state.primaryGoal,
                         workoutsPerWeek = state.workoutsPerWeek,
                         recommendedProgram = state.recommendedProgram,
+                        role = state.role,
+                        coachInviteCode = state.coachInviteCode,
+                        linkedCoachCode = state.linkedCoachCode,
                         onExperienceChange = { viewModel.handleIntent(OnboardingIntent.SetExperience(it)) },
                         onGoalChange = { viewModel.handleIntent(OnboardingIntent.SetGoal(it)) },
-                        onWorkoutsChange = { viewModel.handleIntent(OnboardingIntent.SetWorkoutsPerWeek(it)) }
+                        onWorkoutsChange = { viewModel.handleIntent(OnboardingIntent.SetWorkoutsPerWeek(it)) },
+                        onLinkedCoachCodeChange = { viewModel.handleIntent(OnboardingIntent.SetLinkedCoachCode(it)) }
                     )
                 }
             }
@@ -204,9 +216,11 @@ private fun PersonalInfoStep(
     name: String,
     gender: Gender,
     age: Int,
+    role: UserRole,
     onNameChange: (String) -> Unit,
     onGenderChange: (Gender) -> Unit,
-    onAgeChange: (Int) -> Unit
+    onAgeChange: (Int) -> Unit,
+    onRoleChange: (UserRole) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -214,11 +228,76 @@ private fun PersonalInfoStep(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        GymBrandGraphicBanner(
+            modifier = Modifier.fillMaxWidth()
+        )
+
         GymBrandHeroBanner(
             modifier = Modifier.fillMaxWidth(),
             title = "THE IRON APEX",
-            subtitle = "Персональный профиль атлета и калибровка прогрессии"
+            subtitle = if (role == UserRole.COACH) "Кабинет наставника и ведение подопечных" else "Персональный профиль атлета и калибровка прогрессии"
         )
+
+        // Выбор роли
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                text = "Ваша роль в приложении",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = GymTextPrimary
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                listOf(UserRole.ATHLETE, UserRole.COACH).forEach { r ->
+                    val isSelected = role == r
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(if (isSelected) GymDarkSurfaceVariant else GymDarkSurface)
+                            .border(
+                                width = if (isSelected) 1.5.dp else 1.dp,
+                                color = if (isSelected) GymAccentGreen else GymSurfaceBorder,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                            .clickable { onRoleChange(r) }
+                            .padding(12.dp)
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = if (r == UserRole.ATHLETE) "🏋️ Атлет" else "📋 Тренер",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (isSelected) GymAccentGreen else GymTextPrimary
+                                )
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = GymAccentGreen,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = r.descriptionRu,
+                                fontSize = 11.sp,
+                                color = GymTextSecondary,
+                                lineHeight = 14.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
 
         Text(
             text = "👋 Добро пожаловать!",
@@ -228,7 +307,11 @@ private fun PersonalInfoStep(
         )
 
         Text(
-            text = "Расскажите немного о себе, чтобы тренировочные программы и алгоритм автопрогрессии были максимально точными.",
+            text = if (role == UserRole.COACH) {
+                "Настройте ваш профиль наставника для управления подопечными и назначения тренировочных программ."
+            } else {
+                "Расскажите немного о себе, чтобы тренировочные программы и алгоритм автопрогрессии были максимально точными."
+            },
             fontSize = 15.sp,
             color = GymTextSecondary,
             lineHeight = 22.sp
@@ -605,9 +688,13 @@ private fun TrainingProfileStep(
     goal: FitnessGoal,
     workoutsPerWeek: Int,
     recommendedProgram: String,
+    role: UserRole,
+    coachInviteCode: String?,
+    linkedCoachCode: String?,
     onExperienceChange: (TrainingExperience) -> Unit,
     onGoalChange: (FitnessGoal) -> Unit,
-    onWorkoutsChange: (Int) -> Unit
+    onWorkoutsChange: (Int) -> Unit,
+    onLinkedCoachCodeChange: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -615,8 +702,49 @@ private fun TrainingProfileStep(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        if (role == UserRole.COACH) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = GymDarkSurfaceVariant),
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "📋 Кабинет наставника",
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = GymAccentGreen
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Вам доступны: ведение базы подопечных, учет абонементов, назначение тренировочных программ и видеорецензирование техники с таймкодами.",
+                        fontSize = 13.sp,
+                        color = GymTextSecondary,
+                        lineHeight = 18.sp
+                    )
+                    if (!coachInviteCode.isNullOrBlank()) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(GymDarkSurface)
+                                .border(1.dp, GymAccentGreen.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                                .padding(12.dp)
+                        ) {
+                            Column {
+                                Text("Ваш персональный инвайт-код для учеников:", fontSize = 11.sp, color = GymTextSecondary)
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(coachInviteCode, fontSize = 18.sp, fontWeight = FontWeight.Black, color = GymAccentGreen)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Text(
-            text = "🎯 Ваши цели",
+            text = if (role == UserRole.COACH) "🎯 Профиль подготовки" else "🎯 Ваши цели",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = GymTextPrimary
@@ -681,9 +809,27 @@ private fun TrainingProfileStep(
                             .fillMaxWidth()
                             .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Text(text = g.emoji, fontSize = 24.sp)
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(if (isSelected) GymDarkBackground else GymDarkSurfaceVariant)
+                                .border(
+                                    width = 1.dp,
+                                    color = if (isSelected) GymAccentGreen else GymSurfaceBorder,
+                                    shape = RoundedCornerShape(10.dp)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(id = GymIcons.iconForGoal(g)),
+                                contentDescription = g.displayNameRu,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(26.dp)
+                            )
+                        }
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = g.displayNameRu,
@@ -750,7 +896,12 @@ private fun TrainingProfileStep(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Text("💡", fontSize = 20.sp)
+                    Icon(
+                        painter = painterResource(GymIcons.AiBulb),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp)
+                    )
                     Column {
                         Text(
                             text = "Рекомендованная программа:",
@@ -765,6 +916,35 @@ private fun TrainingProfileStep(
                         )
                     }
                 }
+            }
+        }
+
+        // Инвайт-код тренера (для спортсмена)
+        if (role == UserRole.ATHLETE) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "Персональный тренер",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = GymTextPrimary
+                )
+                OutlinedTextField(
+                    value = linkedCoachCode ?: "",
+                    onValueChange = onLinkedCoachCodeChange,
+                    placeholder = { Text("Инвайт-код тренера (напр. APEX-COACH-77)", color = GymTextSecondary) },
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = GymAccentGreen,
+                        unfocusedBorderColor = GymSurfaceBorder,
+                        focusedTextColor = GymTextPrimary,
+                        unfocusedTextColor = GymTextPrimary,
+                        cursorColor = GymAccentGreen,
+                        focusedContainerColor = GymDarkSurface,
+                        unfocusedContainerColor = GymDarkSurface
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
 

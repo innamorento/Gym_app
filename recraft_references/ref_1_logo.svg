@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512">
+    <rect width="108" height="108" fill="#0A0B0E" rx="16"/>
+    <!-- Внешний шестигранник -->
+    <path d="M 54,22.8 L 81.6,38.4 L 81.6,69.6 L 54,85.2 L 26.4,69.6 L 26.4,38.4 Z"
+          fill="#141822" stroke="#3B465A" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Внутренняя фаска диска -->
+    <path d="M 54,28.8 L 76.2,41.4 L 76.2,66.6 L 54,79.2 L 31.8,66.6 L 31.8,41.4 Z"
+          fill="#090B10" stroke="#1F2635" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Градиент для пика -->
+    <defs>
+        <linearGradient id="limeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4ADE80"/>
+            <stop offset="100%" stop-color="#22C55E"/>
+        </linearGradient>
+    </defs>
+    <!-- Восходящий неоновый пик Apex -->
+    <path d="M 54,33.6 L 69,56.4 L 57,56.4 L 58.8,74.4 L 39,51.6 L 51,51.6 Z"
+          fill="url(#limeGrad)"/>
+    <!-- Штифты замка -->
+    <circle cx="54" cy="28.8" r="1.5" fill="#22C55E"/>
+    <circle cx="54" cy="79.2" r="1.5" fill="#22C55E"/>
+</svg>

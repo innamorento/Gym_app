@@ -112,6 +112,21 @@ interface WorkoutDao {
     @Query("DELETE FROM workout_sets WHERE id = :setId")
     suspend fun deleteWorkoutSet(setId: Long): Int
 
+    @Query("UPDATE workout_exercises SET exerciseId = :newExerciseId WHERE id = :workoutExerciseId")
+    suspend fun updateWorkoutExerciseExerciseId(workoutExerciseId: Long, newExerciseId: Long): Int
+
+    @Query("DELETE FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId")
+    suspend fun deleteSetsForWorkoutExercise(workoutExerciseId: Long): Int
+
+    @Query("DELETE FROM workout_exercises WHERE id = :workoutExerciseId")
+    suspend fun deleteWorkoutExercise(workoutExerciseId: Long): Int
+
+    @Transaction
+    suspend fun removeWorkoutExercise(workoutExerciseId: Long) {
+        deleteSetsForWorkoutExercise(workoutExerciseId)
+        deleteWorkoutExercise(workoutExerciseId)
+    }
+
     @Query("DELETE FROM workouts WHERE id = :workoutId")
     suspend fun deleteWorkout(workoutId: Long): Int
 

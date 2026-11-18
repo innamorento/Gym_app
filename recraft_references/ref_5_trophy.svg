@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="512" height="512">
+    <rect width="24" height="24" fill="#0A0B0E" rx="4"/>
+    <g stroke="#F9FAFB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <!-- Чаша кубка -->
+        <path d="M 6,4 L 18,4 L 17,11 C 17,14 14,16 12,16 C 10,16 7,14 7,11 Z" fill="#14161D"/>
+        <path d="M 6,6 L 3,6 L 3,10 L 6,11"/>
+        <path d="M 18,6 L 21,6 L 21,10 L 18,11"/>
+        <path d="M 12,16 L 12,19" stroke="#22C55E"/>
+        <path d="M 8,19 L 16,19 L 17,21 L 7,21 Z" fill="#1F2430"/>
+    </g>
+    <!-- Внутренний акцент 1RM -->
+    <polygon points="12,7 13.5,10 10.5,10" fill="#22C55E"/>
+</svg>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -183,5 +184,37 @@ fun GymBrandHeroBanner(
                 )
             }
         }
+    }
+}
+
+/**
+ * Графический полноразмерный Hero-баннер бренда "IRON APEX - TACTICAL FITNESS"
+ * в формате 16:9 со скошенными гранями и неоновым бордером.
+ */
+@Composable
+fun GymBrandGraphicBanner(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .border(
+                1.dp,
+                Brush.horizontalGradient(
+                    listOf(
+                        GymAccentGreen.copy(alpha = 0.6f),
+                        GymAccentBlue.copy(alpha = 0.3f),
+                        Color.Transparent
+                    )
+                ),
+                RoundedCornerShape(16.dp)
+            )
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.banner_iron_apex_hero),
+            contentDescription = "The Iron Apex Tactical Fitness",
+            contentScale = androidx.compose.ui.layout.ContentScale.FillWidth,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }

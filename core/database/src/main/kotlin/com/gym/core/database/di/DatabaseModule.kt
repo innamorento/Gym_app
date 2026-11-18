@@ -21,8 +21,9 @@ val databaseModule = module {
                 CoroutineScope(Dispatchers.IO).launch {
                     val exDao = databaseInstance?.exerciseDao()
                     val tmplDao = databaseInstance?.templateDao()
-                    if (exDao != null && tmplDao != null) {
-                        DefaultTemplates.seedDefaultDataIfEmpty(context, exDao, tmplDao)
+                    val planDao = databaseInstance?.workoutPlanDao()
+                    if (exDao != null && tmplDao != null && planDao != null) {
+                        DefaultTemplates.seedDefaultDataIfEmpty(context, exDao, tmplDao, planDao)
                     }
                 }
             }
@@ -32,8 +33,9 @@ val databaseModule = module {
                 CoroutineScope(Dispatchers.IO).launch {
                     val exDao = databaseInstance?.exerciseDao()
                     val tmplDao = databaseInstance?.templateDao()
-                    if (exDao != null && tmplDao != null) {
-                        DefaultTemplates.seedDefaultDataIfEmpty(context, exDao, tmplDao)
+                    val planDao = databaseInstance?.workoutPlanDao()
+                    if (exDao != null && tmplDao != null && planDao != null) {
+                        DefaultTemplates.seedDefaultDataIfEmpty(context, exDao, tmplDao, planDao)
                     }
                 }
             }
@@ -51,7 +53,7 @@ val databaseModule = module {
 
         // Гарантированный посев данных на IO-потоке сразу после создания инстанса
         CoroutineScope(Dispatchers.IO).launch {
-            DefaultTemplates.seedDefaultDataIfEmpty(context, db.exerciseDao(), db.templateDao())
+            DefaultTemplates.seedDefaultDataIfEmpty(context, db.exerciseDao(), db.templateDao(), db.workoutPlanDao())
             seedDemoCoachClientsIfEmpty(db.coachClientDao())
         }
 
@@ -65,6 +67,7 @@ val databaseModule = module {
     single { get<GymDatabase>().coachAndReviewDao() }
     single { get<GymDatabase>().userProfileDao() }
     single { get<GymDatabase>().coachClientDao() }
+    single { get<GymDatabase>().workoutPlanDao() }
     single { com.gym.core.database.backup.BackupManager(get(), get(), get(), get()) }
 }
 
